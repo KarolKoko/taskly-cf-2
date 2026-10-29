@@ -113,7 +113,7 @@ async function main() {
       plan = await generateTestPlan({ file: change.file, source, diff: change.patch, agentInstructions, vitestDocs: docs })
       await mkdir(path.dirname(planPath), {recursive:true})
       await writeFile(planPath, JSON.stringify(plan, null, 2) + '\n')
-      await writeFile(fingerprintPath, fingerprint + '\n')
+      if (coverRun) await writeFile(fingerprintPath, fingerprint + '\n')
     }
     const caseCount = plan.cases.length + plan.component_cases.length
     console.log(`Plan: ${path.relative(repo, planPath)} (${caseCount} cases)`)
