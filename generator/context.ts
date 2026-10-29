@@ -1,6 +1,6 @@
 import { readFile, readdir, stat } from 'node:fs/promises'
 import path from 'node:path'
-import type { ApiPage } from '../parser.js'
+import type { ApiPage } from '../scripts/scrapper/parser.js'
 
 export async function readAgentInstructions(dir: string): Promise<string> {
   const fragments: string[] = []

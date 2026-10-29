@@ -5,7 +5,7 @@ import { parseApiPage, type ApiPage } from './parser.js'
 const BASE = 'https://vitest.dev'
 const ROOT = `${BASE}/api/`
 const API = new URL(ROOT)
-const outDir = path.resolve(process.env.OUTPUT_DIR || './data')
+const outDir = path.resolve(process.env.OUTPUT_DIR || path.join(__dirname, 'data'))
 const concurrency = Math.max(1, Math.min(12, Number(process.env.CONCURRENCY || 3)))
 const delayMs = Math.max(0, Number(process.env.DELAY_MS || 250))
 const maxPages = Math.max(1, Number(process.env.MAX_PAGES || 500))

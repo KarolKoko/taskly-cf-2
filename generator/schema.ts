@@ -33,6 +33,51 @@ export const TestCase = z.object({
   source_lines: z.array(z.number().int()),
 }).strict()
 
+const Category = z.enum(['happy_path', 'edge_case', 'error', 'regression'])
+
+// Targets an element of the rendered component through Testing Library queries.
+export const ElementQuery = z.object({
+  by: z.enum(['role', 'text', 'label_text', 'test_id', 'dialog', 'container']),
+  value: z.string(), // role name, text, label or test id; empty for dialog/container
+  name: z.string(), // accessible name when by=role; empty otherwise
+}).strict()
+
+export const ComponentStep = z.object({
+  action: z.enum(['click', 'type', 'dispatch_cancel', 'rerender']),
+  target: ElementQuery, // ignored for rerender
+  text: z.string(), // text to type; empty otherwise
+  props: z.array(z.object({ name: z.string(), value: JsonValue }).strict()), // new props for rerender
+}).strict()
+
+export const ComponentAssertion = z.object({
+  target: z.discriminatedUnion('kind', [
+    z.object({ kind: z.literal('element'), query: ElementQuery }).strict(),
+    z.object({ kind: z.literal('spy'), prop: z.string() }).strict(),
+  ]),
+  expected: z.boolean(),
+  matcher: z.enum([
+    'toBeInTheDocument', 'toBeDisabled', 'toBeEnabled', 'toHaveTextContent', 'toHaveAttribute',
+    'toHaveFocus', 'toHaveValue', 'toBeEmptyDOMElement',
+    'toHaveBeenCalled', 'toHaveBeenCalledTimes', 'toHaveBeenCalledWith',
+  ]),
+  matcher_args: z.array(JsonValue),
+}).strict()
+
+// React component behavior, described as data and rendered with Testing Library.
+export const ComponentCase = z.object({
+  name: z.string(),
+  business_rule: z.string().min(1).max(500),
+  rationale: z.string().min(1).max(500),
+  target_export: z.string(),
+  props: z.array(z.object({ name: z.string(), value: JsonValue }).strict()),
+  spy_props: z.array(z.string()), // callback props replaced with vi.fn()
+  children_text: z.string(), // plain-text children; empty for none
+  steps: z.array(ComponentStep),
+  assertions: z.array(ComponentAssertion).min(1),
+  category: Category,
+  source_lines: z.array(z.number().int()),
+}).strict()
+
 export const TestPlan = z.object({
   source_file: z.string(),
   describe_name: z.string(),
@@ -42,5 +87,8 @@ export const TestPlan = z.object({
   }).strict()),
   unknowns: z.array(z.string().min(1).max(500)),
   cases: z.array(TestCase),
+  component_cases: z.array(ComponentCase),
 }).strict()
 export type GeneratedTestPlan = z.infer<typeof TestPlan>
+export type ComponentCaseT = z.infer<typeof ComponentCase>
+export type ElementQueryT = z.infer<typeof ElementQuery>
