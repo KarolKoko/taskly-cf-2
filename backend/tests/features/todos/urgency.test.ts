@@ -5,13 +5,13 @@ import * as subject from "../../../src/features/todos/urgency.js"
 afterEach(() => vi.restoreAllMocks())
 
 describe("getUrgency", () => {
-  it("returns completed urgency for completed todos", async () => {
-    const result = (subject["getUrgency"] as any)({"completed":true,"due_date":null})
+  it("returns completed before considering an overdue due date", async () => {
+    const result = (subject["getUrgency"] as any)({"completed":true,"due_date":"2000-01-01"})
     expect(result).toBe("completed")
   })
 
-  it("returns none urgency when incomplete todo has no due date", async () => {
-    const result = (subject["getUrgency"] as any)({"completed":false,"due_date":null})
+  it("returns none for an incomplete todo with a falsy due date", async () => {
+    const result = (subject["getUrgency"] as any)({"completed":false,"due_date":""})
     expect(result).toBe("none")
   })
 
