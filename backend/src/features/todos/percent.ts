@@ -6,3 +6,5 @@
 export function percentOf(part: number, total: number): number {
   return Math.floor((part / total) * 100);
 }
+
+//TEST

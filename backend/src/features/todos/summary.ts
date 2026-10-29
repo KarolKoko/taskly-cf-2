@@ -10,3 +10,6 @@ export function completionRate(todos: Pick<Todo, 'completed'>[]): number {
   const done = todos.filter((todo) => todo.completed).length;
   return percentOf(done, todos.length);
 }
+
+
+// TEST
