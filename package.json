@@ -10,9 +10,11 @@
     "typecheck": "tsc --noEmit",
     "sanity-check": "tsx scripts/sanity-check.ts",
     "pr-tests": "npm test",
-    "docs:scrape": "tsx index.ts",
+    "docs:scrape": "tsx scripts/scrapper/index.ts",
     "generate:tests": "tsx generator/index.ts",
     "generate:tests:plan": "tsx generator/index.ts --plan-only",
+    "cover:run": "tsx scripts/cover-run.ts",
+    "cover:run:plan": "tsx scripts/cover-run.ts --plan-only",
     "test:generated": "tsx scripts/run-generated-tests.ts",
     "stage:generated": "tsx scripts/stage-generated-tests.ts",
     "apply:generated": "tsx scripts/apply-generated-tests.ts",
@@ -41,6 +43,7 @@
   "homepage": "https://github.com/cf-recruitment/taskly-app-node#readme",
   "dependencies": {
     "cheerio": "^1.2.0",
+    "dotenv": "^18.0.9",
     "openai": "^6.0.0",
     "parse-diff": "^0.12.0",
     "ts-morph": "^28.0.0"

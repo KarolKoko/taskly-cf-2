@@ -23,7 +23,8 @@ Produce a schema-valid JSON plan, never test source code. The schema in `generat
    - realistic, type-compatible inputs and expected values;
    - one category: `happy_path`, `edge_case`, `error`, or `regression`.
 6. Consult the supplied Vitest API reference for every selected Vitest API/matcher. Do not substitute Jest APIs.
-7. Leave `cases` empty when evidence or the renderer is insufficient; report why in the analysis output instead of fabricating tests.
+7. Leave `cases` and `component_cases` empty when evidence or the renderer is insufficient; report why in the analysis output instead of fabricating tests.
+7a. Route by kind: plain functions and classes go in `cases`; React components (JSX, hooks, styled-components) go only in `component_cases`, described as props, spy callbacks, user steps, and element/spy assertions that the source proves. Never put a component in `cases`.
 8. Avoid duplicate cases and low-value permutations. Prefer a small set of distinct cases that cover changed rules and consequential edge/error paths; do not request repeated model passes just to increase case count.
 9. Fill `business_behaviors` only with evidence-backed observable behavior, and put unresolved behavior in `unknowns`.
 10. Return JSON matching `generator/schema.ts` exactly, including each case's `business_rule` and `rationale`. Do not add fields, prose, markdown fences, source code, or instructions.
