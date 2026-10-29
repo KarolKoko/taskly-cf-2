@@ -28,12 +28,18 @@ jobs:
             ].join('\n');
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
-            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number, per_page: 100
+            });
             const existing = comments.find(comment => comment.body?.includes(marker));
             if (existing) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body
+              });
             } else {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+              await github.rest.issues.createComment({
+                owner, repo, issue_number, body
+              });
             }
 
   verify:
@@ -70,6 +76,16 @@ jobs:
       - name: Type-check generator and scripts
         run: npm run typecheck
 
+      - name: Test generator context and verification guards
+        run: |
+          node --import tsx scripts/repository-context.test.ts
+          node --import tsx scripts/verify-generated-results.test.ts
+
+      - name: Type-check frontend and backend
+        run: |
+          npm --prefix frontend run typecheck
+          npm --prefix backend run typecheck
+
       - name: Run baseline frontend and backend tests
         run: npm test
 
@@ -90,16 +106,22 @@ jobs:
             const body = [
               marker,
               '## Automated unit-test generation',
-              '- Status: **Baseline checks passed. Analyzing changed business behavior and planning evidence-based Vitest cases.**',
+              '- Status: **Baseline checks passed. Analyzing changed business behavior and planning tests.**',
             ].join('\n');
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
-            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number, per_page: 100
+            });
             const existing = comments.find(comment => comment.body?.includes(marker));
             if (existing) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body
+              });
             } else {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+              await github.rest.issues.createComment({
+                owner, repo, issue_number, body
+              });
             }
 
   generate:
@@ -150,7 +172,13 @@ jobs:
         run: |
           owner="${REPOSITORY%/*}"
           name="${REPOSITORY#*/}"
-          npm run generate:tests -- --repo "$GITHUB_WORKSPACE/pull-request" --agents "$GITHUB_WORKSPACE/trusted/agents" --docs "$GITHUB_WORKSPACE/trusted/scripts/scrapper/data" --owner "$owner" --name "$name" --pr "$PR_NUMBER"
+          npm run generate:tests -- \
+            --repo "$GITHUB_WORKSPACE/pull-request" \
+            --agents "$GITHUB_WORKSPACE/trusted/agents" \
+            --docs "$GITHUB_WORKSPACE/trusted/scripts/scrapper/data" \
+            --owner "$owner" \
+            --name "$name" \
+            --pr "$PR_NUMBER"
         working-directory: trusted
 
       - name: Stage generated tests and plans
@@ -200,17 +228,22 @@ jobs:
               .replace(/</g, '&lt;')
               .replace(/([\\`*_{}\[\]()#+.!|>])/g, '\\$1')
               .slice(0, 240);
+
             const generatorResult = process.env.GENERATOR_JOB_RESULT === 'success'
               ? process.env.GENERATOR_RESULT
               : process.env.GENERATOR_JOB_RESULT;
+
             let files = [];
             let reportWarning = '';
             try {
-              const report = JSON.parse(fs.readFileSync('generated/.vitest-agent/generation-report.json', 'utf8'));
+              const report = JSON.parse(
+                fs.readFileSync('generated/.vitest-agent/generation-report.json', 'utf8')
+              );
               files = Array.isArray(report.files) ? report.files : [];
             } catch (error) {
               reportWarning = `Generation report unavailable: ${safe(error.message)}.`;
             }
+
             const cases = files.flatMap(file =>
               (file.cases ?? []).map(test => ({
                 file: file.test_file || file.source_file,
@@ -222,34 +255,52 @@ jobs:
                 lines: test.source_lines,
               }))
             );
+
             const lines = [
               marker,
               '## Automated unit-test generation',
               generatorResult === 'success'
-                ? `- Status: **${process.env.HAS_GENERATED_TESTS === 'true' ? 'Generated tests; running frontend/backend Vitest suites.' : 'Analysis complete; no supported test cases were generated.'}**`
+                ? `- Status: **${process.env.HAS_GENERATED_TESTS === 'true'
+                    ? 'Generated tests; running frontend/backend verification.'
+                    : 'Analysis complete; no supported test cases were generated.'}**`
                 : generatorResult === 'skipped'
-                  ? '- Status: **Generation skipped (fork PR or baseline prerequisite not met); no repository secrets were used.**'
+                  ? '- Status: **Generation skipped (fork PR or baseline prerequisite not met).**'
                   : `- Status: **Generation failed (${safe(generatorResult)}).**`,
             ];
-            if (reportWarning && generatorResult === 'success') lines.push(`- ${reportWarning}`);
+
+            if (reportWarning && generatorResult === 'success') {
+              lines.push(`- ${reportWarning}`);
+            }
             if (cases.length) {
               lines.push('', '### Planned test cases');
               for (const test of cases.slice(0, 20)) {
                 lines.push(
-                  `- \`${safe(test.file)}\` — **${safe(test.name)}** (${safe(test.category)}): ${safe(test.rationale)} Source: \`${safe(test.source_file)}\`, lines ${safe((test.lines ?? []).join(', '))}.`
+                  `- \`${safe(test.file)}\` — **${safe(test.name)}** ` +
+                  `(${safe(test.category)}): ${safe(test.rationale)} ` +
+                  `Source: \`${safe(test.source_file)}\`, ` +
+                  `lines ${safe((test.lines ?? []).join(', '))}.`
                 );
               }
-              if (cases.length > 20) lines.push(`- ${cases.length - 20} additional cases are listed in the workflow artifact.`);
+              if (cases.length > 20) {
+                lines.push(`- ${cases.length - 20} additional cases are listed in the artifact.`);
+              }
             }
+
             const body = lines.join('\n');
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
-            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number, per_page: 100
+            });
             const existing = comments.find(comment => comment.body?.includes(marker));
             if (existing) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body
+              });
             } else {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+              await github.rest.issues.createComment({
+                owner, repo, issue_number, body
+              });
             }
 
   verify-generated:
@@ -308,10 +359,13 @@ jobs:
         run: npm ci
         working-directory: pull-request/backend
 
-      - name: Run frontend and backend Vitest suites
+      - name: Run type checks and verify generated test execution
         id: run-tests
         continue-on-error: true
-        run: npm run test:generated -- "$GITHUB_WORKSPACE/pull-request"
+        run: |
+          npm run test:generated -- \
+            "$GITHUB_WORKSPACE/pull-request" \
+            "$GITHUB_WORKSPACE/generated/.vitest-agent/generation-report.json"
         working-directory: trusted
 
       - name: Prepare generated-test run report artifact
@@ -319,7 +373,8 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/test-results"
           if [ -f "$GITHUB_WORKSPACE/pull-request/.vitest-agent/run-report.json" ]; then
-            cp "$GITHUB_WORKSPACE/pull-request/.vitest-agent/run-report.json" "$RUNNER_TEMP/test-results/run-report.json"
+            cp "$GITHUB_WORKSPACE/pull-request/.vitest-agent/run-report.json" \
+              "$RUNNER_TEMP/test-results/run-report.json"
           fi
 
       - name: Upload generated-test run report artifact
@@ -357,32 +412,52 @@ jobs:
           script: |
             const fs = require('fs');
             const marker = `<!-- taskly-generated-tests-failure-pr-${process.env.PR_NUMBER} -->`;
+
             let report;
             try {
-              report = JSON.parse(fs.readFileSync('test-results/run-report.json', 'utf8'));
+              report = JSON.parse(
+                fs.readFileSync('test-results/run-report.json', 'utf8')
+              );
             } catch (error) {
-              throw new Error(`Could not read the generated-test run report: ${error.message}`);
+              throw new Error(`Could not read verification report: ${error.message}`);
             }
-            if (!Array.isArray(report.suites)) throw new Error('Generated-test run report is invalid: suites must be an array');
+            if (!Array.isArray(report.suites)) {
+              throw new Error('Invalid verification report: suites must be an array');
+            }
+
             const excerpt = report.suites
               .filter(suite => suite.exit_code !== 0)
-              .map(suite => `### ${suite.suite} — exit ${suite.exit_code}\n~~~text\n${String(suite.output ?? '').slice(-5000).replace(/~~~/g, '~~~\u200b').replace(/@/g, '@\u200b')}\n~~~`)
+              .map(suite =>
+                `### ${suite.suite} — exit ${suite.exit_code}\n~~~text\n` +
+                `${String(suite.output ?? '').slice(-5000)
+                  .replace(/~~~/g, '~~~\u200b')
+                  .replace(/@/g, '@\u200b')}\n~~~`
+              )
               .join('\n\n');
+
             const body = [
               marker,
-              `Generated Vitest tests failed while verifying [PR #${process.env.PR_NUMBER}](${process.env.PR_URL}).`,
+              `Generated-test verification failed for [PR #${process.env.PR_NUMBER}](${process.env.PR_URL}).`,
               '',
               `Workflow run: ${process.env.RUN_URL}`,
               '',
               'Failure details:',
-              excerpt || 'The test runner failed without a suite output excerpt.',
+              excerpt || 'Verification failed without a suite output excerpt.',
             ].join('\n');
+
             const { owner, repo } = context.repo;
-            const issues = await github.paginate(github.rest.issues.listForRepo, { owner, repo, state: 'open', per_page: 100 });
-            const existing = issues.find(issue => !issue.pull_request && issue.body?.includes(marker));
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', per_page: 100
+            });
+            const existing = issues.find(issue =>
+              !issue.pull_request && issue.body?.includes(marker)
+            );
+
             let issue;
             if (existing) {
-              ({ data: issue } = await github.rest.issues.update({ owner, repo, issue_number: existing.number, body }));
+              ({ data: issue } = await github.rest.issues.update({
+                owner, repo, issue_number: existing.number, body
+              }));
             } else {
               ({ data: issue } = await github.rest.issues.create({
                 owner,
@@ -437,7 +512,8 @@ jobs:
         env:
           PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
-          npm --prefix trusted run apply:generated -- "$GITHUB_WORKSPACE/generated" "$GITHUB_WORKSPACE/repo"
+          npm --prefix trusted run apply:generated -- \
+            "$GITHUB_WORKSPACE/generated" "$GITHUB_WORKSPACE/repo"
           cd "$GITHUB_WORKSPACE/repo"
           git add -- frontend backend
           if git diff --cached --quiet; then
@@ -452,7 +528,13 @@ jobs:
           echo "published=true" >> "$GITHUB_OUTPUT"
 
   report-final:
-    needs: [verify, generate, report-generation, verify-generated, create-failure-issue, publish-generated-tests]
+    needs:
+      - verify
+      - generate
+      - report-generation
+      - verify-generated
+      - create-failure-issue
+      - publish-generated-tests
     if: always() && github.event.pull_request.draft == false && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
@@ -496,32 +578,41 @@ jobs:
               .replace(/</g, '&lt;')
               .replace(/([\\`*_{}\[\]()#+.!|>])/g, '\\$1')
               .slice(0, 240);
+
             const generatorResult = process.env.GENERATOR_JOB_RESULT === 'success'
               ? process.env.GENERATOR_RESULT
               : process.env.GENERATOR_JOB_RESULT;
+
             const publishStatus = process.env.PUBLISH_RESULT === 'true'
               ? 'published'
               : process.env.PUBLISH_RESULT === 'false'
                 ? 'no new test-file changes'
                 : process.env.PUBLISH_RESULT;
+
             const lines = [
               marker,
               '## Automated unit-test generation — final status',
               `- Baseline type-check and tests: **${safe(process.env.BASELINE_RESULT)}**`,
               `- Generation: **${safe(generatorResult)}**`,
-              ...(generatorResult === 'skipped' ? ['- Generation was skipped because the PR is from a fork or a baseline prerequisite did not pass.'] : []),
-              `- Generated-test Vitest run: **${safe(process.env.GENERATED_TEST_RESULT)}**`,
-              `- Publish generated tests to PR branch: **${safe(publishStatus)}**`,
+              ...(generatorResult === 'skipped'
+                ? ['- Generation skipped: fork PR or an unmet baseline prerequisite.']
+                : []),
+              `- Generated-test verification: **${safe(process.env.GENERATED_TEST_RESULT)}**`,
+              `- Publish generated tests: **${safe(publishStatus)}**`,
               `- [Workflow run](${process.env.RUN_URL})`,
             ];
+
             let generation;
-            let generationWarning = '';
             try {
-              generation = JSON.parse(fs.readFileSync('generated/.vitest-agent/generation-report.json', 'utf8'));
+              generation = JSON.parse(
+                fs.readFileSync('generated/.vitest-agent/generation-report.json', 'utf8')
+              );
             } catch (error) {
-              generationWarning = `Generation report unavailable: ${safe(error.message)}.`;
+              if (generatorResult === 'success') {
+                lines.push(`- Generation report unavailable: ${safe(error.message)}.`);
+              }
             }
-            if (generationWarning && generatorResult === 'success') lines.push(`- ${generationWarning}`);
+
             const cases = (generation?.files ?? []).flatMap(file =>
               (file.cases ?? []).map(test => ({
                 file: file.test_file || file.source_file,
@@ -534,58 +625,178 @@ jobs:
               }))
             );
             const behaviors = (generation?.files ?? []).flatMap(file =>
-              (file.business_behaviors ?? []).map(item => ({ behavior: item.behavior, evidence: item.evidence }))
+              (file.business_behaviors ?? []).map(item => ({
+                behavior: item.behavior,
+                evidence: item.evidence,
+              }))
             );
-            const unknowns = [...new Set((generation?.files ?? []).flatMap(file => file.unknowns ?? []))];
+            const unknowns = [
+              ...new Set((generation?.files ?? []).flatMap(file => file.unknowns ?? []))
+            ];
+
             if (behaviors.length) {
               lines.push('', '### Business behavior identified from the diff');
               for (const item of behaviors.slice(0, 20)) {
-                lines.push(`- ${safe(item.behavior)} Evidence: ${safe((item.evidence ?? []).join('; '))}.`);
+                lines.push(
+                  `- ${safe(item.behavior)} ` +
+                  `Evidence: ${safe((item.evidence ?? []).join('; '))}.`
+                );
               }
-              if (behaviors.length > 20) lines.push(`- ${behaviors.length - 20} additional behaviors are listed in the workflow artifact.`);
+              if (behaviors.length > 20) {
+                lines.push(`- ${behaviors.length - 20} additional behaviors are in the artifact.`);
+              }
             }
+
             if (cases.length) {
               lines.push('', '### What the generated tests cover and why');
               for (const test of cases.slice(0, 30)) {
                 lines.push(
-                  `- \`${safe(test.file)}\` — **${safe(test.name)}** (${safe(test.category)}): business rule: ${safe(test.business_rule)} Why: ${safe(test.rationale)} Source: \`${safe(test.source_file)}\`, lines ${safe((test.lines ?? []).join(', '))}.`
+                  `- \`${safe(test.file)}\` — **${safe(test.name)}** ` +
+                  `(${safe(test.category)}): business rule: ${safe(test.business_rule)} ` +
+                  `Why: ${safe(test.rationale)} ` +
+                  `Source: \`${safe(test.source_file)}\`, ` +
+                  `lines ${safe((test.lines ?? []).join(', '))}.`
                 );
               }
-              if (cases.length > 30) lines.push(`- ${cases.length - 30} additional test cases are listed in the workflow artifact.`);
+              if (cases.length > 30) {
+                lines.push(`- ${cases.length - 30} additional cases are in the artifact.`);
+              }
             } else if (generatorResult === 'success') {
-              lines.push('', 'No evidence-backed test cases were generated for the changed code.');
+              lines.push('', 'No evidence-backed test cases were generated.');
             }
+
             if (unknowns.length) {
-              lines.push('', '### Unresolved behavior (not assumed by the tests)');
-              for (const unknown of unknowns.slice(0, 20)) lines.push(`- ${safe(unknown)}`);
-              if (unknowns.length > 20) lines.push(`- ${unknowns.length - 20} additional unknowns are listed in the workflow artifact.`);
-            }
-            let runReport;
-            let runReportWarning = '';
-            try {
-              runReport = JSON.parse(fs.readFileSync('test-results/run-report.json', 'utf8'));
-            } catch (error) {
-              runReportWarning = `Generated-test run report unavailable: ${safe(error.message)}.`;
-            }
-            if (runReportWarning && process.env.GENERATED_TEST_RESULT !== 'skipped') lines.push('', runReportWarning);
-            if (runReport?.suites?.length) {
-              lines.push('', '### Vitest suites');
-              for (const suite of runReport.suites) {
-                lines.push(`- ${safe(suite.suite)}: **${suite.exit_code === 0 ? 'passed' : 'failed'}** (exit ${safe(suite.exit_code)}).`);
+              lines.push('', '### Unresolved behavior');
+              for (const unknown of unknowns.slice(0, 20)) {
+                lines.push(`- ${safe(unknown)}`);
+              }
+              if (unknowns.length > 20) {
+                lines.push(`- ${unknowns.length - 20} additional unknowns are in the artifact.`);
               }
             }
-            if (process.env.FAILURE_ISSUE_URL) {
-              lines.push('', `Generated-test failure tracked in [GitHub issue](${process.env.FAILURE_ISSUE_URL}).`);
-            } else if (process.env.GENERATED_TEST_RESULT === 'failure') {
-              lines.push('', `**Issue creation failed or did not complete** (${safe(process.env.ISSUE_JOB_RESULT)}); review the workflow run for the API error.`);
+
+            let runReport;
+            try {
+              runReport = JSON.parse(
+                fs.readFileSync('test-results/run-report.json', 'utf8')
+              );
+            } catch (error) {
+              if (process.env.GENERATED_TEST_RESULT !== 'skipped') {
+                lines.push('', `Verification report unavailable: ${safe(error.message)}.`);
+              }
             }
+
+            if (runReport?.suites?.length) {
+              lines.push('', '### Verification results');
+              for (const suite of runReport.suites) {
+                lines.push(
+                  `- ${safe(suite.suite)}: ` +
+                  `**${suite.exit_code === 0 ? 'passed' : 'failed'}** ` +
+                  `(exit ${safe(suite.exit_code)}).`
+                );
+              }
+            }
+
+            if (process.env.FAILURE_ISSUE_URL) {
+              lines.push(
+                '',
+                `Failure tracked in [GitHub issue](${process.env.FAILURE_ISSUE_URL}).`
+              );
+            } else if (process.env.GENERATED_TEST_RESULT === 'failure') {
+              lines.push(
+                '',
+                `**Issue creation failed or did not complete** ` +
+                `(${safe(process.env.ISSUE_JOB_RESULT)}); review the workflow run.`
+              );
+            }
+
             const body = lines.join('\n');
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
-            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number, per_page: 100
+            });
             const existing = comments.find(comment => comment.body?.includes(marker));
             if (existing) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body
+              });
             } else {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+              await github.rest.issues.createComment({
+                owner, repo, issue_number, body
+              });
             }
+
+  workflow-result:
+    name: Agentic tests result
+    needs:
+      - verify
+      - generate
+      - report-start
+      - report-analysis-start
+      - report-generation
+      - verify-generated
+      - create-failure-issue
+      - publish-generated-tests
+      - report-final
+    if: always() && github.event.pull_request.draft == false && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Enforce workflow outcome after reporting
+        env:
+          JOB_RESULTS: ${{ toJSON(needs) }}
+          SAME_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+
+          jobs = json.loads(os.environ['JOB_RESULTS'])
+          errors = []
+
+          for name, job in jobs.items():
+              if job['result'] in ('failure', 'cancelled'):
+                  errors.append(f"{name}: {job['result']}")
+
+          required = (
+              'verify',
+              'report-start',
+              'report-analysis-start',
+              'report-generation',
+              'report-final',
+          )
+          for name in required:
+              if jobs[name]['result'] != 'success':
+                  errors.append(f"Required job {name} did not succeed")
+
+          if os.environ['SAME_REPOSITORY'] == 'true':
+              generation = jobs['generate']
+              outputs = generation['outputs']
+
+              if (
+                  generation['result'] != 'success'
+                  or outputs.get('outcome') != 'success'
+              ):
+                  errors.append('Generation did not succeed')
+              elif outputs.get('has-generated-tests') == 'true':
+                  verification = jobs['verify-generated']
+
+                  if (
+                      verification['result'] != 'success'
+                      or verification['outputs'].get('tests-passed') != 'true'
+                  ):
+                      errors.append('Generated-test verification did not pass')
+
+                  if jobs['publish-generated-tests']['result'] != 'success':
+                      errors.append('Publication did not succeed')
+              elif outputs.get('has-generated-tests') != 'false':
+                  errors.append('Generation returned no valid test-presence outcome')
+
+          if errors:
+              print('\n'.join(errors), file=sys.stderr)
+              sys.exit(1)
+
+          print('All required stages passed; intentional skips are accepted.')
+          PY
