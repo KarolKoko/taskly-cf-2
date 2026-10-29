@@ -8,4 +8,4 @@ Zdeycdowałem się na implementację własnego Agentic Workflow, który uruchami
 ### How to run the PR workflow and which prerequisites must be met:
 Workflow rozpoczyna się wraz z żądaniem pull request. Porównywany jest wtedy kod, a następnie rusza złożony pipieline. Przede wszystkim jeśli chcemy skorzystać z generatora potrzebny jest nam klucz OpenAI. Przed właściwym generowaniem testów, uruchamiany jest pre-check, który waliduje składnię i pliki .env. Flow jest taki: PR → baseline checks → generator (diff → skille → plan JSON → render) → testy w izolacji → PASS: commit do PR / FAIL: issue GH → końcowy komentarz w PR.
 
-### 
+### Where the custom agent and skills are defined and how they are used during execution:
