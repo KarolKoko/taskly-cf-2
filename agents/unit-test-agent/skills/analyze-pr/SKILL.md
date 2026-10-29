@@ -12,7 +12,7 @@ Explain the business behavior affected by the diff using repository evidence onl
 ## Procedure
 
 1. Read the complete diff and the current full source for each changed TypeScript/JavaScript module.
-2. Trace only relevant callers, types, existing tests, and repository documentation needed to understand the changed behavior.
+2. Use `repository_context.files` to inspect direct relative dependencies, callers, existing tests and README documentation. Each entry includes its path, relation and bounded source. Check `repository_context.omitted` for missing or truncated evidence; report relevant limitations in `unknowns`. Do not assume omitted context exists or invent its behavior.
 3. For each changed behavior, record:
    - source path and changed line numbers;
    - the observable input, state transition, or output;
