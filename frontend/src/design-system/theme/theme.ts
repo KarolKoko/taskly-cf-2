@@ -12,7 +12,7 @@ export const theme = {
     accentSoft: '#f9e6cf',
     success: '#2e8b57',
     warning: '#b4471b',
-    info: '#3c5a89',
+    info: '#0f3d86',
     shadow: 'rgba(18, 33, 43, 0.12)',
     overlay: 'rgba(9, 12, 16, 0.4)',
   },
