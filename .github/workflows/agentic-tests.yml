@@ -70,6 +70,16 @@ jobs:
       - name: Type-check generator and scripts
         run: npm run typecheck
 
+      - name: Test generator context and verification guards
+        run: |
+          node --import tsx scripts/repository-context.test.ts
+          node --import tsx scripts/verify-generated-results.test.ts
+
+      - name: Type-check frontend and backend
+        run: |
+          npm --prefix frontend run typecheck
+          npm --prefix backend run typecheck
+
       - name: Run baseline frontend and backend tests
         run: npm test
 
@@ -311,7 +321,7 @@ jobs:
       - name: Run frontend and backend Vitest suites
         id: run-tests
         continue-on-error: true
-        run: npm run test:generated -- "$GITHUB_WORKSPACE/pull-request"
+        run: npm run test:generated -- "$GITHUB_WORKSPACE/pull-request" "$GITHUB_WORKSPACE/generated/.vitest-agent/generation-report.json"
         working-directory: trusted
 
       - name: Prepare generated-test run report artifact
@@ -589,3 +599,43 @@ jobs:
             } else {
               await github.rest.issues.createComment({ owner, repo, issue_number, body });
             }
+
+  workflow-result:
+    name: Agentic tests result
+    needs: [verify, generate, report-start, report-analysis-start, report-generation, verify-generated, create-failure-issue, publish-generated-tests, report-final]
+    if: always() && github.event.pull_request.draft == false && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Enforce workflow outcome after reporting
+        env:
+          JOB_RESULTS: ${{ toJSON(needs) }}
+          SAME_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          jobs = json.loads(os.environ['JOB_RESULTS'])
+          errors = []
+          for name, job in jobs.items():
+              if job['result'] in ('failure', 'cancelled'):
+                  errors.append(f"{name}: {job['result']}")
+          for name in ('verify', 'report-start', 'report-analysis-start', 'report-generation', 'report-final'):
+              if jobs[name]['result'] != 'success':
+                  errors.append(f"Required job {name} did not succeed")
+          if os.environ['SAME_REPOSITORY'] == 'true':
+              generation = jobs['generate']
+              if generation['result'] != 'success' or generation['outputs'].get('outcome') != 'success':
+                  errors.append('Generation did not succeed')
+              elif generation['outputs'].get('has-generated-tests') == 'true':
+                  verification = jobs['verify-generated']
+                  if verification['result'] != 'success' or verification['outputs'].get('tests-passed') != 'true':
+                      errors.append('Generated-test verification did not pass')
+                  if jobs['publish-generated-tests']['result'] != 'success':
+                      errors.append('Publication did not succeed')
+              elif generation['outputs'].get('has-generated-tests') != 'false':
+                  errors.append('Generation returned no valid test-presence outcome')
+          if errors:
+              print('\n'.join(errors), file=sys.stderr)
+              sys.exit(1)
+          print('All required stages passed; intentional skips are accepted.')
+          PY

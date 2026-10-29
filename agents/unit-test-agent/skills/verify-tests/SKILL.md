@@ -7,8 +7,8 @@ description: "Use after test generation to run frontend and backend Vitest suite
 
 ## Procedure
 
-1. Run the frontend and backend test suites from their respective package directories with their existing Vitest scripts.
-2. Capture each command, exit code, and a bounded output excerpt in the machine-readable run report.
+1. Run `npm run test:generated -- <repo> <generation-report.json>` from the trusted checkout. It type-checks both applications, runs both existing Vitest scripts with a JSON reporter and verifies every planned generated case by file path, case name and passed status. Skipped, todo, missing or renamed cases fail verification. The generation report must come from the same generation artifact as the applied test files.
+2. Capture each command, exit code, type-check exit code, verification errors and a bounded output excerpt in the machine-readable run report. Use a fresh temporary JSON report for each suite; never reuse reports from earlier runs.
 3. Do not skip the second suite if the first fails.
 4. Compare the generated run with the baseline PR checks. Attribute a failure to generated tests only when it occurs in the post-generation run; do not claim causality without evidence.
 5. If any post-generation suite fails, mark verification failed and create or update one GitHub issue for the PR. Include the failing suite, exit code, relevant output excerpt, PR link, and workflow run link.
