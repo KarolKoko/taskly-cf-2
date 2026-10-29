@@ -4,7 +4,7 @@ import { appendFile, mkdir, readFile, realpath, writeFile } from 'node:fs/promis
 import path from 'node:path'
 import { parseUnifiedDiff, fetchGithubPrDiff, type ChangedFile } from './diff.js'
 import { coverRunEnabled, findCoverageTargets } from './cover.js'
-import { readAgentInstructions, readRelevantDocumentation } from './context.js'
+import { readAgentInstructions, readRelevantDocumentation, readRepositoryContext } from './context.js'
 import { generateTestPlan } from './model.js'
 import { GENERATED_TEST_FILE_MARKER, renderTestFile, testFilePath } from './render.js'
 import { TestPlan, type GeneratedTestPlan } from './schema.js'
@@ -98,7 +98,9 @@ async function main() {
     const source = await readFile(sourceFile, 'utf8')
     const planPath = assertInRepo(repo, `.vitest-agent/plans/${change.file}.json`)
     await assertNoSymlinkEscape(realRepo, planPath)
-    const fingerprint = createHash('sha256').update(source).update(agentInstructions).update(generatorVersion).digest('hex')
+    const repositoryContext = await readRepositoryContext(repo, change.file, source)
+    const docs = await readRelevantDocumentation(docsDir, change.patch)
+    const fingerprint = createHash('sha256').update(source).update(JSON.stringify(repositoryContext)).update(docs).update(agentInstructions).update(generatorVersion).digest('hex')
     const fingerprintPath = `${planPath}.sha256`
     let plan: GeneratedTestPlan | undefined
     if (coverRun && !coverRefresh) {
@@ -109,8 +111,7 @@ async function main() {
       }
     }
     if (!plan) {
-      const docs = await readRelevantDocumentation(docsDir, change.patch)
-      plan = await generateTestPlan({ file: change.file, source, diff: change.patch, agentInstructions, vitestDocs: docs })
+      plan = await generateTestPlan({ file: change.file, source, diff: change.patch, agentInstructions, vitestDocs: docs, repositoryContext })
       await mkdir(path.dirname(planPath), {recursive:true})
       await writeFile(planPath, JSON.stringify(plan, null, 2) + '\n')
       if (coverRun) await writeFile(fingerprintPath, fingerprint + '\n')
@@ -136,7 +137,7 @@ async function main() {
     let current = await existingFile(target)
     if (current && !current.startsWith(GENERATED_TEST_FILE_MARKER)) {
       const ext = path.posix.extname(standardPath)
-      targetPath = `${standardPath.slice(0, -ext.length)}.generated${ext}`
+      targetPath = `${standardPath.slice(0, -ext.length).replace(/\.test$/, ".generated.test")}${ext}`
       target = assertInRepo(repo, targetPath)
       await assertNoSymlinkEscape(realRepo, target)
       current = await existingFile(target)
