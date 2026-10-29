@@ -1,0 +1,137 @@
+{
+  "title": "Plugin API 3.1.0+",
+  "url": "https://vitest.dev/api/advanced/plugin",
+  "description": "Vitest supports a configureVitest plugin hook since version 3.1.\n\nUnlike reporter.onInit, this hooks runs early in Vitest lifecycle allowing you to make changes to configuration like coverage and reporters. A more notable change is that you can manipulate the global config from a test project if your plugin is defined in the project and not in the global config.",
+  "entries": [
+    {
+      "name": "Plugin API 3.1.0+",
+      "id": "plugin-api",
+      "level": 1,
+      "url": "https://vitest.dev/api/advanced/plugin#plugin-api",
+      "description": "Vitest supports a configureVitest plugin hook since version 3.1.\n\nUnlike reporter.onInit, this hooks runs early in Vitest lifecycle allowing you to make changes to configuration like coverage and reporters. A more notable change is that you can manipulate the global config from a test project if your plugin is defined in the project and not in the global config.",
+      "signatures": [
+        "import type { Vite, VitestPluginContext } from 'vitest/node'\n\nexport function plugin(): Vite.Plugin {\n  return {\n    name: 'vitest:my-plugin',\n    configureVitest(context: VitestPluginContext) {\n      // ...\n    }\n  }\n}",
+        "/// <reference types=\"vitest/config\" />\n\nimport type { Plugin } from 'vite'\n\nexport function plugin(): Plugin {\n  return {\n    name: 'vitest:my-plugin',\n    transform() {\n      // ...\n    },\n    configureVitest(context) {\n      // ...\n    }\n  }\n}"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "import type { Vite, VitestPluginContext } from 'vitest/node'\n\nexport function plugin(): Vite.Plugin {\n  return {\n    name: 'vitest:my-plugin',\n    configureVitest(context: VitestPluginContext) {\n      // ...\n    }\n  }\n}"
+        },
+        {
+          "language": "ts",
+          "code": "/// <reference types=\"vitest/config\" />\n\nimport type { Plugin } from 'vite'\n\nexport function plugin(): Plugin {\n  return {\n    name: 'vitest:my-plugin',\n    transform() {\n      // ...\n    },\n    configureVitest(context) {\n      // ...\n    }\n  }\n}"
+        },
+        {
+          "language": "ts",
+          "code": "/// <reference types=\"vitest/config\" />"
+        }
+      ],
+      "notes": [
+        "WARNINGThis is an advanced API. If you just want to run tests, you probably don't need this. It is primarily used by library authors.This guide assumes you know how to work with Vite plugins."
+      ],
+      "children": [
+        {
+          "name": "Context",
+          "id": "context",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/plugin#context",
+          "description": "",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": [
+            {
+              "name": "project",
+              "id": "project",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/plugin#project",
+              "description": "The current test project that the plugin belongs to.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [
+                "Browser ModeNote that if you are relying on a browser feature, the project.browser field is not set yet. Use reporter.onBrowserInit event instead."
+              ],
+              "children": []
+            },
+            {
+              "name": "vitest",
+              "id": "vitest",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/plugin#vitest",
+              "description": "The global Vitest instance. You can change the global configuration by directly mutating the vitest.config property:",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "vitest.config.coverage.enabled = false\nvitest.config.reporters.push([['my-reporter', {}]])"
+                }
+              ],
+              "notes": [
+                "Config is ResolvedNote that Vitest already resolved the config, so some types might be different from the usual user configuration. This also means that some properties will not be resolved again, like setupFile. If you are adding new files, make sure to resolve it first.At this point reporters are not created yet, so modifying vitest.reporters will have no effect because it will be overwritten. If you need to inject your own reporter, modify the config instead."
+              ],
+              "children": []
+            },
+            {
+              "name": "injectTestProjects",
+              "id": "injecttestprojects",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/plugin#injecttestprojects",
+              "description": "This methods accepts a config glob pattern, a filepath to the config or an inline configuration. It returns an array of resolved test projects.",
+              "signatures": [
+                "function injectTestProjects(\n  config: TestProjectConfiguration | TestProjectConfiguration[]\n): Promise<TestProject[]>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function injectTestProjects(\n  config: TestProjectConfiguration | TestProjectConfiguration[]\n): Promise<TestProject[]>"
+                },
+                {
+                  "language": "ts",
+                  "code": "// inject a single project with a custom alias\nconst newProjects = await injectTestProjects({\n  // you can inherit the current project config by referencing `extends`\n  // note that you cannot have a project with the name that already exists,\n  // so it's a good practice to define a custom name\n  extends: project.vite.config.configFile,\n  test: {\n    name: 'my-custom-alias',\n    alias: {\n      customAlias: resolve('./custom-path.js'),\n    },\n  },\n})"
+                },
+                {
+                  "language": "ts",
+                  "code": "vitest.config.project.push('my-project-name')"
+                }
+              ],
+              "notes": [
+                "Referencing the Current ConfigInline configurations inherit the root config by default. If you want to inherit a specific configuration file instead, set the extends property to its path. All other properties will be merged with the user defined config.The project's configFile can be accessed in Vite's config: project.vite.config.configFile.Note that the name is never inherited because Vitest doesn't allow multiple projects with the same name. Make sure every project has a unique name. You can access the current name via the project.name property and all used names are available in the vitest.projects array."
+              ],
+              "children": []
+            },
+            {
+              "name": "defineCacheKeyGenerator 5.0.0+",
+              "id": "definecachekeygenerator",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/plugin#definecachekeygenerator",
+              "description": "Define a generator that will be applied before hashing the cache key.\n\nUse this to make sure Vitest generates correct hash. It is a good idea to define this function if your plugin can be registered with different options.\n\nThis is called only if fsModuleCache is enabled.\n\nIf false is returned, the module will not be cached on the file system.",
+              "signatures": [
+                "interface CacheKeyIdGeneratorContext {\n  environment: DevEnvironment\n  id: string\n  sourceCode: string\n}\n\nfunction defineCacheKeyGenerator(\n  callback: (context: CacheKeyIdGeneratorContext) => string | undefined | null | false\n): void",
+                "interface PluginOptions {\n  replacePropertyKey: string\n  replacePropertyValue: string\n}\n\nexport function plugin(options: PluginOptions) {\n  return {\n    name: 'plugin-that-replaces-property',\n    transform(code) {\n      return code.replace(\n        options.replacePropertyKey,\n        options.replacePropertyValue\n      )\n    },\n    configureVitest({ defineCacheKeyGenerator }) {\n      defineCacheKeyGenerator(() => {\n        // since these options affect the transform result,\n        // return them together as a unique string\n        return options.replacePropertyKey + options.replacePropertyValue\n      })\n    }\n  }\n}"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "interface CacheKeyIdGeneratorContext {\n  environment: DevEnvironment\n  id: string\n  sourceCode: string\n}\n\nfunction defineCacheKeyGenerator(\n  callback: (context: CacheKeyIdGeneratorContext) => string | undefined | null | false\n): void"
+                },
+                {
+                  "language": "ts",
+                  "code": "interface PluginOptions {\n  replacePropertyKey: string\n  replacePropertyValue: string\n}\n\nexport function plugin(options: PluginOptions) {\n  return {\n    name: 'plugin-that-replaces-property',\n    transform(code) {\n      return code.replace(\n        options.replacePropertyKey,\n        options.replacePropertyValue\n      )\n    },\n    configureVitest({ defineCacheKeyGenerator }) {\n      defineCacheKeyGenerator(() => {\n        // since these options affect the transform result,\n        // return them together as a unique string\n        return options.replacePropertyKey + options.replacePropertyValue\n      })\n    }\n  }\n}"
+                }
+              ],
+              "notes": [],
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

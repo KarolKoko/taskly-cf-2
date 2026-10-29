@@ -7,6 +7,7 @@ storybook-static/
 .vite/
 *.tsbuildinfo
 backend/src/generated/prisma/
+.vitest-agent/
 
 # Test coverage
 coverage/
@@ -21,3 +22,5 @@ coverage/
 
 # macOS
 .DS_Store
+
+assignment-4.md

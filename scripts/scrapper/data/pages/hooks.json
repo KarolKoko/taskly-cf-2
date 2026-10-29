@@ -1,0 +1,308 @@
+{
+  "title": "Hooks",
+  "url": "https://vitest.dev/api/hooks",
+  "description": "These functions allow you to hook into the life cycle of tests to avoid repeating setup and teardown code. They apply to the current context: the file if they are used at the top-level or the current suite if they are inside a describe block. These hooks are not called, when you are running Vitest as a type checker.\n\nTest hooks are called in a stack order (\"after\" hooks are reversed) by default, but you can configure it via sequence.hooks option.",
+  "entries": [
+    {
+      "name": "Hooks",
+      "id": "hooks",
+      "level": 1,
+      "url": "https://vitest.dev/api/hooks#hooks",
+      "description": "These functions allow you to hook into the life cycle of tests to avoid repeating setup and teardown code. They apply to the current context: the file if they are used at the top-level or the current suite if they are inside a describe block. These hooks are not called, when you are running Vitest as a type checker.\n\nTest hooks are called in a stack order (\"after\" hooks are reversed) by default, but you can configure it via sequence.hooks option.",
+      "signatures": [],
+      "aliases": [],
+      "examples": [],
+      "notes": [],
+      "children": [
+        {
+          "name": "beforeEach",
+          "id": "beforeeach",
+          "level": 2,
+          "url": "https://vitest.dev/api/hooks#beforeeach",
+          "description": "Register a callback to be called before each of the tests in the current suite runs. If the function returns a promise, Vitest waits until the promise resolve before running the test.\n\nOptionally, you can pass a timeout (in milliseconds) defining how long to wait before terminating. The default is 10 seconds, and can be configured globally with hookTimeout.\n\nHere, the beforeEach ensures that user is added for each test.\n\nbeforeEach can also return an optional cleanup function. It's similar to afterEach. The only difference is that it's executed after all other afterEach hooks:",
+          "signatures": [
+            "function beforeEach(\n  body: (context: TestContext) => unknown,\n  timeout?: number,\n): void",
+            "import { beforeEach } from 'vitest'\n\nbeforeEach(async () => {\n  // called once before each test run\n  await prepareSomething()\n\n  // clean up function, called once after each test run, after afterEach hooks\n  return async () => {\n    await resetSomething()\n  }\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function beforeEach(\n  body: (context: TestContext) => unknown,\n  timeout?: number,\n): void"
+            },
+            {
+              "language": "ts",
+              "code": "import { beforeEach } from 'vitest'\n\nbeforeEach(async () => {\n  // Clear mocks and add some testing data before each test run\n  await stopMocking()\n  await addUser({ name: 'John' })\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import { beforeEach } from 'vitest'\n\nbeforeEach(async () => {\n  // called once before each test run\n  await prepareSomething()\n\n  // clean up function, called once after each test run, after afterEach hooks\n  return async () => {\n    await resetSomething()\n  }\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "afterEach",
+          "id": "aftereach",
+          "level": 2,
+          "url": "https://vitest.dev/api/hooks#aftereach",
+          "description": "Register a callback to be called after each one of the tests in the current suite completes. If the function returns a promise, Vitest waits until the promise resolve before continuing.\n\nOptionally, you can provide a timeout (in milliseconds) for specifying how long to wait before terminating. The default is 10 seconds, and can be configured globally with hookTimeout.\n\nHere, the afterEach ensures that testing data is cleared after each test runs.",
+          "signatures": [
+            "function afterEach(\n  body: (context: TestContext) => unknown,\n  timeout?: number,\n): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function afterEach(\n  body: (context: TestContext) => unknown,\n  timeout?: number,\n): void"
+            },
+            {
+              "language": "ts",
+              "code": "import { afterEach } from 'vitest'\n\nafterEach(async () => {\n  await clearTestingData() // clear testing data after each test run\n})"
+            }
+          ],
+          "notes": [
+            "TIPYou can also use onTestFinished during the test execution to cleanup any state after the test has finished running."
+          ],
+          "children": []
+        },
+        {
+          "name": "beforeAll",
+          "id": "beforeall",
+          "level": 2,
+          "url": "https://vitest.dev/api/hooks#beforeall",
+          "description": "Register a callback to be called once before starting to run all tests in the current suite. If the function returns a promise, Vitest waits until the promise resolve before running tests.\n\nOptionally, you can provide a timeout (in milliseconds) for specifying how long to wait before terminating. The default is 10 seconds, and can be configured globally with hookTimeout.\n\nHere the beforeAll ensures that the mock data is set up before tests run.\n\nbeforeAll can also return an optional cleanup function. It's similar to afterAll. The only difference is that it's executed after all other afterAll hooks:",
+          "signatures": [
+            "function beforeAll(\n  body: (context: ModuleContext) => unknown,\n  timeout?: number,\n): void",
+            "import { beforeAll } from 'vitest'\n\nbeforeAll(async () => {\n  // called once before all tests run\n  await startMocking()\n\n  // clean up function, called once after all tests run, after afterAll hooks\n  return async () => {\n    await stopMocking()\n  }\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function beforeAll(\n  body: (context: ModuleContext) => unknown,\n  timeout?: number,\n): void"
+            },
+            {
+              "language": "ts",
+              "code": "import { beforeAll } from 'vitest'\n\nbeforeAll(async () => {\n  await startMocking() // called once before all tests run\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import { beforeAll } from 'vitest'\n\nbeforeAll(async () => {\n  // called once before all tests run\n  await startMocking()\n\n  // clean up function, called once after all tests run, after afterAll hooks\n  return async () => {\n    await stopMocking()\n  }\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "afterAll",
+          "id": "afterall",
+          "level": 2,
+          "url": "https://vitest.dev/api/hooks#afterall",
+          "description": "Register a callback to be called once after all tests have run in the current suite. If the function returns a promise, Vitest waits until the promise resolve before continuing.\n\nOptionally, you can provide a timeout (in milliseconds) for specifying how long to wait before terminating. The default is 10 seconds, and can be configured globally with hookTimeout.\n\nHere the afterAll ensures that stopMocking method is called after all tests run.",
+          "signatures": [
+            "function afterAll(\n  body: (context: ModuleContext) => unknown,\n  timeout?: number,\n): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function afterAll(\n  body: (context: ModuleContext) => unknown,\n  timeout?: number,\n): void"
+            },
+            {
+              "language": "ts",
+              "code": "import { afterAll } from 'vitest'\n\nafterAll(async () => {\n  await stopMocking() // this method is called after all tests run\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "aroundEach",
+          "id": "aroundeach",
+          "level": 2,
+          "url": "https://vitest.dev/api/hooks#aroundeach",
+          "description": "Register a callback function that wraps around each test within the current suite. The callback receives a runTest function that must be called to run the test.\n\nThe runTest() function runs beforeEach hooks, the test itself, fixtures accessed in the test, and afterEach hooks. Fixtures that are accessed in the aroundEach callback are initialized before runTest() is called and are torn down after the aroundEach teardown code completes, allowing you to safely use them in both setup and teardown phases.\n\nOptionally, you can provide a timeout (in milliseconds) for specifying how long to wait before terminating. The timeout applies independently to the setup phase (before runTest()) and teardown phase (after runTest()). The default is 10 seconds, and can be configured globally with hookTimeout.",
+          "signatures": [
+            "function aroundEach(\n  body: (\n    runTest: () => Promise<void>,\n    context: TestContext,\n  ) => Promise<void>,\n  timeout?: number,\n): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function aroundEach(\n  body: (\n    runTest: () => Promise<void>,\n    context: TestContext,\n  ) => Promise<void>,\n  timeout?: number,\n): void"
+            },
+            {
+              "language": "ts",
+              "code": "import { aroundEach, test } from 'vitest'\n\naroundEach(async (runTest) => {\n  await db.transaction(runTest)\n})\n\ntest('insert user', async () => {\n  await db.insert({ name: 'Alice' })\n  // transaction is automatically rolled back after the test\n})"
+            },
+            {
+              "language": "ts",
+              "code": "beforeEach(async () => {\n  await database.connect()\n  return async () => {\n    await database.disconnect()\n  }\n})"
+            }
+          ],
+          "notes": [
+            "WARNINGYou must call runTest() within your callback. If runTest() is not called, the test will fail with an error."
+          ],
+          "children": [
+            {
+              "name": "Multiple Hooks",
+              "id": "multiple-hooks",
+              "level": 3,
+              "url": "https://vitest.dev/api/hooks#multiple-hooks",
+              "description": "When multiple aroundEach hooks are registered, they are nested inside each other. The first registered hook is the outermost wrapper:",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "aroundEach(async (runTest) => {\n  console.log('outer before')\n  await runTest()\n  console.log('outer after')\n})\n\naroundEach(async (runTest) => {\n  console.log('inner before')\n  await runTest()\n  console.log('inner after')\n})\n\n// Output order:\n//  outer before\n//    inner before\n//      test\n//    inner after\n//  outer after"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "Context and Fixtures",
+              "id": "context-and-fixtures",
+              "level": 3,
+              "url": "https://vitest.dev/api/hooks#context-and-fixtures",
+              "description": "The callback receives the test context as the second argument which means that you can use fixtures with aroundEach:",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { aroundEach, test as base } from 'vitest'\n\nconst test = base.extend<{ db: Database; user: User }>({\n  db: async ({}, use) => {\n    // db is created before `aroundEach` hook\n    const db = await createTestDatabase()\n    await use(db)\n    await db.close()\n  },\n  user: async ({ db }, use) => {\n    // `user` runs as part of the transaction\n    // because it's accessed inside the `test`\n    const user = await db.createUser()\n    await use(user)\n  },\n})\n\n// note that `aroundEach` is available on test\n// for a better TypeScript support of fixtures\ntest.aroundEach(async (runTest, { db }) => {\n  await db.transaction(runTest)\n})\n\ntest('insert user', async ({ db, user }) => {\n  await db.insert(user)\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "aroundAll",
+          "id": "aroundall",
+          "level": 2,
+          "url": "https://vitest.dev/api/hooks#aroundall",
+          "description": "Register a callback function that wraps around all tests within the current suite. The callback receives a runSuite function that must be called to run the suite's tests.\n\nThe runSuite() function runs all tests in the suite, including beforeAll/afterAll/beforeEach/afterEach hooks, aroundEach hooks, and fixtures.\n\nOptionally, you can provide a timeout (in milliseconds) for specifying how long to wait before terminating. The timeout applies independently to the setup phase (before runSuite()) and teardown phase (after runSuite()). The default is 10 seconds, and can be configured globally with hookTimeout.",
+          "signatures": [
+            "function aroundAll(\n  body: (\n    runSuite: () => Promise<void>,\n    context: ModuleContext,\n  ) => Promise<void>,\n  timeout?: number,\n): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function aroundAll(\n  body: (\n    runSuite: () => Promise<void>,\n    context: ModuleContext,\n  ) => Promise<void>,\n  timeout?: number,\n): void"
+            },
+            {
+              "language": "ts",
+              "code": "import { aroundAll, test } from 'vitest'\n\naroundAll(async (runSuite) => {\n  await tracer.trace('test-suite', runSuite)\n})\n\ntest('test 1', () => {\n  // Runs within the tracing span\n})\n\ntest('test 2', () => {\n  // Also runs within the same tracing span\n})"
+            },
+            {
+              "language": "ts",
+              "code": "beforeAll(async () => {\n  await server.start()\n  return async () => {\n    await server.stop()\n  }\n})"
+            }
+          ],
+          "notes": [
+            "WARNINGYou must call runSuite() within your callback. If runSuite() is not called, the hook will fail with an error and all tests in the suite will be skipped."
+          ],
+          "children": [
+            {
+              "name": "Multiple Hooks",
+              "id": "multiple-hooks-1",
+              "level": 3,
+              "url": "https://vitest.dev/api/hooks#multiple-hooks-1",
+              "description": "When multiple aroundAll hooks are registered, they are nested inside each other. The first registered hook is the outermost wrapper:\n\nEach suite has its own independent aroundAll hooks. Parent suite's aroundAll wraps around child suite's execution:",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "aroundAll(async (runSuite) => {\n  console.log('outer before')\n  await runSuite()\n  console.log('outer after')\n})\n\naroundAll(async (runSuite) => {\n  console.log('inner before')\n  await runSuite()\n  console.log('inner after')\n})\n\n// Output order: outer before → inner before → tests → inner after → outer after"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { AsyncLocalStorage } from 'node:async_hooks'\nimport { aroundAll, describe, test } from 'vitest'\n\nconst context = new AsyncLocalStorage<{ suiteId: string }>()\n\naroundAll(async (runSuite) => {\n  await context.run({ suiteId: 'root' }, runSuite)\n})\n\ntest('root test', () => {\n  // context.getStore() returns { suiteId: 'root' }\n})\n\ndescribe('nested', () => {\n  aroundAll(async (runSuite) => {\n    // Parent's context is available here\n    await context.run({ suiteId: 'nested' }, runSuite)\n  })\n\n  test('nested test', () => {\n    // context.getStore() returns { suiteId: 'nested' }\n  })\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Test Hooks",
+          "id": "test-hooks",
+          "level": 2,
+          "url": "https://vitest.dev/api/hooks#test-hooks",
+          "description": "Vitest provides a few hooks that you can call during the test execution to cleanup the state when the test has finished running.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "WARNINGThese hooks will throw an error if they are called outside of the test body."
+          ],
+          "children": [
+            {
+              "name": "onTestFinished",
+              "id": "ontestfinished",
+              "level": 3,
+              "url": "https://vitest.dev/api/hooks#ontestfinished",
+              "description": "This hook is always called after the test has finished running. It is called after afterEach hooks since they can influence the test result. It receives an TestContext object like beforeEach and afterEach.\n\nThis hook is particularly useful when creating reusable logic:\n\nIt is also a good practice to cleanup your spies after each test, so they don't leak into other tests. You can do so by enabling restoreMocks config globally, or restoring the spy inside onTestFinished (if you try to restore the mock at the end of the test, it won't be restored if one of the assertions fails - using onTestFinished ensures the code always runs):",
+              "signatures": [
+                "// this can be in a separate file\nfunction getTestDb() {\n  const db = connectMockedDb()\n  onTestFinished(() => db.close())\n  return db\n}\n\ntest('performs a user query', async () => {\n  const db = getTestDb()\n  expect(\n    await db.query('SELECT * from users').perform()\n  ).toEqual([])\n})\n\ntest('performs an organization query', async () => {\n  const db = getTestDb()\n  expect(\n    await db.query('SELECT * from organizations').perform()\n  ).toEqual([])\n})"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { onTestFinished, test } from 'vitest'\n\ntest('performs a query', () => {\n  const db = connectDb()\n  onTestFinished(() => db.close())\n  db.query('SELECT * FROM users')\n})"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { test } from 'vitest'\n\ntest.concurrent('performs a query', ({ onTestFinished }) => {\n  const db = connectDb()\n  onTestFinished(() => db.close())\n  db.query('SELECT * FROM users')\n})"
+                },
+                {
+                  "language": "ts",
+                  "code": "// this can be in a separate file\nfunction getTestDb() {\n  const db = connectMockedDb()\n  onTestFinished(() => db.close())\n  return db\n}\n\ntest('performs a user query', async () => {\n  const db = getTestDb()\n  expect(\n    await db.query('SELECT * from users').perform()\n  ).toEqual([])\n})\n\ntest('performs an organization query', async () => {\n  const db = getTestDb()\n  expect(\n    await db.query('SELECT * from organizations').perform()\n  ).toEqual([])\n})"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { onTestFinished, test } from 'vitest'\n\ntest('performs a query', () => {\n  const spy = vi.spyOn(db, 'query')\n  onTestFinished(() => spy.mockClear())\n\n  db.query('SELECT * FROM users')\n  expect(spy).toHaveBeenCalled()\n})"
+                }
+              ],
+              "notes": [
+                "TIPThis hook is always called in reverse order and is not affected by sequence.hooks option."
+              ],
+              "children": []
+            },
+            {
+              "name": "onTestFailed",
+              "id": "ontestfailed",
+              "level": 3,
+              "url": "https://vitest.dev/api/hooks#ontestfailed",
+              "description": "This hook is called only after the test has failed. It is called after afterEach hooks since they can influence the test result. It receives a TestContext object like beforeEach and afterEach. This hook is useful for debugging.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { onTestFailed, test } from 'vitest'\n\ntest('performs a query', () => {\n  const db = connectDb()\n  onTestFailed(({ task }) => {\n    console.log(task.result.errors)\n  })\n  db.query('SELECT * FROM users')\n})"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { test } from 'vitest'\n\ntest.concurrent('performs a query', ({ onTestFailed }) => {\n  const db = connectDb()\n  onTestFailed(({ task }) => {\n    console.log(task.result.errors)\n  })\n  db.query('SELECT * FROM users')\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

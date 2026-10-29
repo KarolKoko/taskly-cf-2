@@ -1,0 +1,587 @@
+name: PR unit-test generator
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  report-start:
+    if: github.event.pull_request.draft == false && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Report baseline status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- taskly-cf-unit-test-generator -->';
+            const body = [
+              marker,
+              '## Automated unit-test generation',
+              '- Status: **Running baseline type-check and frontend/backend Vitest suites.**',
+              '- The generator will only plan tests from repository evidence and the supplied Vitest API reference.',
+            ].join('\n');
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const existing = comments.data.find(comment => comment.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+
+  verify:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.12
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+            backend/package-lock.json
+
+      - name: Install generator dependencies
+        run: npm ci
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Type-check generator and scripts
+        run: npm run typecheck
+
+      - name: Run baseline frontend and backend tests
+        run: npm test
+
+  report-analysis-start:
+    needs: [verify, report-start]
+    if: always() && needs.verify.result == 'success' && github.event.pull_request.draft == false && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Report analysis progress
+        uses: actions/github-script@v7
+        continue-on-error: true
+        with:
+          script: |
+            const marker = '<!-- taskly-cf-unit-test-generator -->';
+            const body = [
+              marker,
+              '## Automated unit-test generation',
+              '- Status: **Baseline checks passed. Analyzing changed business behavior and planning evidence-based Vitest cases.**',
+            ].join('\n');
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const existing = comments.data.find(comment => comment.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+
+  generate:
+    needs: [verify, report-analysis-start]
+    if: github.event.pull_request.draft == false && github.actor != 'github-actions[bot]' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    environment: test-generation
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      outcome: ${{ steps.generate.outcome }}
+      has-generated-tests: ${{ steps.generate.outputs.has_generated_tests }}
+    steps:
+      - name: Check out trusted base revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted
+          persist-credentials: false
+
+      - name: Check out pull-request files
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pull-request
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.12
+          cache: npm
+          cache-dependency-path: trusted/package-lock.json
+
+      - name: Install trusted generator dependencies
+        run: npm ci
+        working-directory: trusted
+
+      - name: Generate tests from the pull request
+        id: generate
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          owner="${REPOSITORY%/*}"
+          name="${REPOSITORY#*/}"
+          npm run generate:tests -- --repo "$GITHUB_WORKSPACE/pull-request" --agents "$GITHUB_WORKSPACE/trusted/agents" --docs "$GITHUB_WORKSPACE/trusted/scripts/scrapper/data" --owner "$owner" --name "$name" --pr "$PR_NUMBER"
+        working-directory: trusted
+
+      - name: Stage generated tests and plans
+        if: always() && steps.generate.outcome == 'success'
+        run: npm run stage:generated -- "$GITHUB_WORKSPACE/pull-request" "$RUNNER_TEMP/generated-tests"
+        working-directory: trusted
+
+      - name: Upload generated tests and test plans
+        if: always() && steps.generate.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-tests-${{ github.event.pull_request.number }}
+          path: ${{ runner.temp }}/generated-tests/**
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  report-generation:
+    needs: [generate]
+    if: always() && github.event.pull_request.draft == false && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Download generated plans
+        if: needs.generate.result == 'success' && needs.generate.outputs.outcome == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-tests-${{ github.event.pull_request.number }}
+          path: generated
+        continue-on-error: true
+
+      - name: Report analysis and verification progress
+        uses: actions/github-script@v7
+        env:
+          GENERATOR_RESULT: ${{ needs.generate.outputs.outcome || needs.generate.result }}
+          GENERATOR_JOB_RESULT: ${{ needs.generate.result }}
+          HAS_GENERATED_TESTS: ${{ needs.generate.outputs.has-generated-tests || 'false' }}
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- taskly-cf-unit-test-generator -->';
+            const safe = value => String(value ?? '')
+              .replace(/[\r\n]+/g, ' ')
+              .replace(/@/g, '@\u200b')
+              .replace(/</g, '&lt;')
+              .replace(/([\\`*_{}\[\]()#+.!|>])/g, '\\$1')
+              .slice(0, 240);
+            const generatorResult = process.env.GENERATOR_JOB_RESULT === 'success'
+              ? process.env.GENERATOR_RESULT
+              : process.env.GENERATOR_JOB_RESULT;
+            let files = [];
+            let reportWarning = '';
+            try {
+              const report = JSON.parse(fs.readFileSync('generated/.vitest-agent/generation-report.json', 'utf8'));
+              files = Array.isArray(report.files) ? report.files : [];
+            } catch (error) {
+              reportWarning = `Generation report unavailable: ${safe(error.message)}.`;
+            }
+            const cases = files.flatMap(file =>
+              (file.cases ?? []).map(test => ({
+                file: file.test_file || file.source_file,
+                source_file: file.source_file,
+                name: test.name,
+                business_rule: test.business_rule,
+                rationale: test.rationale,
+                category: test.category,
+                lines: test.source_lines,
+              }))
+            );
+            const lines = [
+              marker,
+              '## Automated unit-test generation',
+              generatorResult === 'success'
+                ? `- Status: **${process.env.HAS_GENERATED_TESTS === 'true' ? 'Generated tests; running frontend/backend Vitest suites.' : 'Analysis complete; no supported test cases were generated.'}**`
+                : generatorResult === 'skipped'
+                  ? '- Status: **Generation skipped (fork PR or baseline prerequisite not met); no repository secrets were used.**'
+                  : `- Status: **Generation failed (${safe(generatorResult)}).**`,
+            ];
+            if (reportWarning && generatorResult === 'success') lines.push(`- ${reportWarning}`);
+            if (cases.length) {
+              lines.push('', '### Planned test cases');
+              for (const test of cases.slice(0, 20)) {
+                lines.push(
+                  `- \`${safe(test.file)}\` — **${safe(test.name)}** (${safe(test.category)}): ${safe(test.rationale)} Source: \`${safe(test.source_file)}\`, lines ${safe((test.lines ?? []).join(', '))}.`
+                );
+              }
+              if (cases.length > 20) lines.push(`- ${cases.length - 20} additional cases are listed in the workflow artifact.`);
+            }
+            const body = lines.join('\n');
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const existing = comments.data.find(comment => comment.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+
+  verify-generated:
+    needs: [generate]
+    if: needs.generate.result == 'success' && needs.generate.outputs.outcome == 'success' && needs.generate.outputs.has-generated-tests == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      test-outcome: ${{ steps.run-tests.outcome }}
+      tests-passed: ${{ steps.run-tests.outputs.tests_passed }}
+    steps:
+      - name: Check out pull-request files
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pull-request
+          persist-credentials: false
+
+      - name: Check out trusted test runner
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.12
+          cache: npm
+          cache-dependency-path: |
+            trusted/package-lock.json
+            pull-request/frontend/package-lock.json
+            pull-request/backend/package-lock.json
+
+      - name: Download generated tests
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-tests-${{ github.event.pull_request.number }}
+          path: generated
+
+      - name: Install trusted test runner
+        run: npm ci
+        working-directory: trusted
+
+      - name: Apply generated test files
+        run: npm run apply:generated -- "$GITHUB_WORKSPACE/generated" "$GITHUB_WORKSPACE/pull-request"
+        working-directory: trusted
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: pull-request/frontend
+
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: pull-request/backend
+
+      - name: Run frontend and backend Vitest suites
+        id: run-tests
+        continue-on-error: true
+        run: npm run test:generated -- "$GITHUB_WORKSPACE/pull-request"
+        working-directory: trusted
+
+      - name: Prepare generated-test run report artifact
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/test-results"
+          if [ -f "$GITHUB_WORKSPACE/pull-request/.vitest-agent/run-report.json" ]; then
+            cp "$GITHUB_WORKSPACE/pull-request/.vitest-agent/run-report.json" "$RUNNER_TEMP/test-results/run-report.json"
+          fi
+
+      - name: Upload generated-test run report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-test-results-${{ github.event.pull_request.number }}
+          path: ${{ runner.temp }}/test-results/run-report.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  create-failure-issue:
+    needs: [verify-generated]
+    if: always() && needs.verify-generated.outputs.test-outcome == 'failure'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    outputs:
+      issue-url: ${{ steps.issue.outputs.issue_url }}
+    steps:
+      - name: Download generated-test run report
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-test-results-${{ github.event.pull_request.number }}
+          path: test-results
+
+      - name: Create or update failure issue
+        id: issue
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = `<!-- taskly-generated-tests-failure-pr-${process.env.PR_NUMBER} -->`;
+            let report;
+            try {
+              report = JSON.parse(fs.readFileSync('test-results/run-report.json', 'utf8'));
+            } catch (error) {
+              throw new Error(`Could not read the generated-test run report: ${error.message}`);
+            }
+            if (!Array.isArray(report.suites)) throw new Error('Generated-test run report is invalid: suites must be an array');
+            const excerpt = report.suites
+              .filter(suite => suite.exit_code !== 0)
+              .map(suite => `### ${suite.suite} — exit ${suite.exit_code}\n~~~text\n${String(suite.output ?? '').slice(-5000).replace(/~~~/g, '~~~\u200b').replace(/@/g, '@\u200b')}\n~~~`)
+              .join('\n\n');
+            const body = [
+              marker,
+              `Generated Vitest tests failed while verifying [PR #${process.env.PR_NUMBER}](${process.env.PR_URL}).`,
+              '',
+              `Workflow run: ${process.env.RUN_URL}`,
+              '',
+              'Failure details:',
+              excerpt || 'The test runner failed without a suite output excerpt.',
+            ].join('\n');
+            const { owner, repo } = context.repo;
+            const issues = await github.paginate(github.rest.issues.listForRepo, { owner, repo, state: 'open', per_page: 100 });
+            const existing = issues.data.find(issue => !issue.pull_request && issue.body?.includes(marker));
+            let issue;
+            if (existing) {
+              ({ data: issue } = await github.rest.issues.update({ owner, repo, issue_number: existing.number, body }));
+            } else {
+              ({ data: issue } = await github.rest.issues.create({
+                owner,
+                repo,
+                title: `Generated tests failed for PR #${process.env.PR_NUMBER}`,
+                body,
+              }));
+            }
+            core.setOutput('issue_url', issue.html_url);
+
+  publish-generated-tests:
+    needs: [generate, verify-generated]
+    if: needs.generate.result == 'success' && needs.generate.outputs.outcome == 'success' && needs.generate.outputs.has-generated-tests == 'true' && needs.verify-generated.outputs.tests-passed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      published: ${{ steps.publish.outputs.published }}
+    steps:
+      - name: Check out pull-request branch
+        uses: actions/checkout@v4
+        with:
+          path: repo
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: true
+          token: ${{ github.token }}
+
+      - name: Check out trusted artifact applier
+        uses: actions/checkout@v4
+        with:
+          path: trusted
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.12
+
+      - name: Install trusted artifact applier
+        run: npm ci
+        working-directory: trusted
+
+      - name: Download verified generated tests
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-tests-${{ github.event.pull_request.number }}
+          path: generated
+
+      - name: Apply generated tests and publish
+        id: publish
+        env:
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          npm --prefix trusted run apply:generated -- "$GITHUB_WORKSPACE/generated" "$GITHUB_WORKSPACE/repo"
+          cd "$GITHUB_WORKSPACE/repo"
+          git add -- frontend backend
+          if git diff --cached --quiet; then
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "No generated-test changes to publish."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "test: add generated Vitest coverage"
+          git push origin "HEAD:refs/heads/${PR_HEAD_REF}"
+          echo "published=true" >> "$GITHUB_OUTPUT"
+
+  report-final:
+    needs: [verify, generate, report-generation, verify-generated, create-failure-issue, publish-generated-tests]
+    if: always() && github.event.pull_request.draft == false && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Download generated-test plan
+        if: needs.generate.result == 'success' && needs.generate.outputs.outcome == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-tests-${{ github.event.pull_request.number }}
+          path: generated
+        continue-on-error: true
+
+      - name: Download generated-test run report
+        if: needs.verify-generated.outputs.test-outcome != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-test-results-${{ github.event.pull_request.number }}
+          path: test-results
+        continue-on-error: true
+
+      - name: Report final workflow results
+        uses: actions/github-script@v7
+        env:
+          BASELINE_RESULT: ${{ needs.verify.result }}
+          GENERATOR_RESULT: ${{ needs.generate.outputs.outcome || needs.generate.result }}
+          GENERATOR_JOB_RESULT: ${{ needs.generate.result }}
+          GENERATED_TEST_RESULT: ${{ needs.verify-generated.outputs.test-outcome || needs.verify-generated.result }}
+          PUBLISH_RESULT: ${{ needs.publish-generated-tests.outputs.published || needs.publish-generated-tests.result }}
+          FAILURE_ISSUE_URL: ${{ needs.create-failure-issue.outputs.issue-url }}
+          ISSUE_JOB_RESULT: ${{ needs.create-failure-issue.result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- taskly-cf-unit-test-generator -->';
+            const safe = value => String(value ?? '')
+              .replace(/[\r\n]+/g, ' ')
+              .replace(/@/g, '@\u200b')
+              .replace(/</g, '&lt;')
+              .replace(/([\\`*_{}\[\]()#+.!|>])/g, '\\$1')
+              .slice(0, 240);
+            const generatorResult = process.env.GENERATOR_JOB_RESULT === 'success'
+              ? process.env.GENERATOR_RESULT
+              : process.env.GENERATOR_JOB_RESULT;
+            const publishStatus = process.env.PUBLISH_RESULT === 'true'
+              ? 'published'
+              : process.env.PUBLISH_RESULT === 'false'
+                ? 'no new test-file changes'
+                : process.env.PUBLISH_RESULT;
+            const lines = [
+              marker,
+              '## Automated unit-test generation — final status',
+              `- Baseline type-check and tests: **${safe(process.env.BASELINE_RESULT)}**`,
+              `- Generation: **${safe(generatorResult)}**`,
+              ...(generatorResult === 'skipped' ? ['- Generation was skipped because the PR is from a fork or a baseline prerequisite did not pass.'] : []),
+              `- Generated-test Vitest run: **${safe(process.env.GENERATED_TEST_RESULT)}**`,
+              `- Publish generated tests to PR branch: **${safe(publishStatus)}**`,
+              `- [Workflow run](${process.env.RUN_URL})`,
+            ];
+            let generation;
+            let generationWarning = '';
+            try {
+              generation = JSON.parse(fs.readFileSync('generated/.vitest-agent/generation-report.json', 'utf8'));
+            } catch (error) {
+              generationWarning = `Generation report unavailable: ${safe(error.message)}.`;
+            }
+            if (generationWarning && generatorResult === 'success') lines.push(`- ${generationWarning}`);
+            const cases = (generation?.files ?? []).flatMap(file =>
+              (file.cases ?? []).map(test => ({
+                file: file.test_file || file.source_file,
+                source_file: file.source_file,
+                name: test.name,
+                business_rule: test.business_rule,
+                rationale: test.rationale,
+                category: test.category,
+                lines: test.source_lines,
+              }))
+            );
+            const behaviors = (generation?.files ?? []).flatMap(file =>
+              (file.business_behaviors ?? []).map(item => ({ behavior: item.behavior, evidence: item.evidence }))
+            );
+            const unknowns = [...new Set((generation?.files ?? []).flatMap(file => file.unknowns ?? []))];
+            if (behaviors.length) {
+              lines.push('', '### Business behavior identified from the diff');
+              for (const item of behaviors.slice(0, 20)) {
+                lines.push(`- ${safe(item.behavior)} Evidence: ${safe((item.evidence ?? []).join('; '))}.`);
+              }
+              if (behaviors.length > 20) lines.push(`- ${behaviors.length - 20} additional behaviors are listed in the workflow artifact.`);
+            }
+            if (cases.length) {
+              lines.push('', '### What the generated tests cover and why');
+              for (const test of cases.slice(0, 30)) {
+                lines.push(
+                  `- \`${safe(test.file)}\` — **${safe(test.name)}** (${safe(test.category)}): business rule: ${safe(test.business_rule)} Why: ${safe(test.rationale)} Source: \`${safe(test.source_file)}\`, lines ${safe((test.lines ?? []).join(', '))}.`
+                );
+              }
+              if (cases.length > 30) lines.push(`- ${cases.length - 30} additional test cases are listed in the workflow artifact.`);
+            } else if (generatorResult === 'success') {
+              lines.push('', 'No evidence-backed test cases were generated for the changed code.');
+            }
+            if (unknowns.length) {
+              lines.push('', '### Unresolved behavior (not assumed by the tests)');
+              for (const unknown of unknowns.slice(0, 20)) lines.push(`- ${safe(unknown)}`);
+              if (unknowns.length > 20) lines.push(`- ${unknowns.length - 20} additional unknowns are listed in the workflow artifact.`);
+            }
+            let runReport;
+            let runReportWarning = '';
+            try {
+              runReport = JSON.parse(fs.readFileSync('test-results/run-report.json', 'utf8'));
+            } catch (error) {
+              runReportWarning = `Generated-test run report unavailable: ${safe(error.message)}.`;
+            }
+            if (runReportWarning && process.env.GENERATED_TEST_RESULT !== 'skipped') lines.push('', runReportWarning);
+            if (runReport?.suites?.length) {
+              lines.push('', '### Vitest suites');
+              for (const suite of runReport.suites) {
+                lines.push(`- ${safe(suite.suite)}: **${suite.exit_code === 0 ? 'passed' : 'failed'}** (exit ${safe(suite.exit_code)}).`);
+              }
+            }
+            if (process.env.FAILURE_ISSUE_URL) {
+              lines.push('', `Generated-test failure tracked in [GitHub issue](${process.env.FAILURE_ISSUE_URL}).`);
+            } else if (process.env.GENERATED_TEST_RESULT === 'failure') {
+              lines.push('', `**Issue creation failed or did not complete** (${safe(process.env.ISSUE_JOB_RESULT)}); review the workflow run for the API error.`);
+            }
+            const body = lines.join('\n');
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const existing = comments.data.find(comment => comment.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }

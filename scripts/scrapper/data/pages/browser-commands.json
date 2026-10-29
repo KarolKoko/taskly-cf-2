@@ -1,0 +1,162 @@
+{
+  "title": "Commands",
+  "url": "https://vitest.dev/api/browser/commands",
+  "description": "Command is a function that invokes another function on the server and passes down the result back to the browser. Vitest exposes several built-in commands you can use in your browser tests.",
+  "entries": [
+    {
+      "name": "Commands",
+      "id": "commands",
+      "level": 1,
+      "url": "https://vitest.dev/api/browser/commands#commands",
+      "description": "Command is a function that invokes another function on the server and passes down the result back to the browser. Vitest exposes several built-in commands you can use in your browser tests.",
+      "signatures": [],
+      "aliases": [],
+      "examples": [],
+      "notes": [],
+      "children": [
+        {
+          "name": "Built-in Commands",
+          "id": "built-in-commands",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/commands#built-in-commands",
+          "description": "",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": [
+            {
+              "name": "Files Handling",
+              "id": "files-handling",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/commands#files-handling",
+              "description": "You can use the readFile, writeFile, and removeFile APIs to handle files in your browser tests. Since Vitest 3.2, all paths are resolved relative to the project root (which is process.cwd(), unless overridden manually). Previously, paths were resolved relative to the test file.\n\nBy default, Vitest uses utf-8 encoding but you can override it with options.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { server } from 'vitest/browser'\n\nconst { readFile, writeFile, removeFile } = server.commands\n\nit('handles files', async () => {\n  const file = './test.txt'\n\n  await writeFile(file, 'hello world')\n  const content = await readFile(file)\n\n  expect(content).toBe('hello world')\n\n  await removeFile(file)\n})"
+                }
+              ],
+              "notes": [
+                "TIPThe built-in file commands follow Vite's server.fs restrictions for security reasons.writeFile and removeFile also require write access through api.allowWrite."
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "CDP Session",
+          "id": "cdp-session",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/commands#cdp-session",
+          "description": "Vitest exposes access to raw Chrome DevTools Protocol via the cdp method exported from vitest/browser. It is mostly useful to library authors to build tools on top of it.",
+          "signatures": [
+            "import { cdp } from 'vitest/browser'\n\nconst input = document.createElement('input')\ndocument.body.appendChild(input)\ninput.focus()\n\nawait cdp().send('Input.dispatchKeyEvent', {\n  type: 'keyDown',\n  text: 'a',\n})\n\nexpect(input).toHaveValue('a')"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { cdp } from 'vitest/browser'\n\nconst input = document.createElement('input')\ndocument.body.appendChild(input)\ninput.focus()\n\nawait cdp().send('Input.dispatchKeyEvent', {\n  type: 'keyDown',\n  text: 'a',\n})\n\nexpect(input).toHaveValue('a')"
+            }
+          ],
+          "notes": [
+            "WARNINGCDP session works only with playwright provider and only when using chromium browser. You can read more about it in playwright's CDPSession documentation.CDP is a privileged debugging API. It is available only when browser API write and exec operations are enabled through api.allowWrite, and api.allowExec."
+          ],
+          "children": []
+        },
+        {
+          "name": "Custom Commands",
+          "id": "custom-commands",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/commands#custom-commands",
+          "description": "You can also add your own commands via browser.commands config option. If you develop a library, you can provide them via a config hook inside a plugin:\n\nThen you can call it inside your test by importing it from vitest/browser:",
+          "signatures": [
+            "import type { Plugin } from 'vitest/config'\nimport type { BrowserCommand } from 'vitest/node'\n\nconst myCustomCommand: BrowserCommand<[arg1: string, arg2: string]> = ({\n  testPath,\n  provider\n}, arg1, arg2) => {\n  if (provider.name === 'playwright') {\n    console.log(testPath, arg1, arg2)\n    return { someValue: true }\n  }\n\n  throw new Error(`provider ${provider.name} is not supported`)\n}\n\nexport default function BrowserCommands(): Plugin {\n  return {\n    name: 'vitest:custom-commands',\n    config() {\n      return {\n        test: {\n          browser: {\n            commands: {\n              myCustomCommand,\n            }\n          }\n        }\n      }\n    }\n  }\n}",
+            "import { commands } from 'vitest/browser'\nimport { expect, test } from 'vitest'\n\ntest('custom command works correctly', async () => {\n  const result = await commands.myCustomCommand('test1', 'test2')\n  expect(result).toEqual({ someValue: true })\n})\n\n// if you are using TypeScript, you can augment the module\ndeclare module 'vitest/browser' {\n  interface BrowserCommands {\n    myCustomCommand: (arg1: string, arg2: string) => Promise<{\n      someValue: true\n    }>\n  }\n}",
+            "import { mkdir, writeFile } from 'node:fs/promises'\nimport { dirname, resolve } from 'node:path'\nimport { normalizePath } from 'vite'\nimport { isFileLoadingAllowed } from 'vitest/node'\nimport type { BrowserCommand } from 'vitest/node'\n\nfunction assertFileAccess(path: string, project: any) {\n  if (\n    !isFileLoadingAllowed(project.vite.config, path)\n    && !isFileLoadingAllowed(project.vitest.vite.config, path)\n  ) {\n    throw new Error(`Access denied to \"${path}\".`)\n  }\n}\n\nfunction assertWrite(project: any) {\n  if (!project.config.browser.api.allowWrite || !project.vitest.config.api.allowWrite) {\n    throw new Error('Writing files is disabled.')\n  }\n}\n\nexport const myWriteFileCommand: BrowserCommand<[path: string, content: string]> = async (\n  { project },\n  path,\n  content,\n) => {\n  assertWrite(project)\n\n  const file = resolve(project.config.root, path)\n  assertFileAccess(normalizePath(file), project)\n\n  await mkdir(dirname(file), { recursive: true })\n  await writeFile(file, content)\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import type { Plugin } from 'vitest/config'\nimport type { BrowserCommand } from 'vitest/node'\n\nconst myCustomCommand: BrowserCommand<[arg1: string, arg2: string]> = ({\n  testPath,\n  provider\n}, arg1, arg2) => {\n  if (provider.name === 'playwright') {\n    console.log(testPath, arg1, arg2)\n    return { someValue: true }\n  }\n\n  throw new Error(`provider ${provider.name} is not supported`)\n}\n\nexport default function BrowserCommands(): Plugin {\n  return {\n    name: 'vitest:custom-commands',\n    config() {\n      return {\n        test: {\n          browser: {\n            commands: {\n              myCustomCommand,\n            }\n          }\n        }\n      }\n    }\n  }\n}"
+            },
+            {
+              "language": "ts",
+              "code": "import { commands } from 'vitest/browser'\nimport { expect, test } from 'vitest'\n\ntest('custom command works correctly', async () => {\n  const result = await commands.myCustomCommand('test1', 'test2')\n  expect(result).toEqual({ someValue: true })\n})\n\n// if you are using TypeScript, you can augment the module\ndeclare module 'vitest/browser' {\n  interface BrowserCommands {\n    myCustomCommand: (arg1: string, arg2: string) => Promise<{\n      someValue: true\n    }>\n  }\n}"
+            },
+            {
+              "language": "ts",
+              "code": "import { mkdir, writeFile } from 'node:fs/promises'\nimport { dirname, resolve } from 'node:path'\nimport { normalizePath } from 'vite'\nimport { isFileLoadingAllowed } from 'vitest/node'\nimport type { BrowserCommand } from 'vitest/node'\n\nfunction assertFileAccess(path: string, project: any) {\n  if (\n    !isFileLoadingAllowed(project.vite.config, path)\n    && !isFileLoadingAllowed(project.vitest.vite.config, path)\n  ) {\n    throw new Error(`Access denied to \"${path}\".`)\n  }\n}\n\nfunction assertWrite(project: any) {\n  if (!project.config.browser.api.allowWrite || !project.vitest.config.api.allowWrite) {\n    throw new Error('Writing files is disabled.')\n  }\n}\n\nexport const myWriteFileCommand: BrowserCommand<[path: string, content: string]> = async (\n  { project },\n  path,\n  content,\n) => {\n  assertWrite(project)\n\n  const file = resolve(project.config.root, path)\n  assertFileAccess(normalizePath(file), project)\n\n  await mkdir(dirname(file), { recursive: true })\n  await writeFile(file, content)\n}"
+            }
+          ],
+          "notes": [
+            "WARNINGCustom functions will override built-in ones if they have the same name."
+          ],
+          "children": [
+            {
+              "name": "Recording trace markers",
+              "id": "recording-trace-markers",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/commands#recording-trace-markers",
+              "description": "Custom commands can record trace markers for the test that triggered them through context.mark. This is the server-side equivalent of page.mark and helps annotate the trace view with custom actions performed inside a command.\n\ncontext.mark is a no-op when browser tracing is not enabled or no test is currently running in the session. Unlike page.mark, it does not accept a callback form.",
+              "signatures": [
+                "import type { BrowserCommand } from 'vitest/node'\n\nexport const uploadFixture: BrowserCommand<[name: string]> = async (\n  context,\n  name,\n) => {\n  await context.mark(`upload start: ${name}`, { kind: 'action' })\n  // ... do server-side work\n  await context.mark(`upload done: ${name}`, { kind: 'action' })\n}"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import type { BrowserCommand } from 'vitest/node'\n\nexport const uploadFixture: BrowserCommand<[name: string]> = async (\n  context,\n  name,\n) => {\n  await context.mark(`upload start: ${name}`, { kind: 'action' })\n  // ... do server-side work\n  await context.mark(`upload done: ${name}`, { kind: 'action' })\n}"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "Custom playwright commands",
+              "id": "custom-playwright-commands",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/commands#custom-playwright-commands",
+              "description": "Vitest exposes several playwright specific properties on the command context.",
+              "signatures": [
+                "import { BrowserCommand } from 'vitest/node'\n\nexport const myCommand: BrowserCommand<[string, number]> = async (\n  ctx,\n  arg1: string,\n  arg2: number\n) => {\n  if (ctx.provider.name === 'playwright') {\n    const element = await ctx.iframe.findByRole('alert')\n    const screenshot = await element.screenshot()\n    // do something with the screenshot\n    return difference\n  }\n}"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { BrowserCommand } from 'vitest/node'\n\nexport const myCommand: BrowserCommand<[string, number]> = async (\n  ctx,\n  arg1: string,\n  arg2: number\n) => {\n  if (ctx.provider.name === 'playwright') {\n    const element = await ctx.iframe.findByRole('alert')\n    const screenshot = await element.screenshot()\n    // do something with the screenshot\n    return difference\n  }\n}"
+                }
+              ],
+              "notes": [
+                "page references the full page that contains the test iframe. This is the orchestrator HTML and you most likely shouldn't touch it to not break things.",
+                "frame is an async method that will resolve tester Frame. It has a similar API to the page, but it doesn't support certain methods. If you need to query an element, you should prefer using context.iframe instead because it is more stable and faster.",
+                "iframe is a FrameLocator that should be used to query other elements on the page.",
+                "context refers to the unique BrowserContext."
+              ],
+              "children": []
+            },
+            {
+              "name": "Custom webdriverio commands",
+              "id": "custom-webdriverio-commands",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/commands#custom-webdriverio-commands",
+              "description": "Vitest exposes some webdriverio specific properties on the context object.\n\nVitest automatically switches the webdriver context to the test iframe by calling browser.switchFrame before the command is called, so $ and $$ methods refer to the elements inside the iframe, not in the orchestrator, but non-webdriver APIs will still refer to the parent frame context.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [
+                "browser is the WebdriverIO.Browser API."
+              ],
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

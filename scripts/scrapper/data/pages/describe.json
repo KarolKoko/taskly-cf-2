@@ -1,0 +1,271 @@
+{
+  "title": "describe",
+  "url": "https://vitest.dev/api/describe",
+  "description": "describe is used to group related tests and benchmarks into a suite. Suites help organize your test files by creating logical blocks, making test output easier to read and enabling shared setup/teardown through lifecycle hooks.\n\nWhen you use test in the top level of file, they are collected as part of the implicit suite for it. Using describe you can define a new suite in the current context, as a set of related tests or benchmarks and other nested suites.\n\nYou can also nest describe blocks if you have a hierarchy of tests:",
+  "entries": [
+    {
+      "name": "describe",
+      "id": "describe",
+      "level": 1,
+      "url": "https://vitest.dev/api/describe#describe",
+      "description": "describe is used to group related tests and benchmarks into a suite. Suites help organize your test files by creating logical blocks, making test output easier to read and enabling shared setup/teardown through lifecycle hooks.\n\nWhen you use test in the top level of file, they are collected as part of the implicit suite for it. Using describe you can define a new suite in the current context, as a set of related tests or benchmarks and other nested suites.\n\nYou can also nest describe blocks if you have a hierarchy of tests:",
+      "signatures": [
+        "function describe(\n  name: string | Function,\n  body?: () => unknown,\n  timeout?: number\n): void\nfunction describe(\n  name: string | Function,\n  options: SuiteOptions,\n  body?: () => unknown,\n): void",
+        "import { describe, expect, test } from 'vitest'\n\nfunction numberToCurrency(value: number | string) {\n  if (typeof value !== 'number') {\n    throw new TypeError('Value must be a number')\n  }\n\n  return value.toFixed(2).toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',')\n}\n\ndescribe('numberToCurrency', () => {\n  describe('given an invalid number', () => {\n    test('composed of non-numbers to throw error', () => {\n      expect(() => numberToCurrency('abc')).toThrow()\n    })\n  })\n\n  describe('given a valid number', () => {\n    test('returns the correct currency format', () => {\n      expect(numberToCurrency(10000)).toBe('10,000.00')\n    })\n  })\n})"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "function describe(\n  name: string | Function,\n  body?: () => unknown,\n  timeout?: number\n): void\nfunction describe(\n  name: string | Function,\n  options: SuiteOptions,\n  body?: () => unknown,\n): void"
+        },
+        {
+          "language": "ts",
+          "code": "import { describe, expect, test } from 'vitest'\n\nconst person = {\n  isActive: true,\n  age: 32,\n}\n\ndescribe('person', () => {\n  test('person is defined', () => {\n    expect(person).toBeDefined()\n  })\n\n  test('is active', () => {\n    expect(person.isActive).toBeTruthy()\n  })\n\n  test('age limit', () => {\n    expect(person.age).toBeLessThanOrEqual(32)\n  })\n})"
+        },
+        {
+          "language": "ts",
+          "code": "import { describe, expect, test } from 'vitest'\n\nfunction numberToCurrency(value: number | string) {\n  if (typeof value !== 'number') {\n    throw new TypeError('Value must be a number')\n  }\n\n  return value.toFixed(2).toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',')\n}\n\ndescribe('numberToCurrency', () => {\n  describe('given an invalid number', () => {\n    test('composed of non-numbers to throw error', () => {\n      expect(() => numberToCurrency('abc')).toThrow()\n    })\n  })\n\n  describe('given a valid number', () => {\n    test('returns the correct currency format', () => {\n      expect(numberToCurrency(10000)).toBe('10,000.00')\n    })\n  })\n})"
+        }
+      ],
+      "notes": [
+        "Alias: suite"
+      ],
+      "children": [
+        {
+          "name": "Test Options",
+          "id": "test-options",
+          "level": 2,
+          "url": "https://vitest.dev/api/describe#test-options",
+          "description": "You can use test options to apply configuration to every test inside a suite, including nested suites. This is useful when you want to set timeouts, retries, or other options for a group of related tests.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { describe, test } from 'vitest'\n\ndescribe('slow tests', { timeout: 10_000 }, () => {\n  test('test 1', () => { /* ... */ })\n  test('test 2', () => { /* ... */ })\n\n  // nested suites also inherit the timeout\n  describe('nested', () => {\n    test('test 3', () => { /* ... */ })\n  })\n})"
+            }
+          ],
+          "notes": [],
+          "children": [
+            {
+              "name": "shuffle",
+              "id": "shuffle",
+              "level": 3,
+              "url": "https://vitest.dev/api/describe#shuffle",
+              "description": "Run tests within the suite in random order. This option is inherited by nested suites.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { describe, test } from 'vitest'\n\ndescribe('randomized tests', { shuffle: true }, () => {\n  test('test 1', () => { /* ... */ })\n  test('test 2', () => { /* ... */ })\n  test('test 3', () => { /* ... */ })\n})"
+                }
+              ],
+              "notes": [
+                "Type: boolean",
+                "Default: false (configured by sequence.shuffle)",
+                "Alias: describe.shuffle"
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "describe.skip",
+          "id": "describe-skip",
+          "level": 2,
+          "url": "https://vitest.dev/api/describe#describe-skip",
+          "description": "Use describe.skip in a suite to avoid running a particular describe block.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, describe, test } from 'vitest'\n\ndescribe.skip('skipped suite', () => {\n  test('sqrt', () => {\n    // Suite skipped, no error\n    assert.equal(Math.sqrt(4), 3)\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Alias: suite.skip"
+          ],
+          "children": []
+        },
+        {
+          "name": "describe.skipIf",
+          "id": "describe-skipif",
+          "level": 2,
+          "url": "https://vitest.dev/api/describe#describe-skipif",
+          "description": "In some cases, you might run suites multiple times with different environments, and some of the suites might be environment-specific. Instead of wrapping the suite with if, you can use describe.skipIf to skip the suite whenever the condition is truthy.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { describe, test } from 'vitest'\n\nconst isDev = process.env.NODE_ENV === 'development'\n\ndescribe.skipIf(isDev)('prod only test suite', () => {\n  // this test suite only runs in production\n})"
+            }
+          ],
+          "notes": [
+            "Alias: suite.skipIf"
+          ],
+          "children": []
+        },
+        {
+          "name": "describe.runIf",
+          "id": "describe-runif",
+          "level": 2,
+          "url": "https://vitest.dev/api/describe#describe-runif",
+          "description": "Opposite of describe.skipIf.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, describe, test } from 'vitest'\n\nconst isDev = process.env.NODE_ENV === 'development'\n\ndescribe.runIf(isDev)('dev only test suite', () => {\n  // this test suite only runs in development\n})"
+            }
+          ],
+          "notes": [
+            "Alias: suite.runIf"
+          ],
+          "children": []
+        },
+        {
+          "name": "describe.only",
+          "id": "describe-only",
+          "level": 2,
+          "url": "https://vitest.dev/api/describe#describe-only",
+          "description": "Use describe.only to only run certain suites\n\nSometimes it is very useful to run only tests in a certain file, ignoring all other tests from the whole test suite, which pollute the output.\n\nIn order to do that, run vitest with specific file containing the tests in question:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, describe, test } from 'vitest'\n\n// Only this suite (and others marked with only) are run\ndescribe.only('suite', () => {\n  test('sqrt', () => {\n    assert.equal(Math.sqrt(4), 3)\n  })\n})\n\ndescribe('other suite', () => {\n  // ... will be skipped\n})"
+            },
+            {
+              "language": "shell",
+              "code": "vitest interesting.test.ts"
+            }
+          ],
+          "notes": [
+            "Alias: suite.only"
+          ],
+          "children": []
+        },
+        {
+          "name": "describe.concurrent",
+          "id": "describe-concurrent",
+          "level": 2,
+          "url": "https://vitest.dev/api/describe#describe-concurrent",
+          "description": "describe.concurrent runs all inner suites and tests in parallel\n\nSet concurrent to false to opt out of concurrency inherited from a parent suite or sequence.concurrent:\n\n.skip, .only, and .todo works with concurrent suites. All the following combinations are valid:\n\nWhen running concurrent tests, Snapshots and Assertions must use expect from the local Test Context to ensure the right test is detected.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { describe, test } from 'vitest'\n\n// All suites and tests within this suite will be run in parallel\ndescribe.concurrent('suite', () => {\n  test('concurrent test 1', async () => { /* ... */ })\n  describe('concurrent suite 2', async () => {\n    test('concurrent test inner 1', async () => { /* ... */ })\n    test('concurrent test inner 2', async () => { /* ... */ })\n  })\n  test.concurrent('concurrent test 3', async () => { /* ... */ })\n})"
+            },
+            {
+              "language": "ts",
+              "code": "describe.concurrent('suite', () => {\n  test('concurrent test', async () => { /* ... */ })\n\n  describe('sequential suite', { concurrent: false }, () => {\n    test('sequential test 1', async () => { /* ... */ })\n    test('sequential test 2', async () => { /* ... */ })\n  })\n})"
+            },
+            {
+              "language": "ts",
+              "code": "describe.concurrent(/* ... */)\ndescribe.skip.concurrent(/* ... */) // or describe.concurrent.skip(/* ... */)\ndescribe.only.concurrent(/* ... */) // or describe.concurrent.only(/* ... */)\ndescribe.todo.concurrent(/* ... */) // or describe.concurrent.todo(/* ... */)"
+            },
+            {
+              "language": "ts",
+              "code": "describe.concurrent('suite', () => {\n  test('concurrent test 1', async ({ expect }) => {\n    expect(foo).toMatchSnapshot()\n  })\n  test('concurrent test 2', async ({ expect }) => {\n    expect(foo).toMatchSnapshot()\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Alias: suite.concurrent"
+          ],
+          "children": []
+        },
+        {
+          "name": "describe.shuffle",
+          "id": "describe-shuffle",
+          "level": 2,
+          "url": "https://vitest.dev/api/describe#describe-shuffle",
+          "description": "Vitest provides a way to run all tests in random order via CLI flag --sequence.shuffle or config option sequence.shuffle, but if you want to have only part of your test suite to run tests in random order, you can mark it with this flag.\n\n.skip, .only, and .todo works with random suites.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { describe, test } from 'vitest'\n\n// or describe('suite', { shuffle: true }, ...)\ndescribe.shuffle('suite', () => {\n  test('random test 1', async () => { /* ... */ })\n  test('random test 2', async () => { /* ... */ })\n  test('random test 3', async () => { /* ... */ })\n\n  // `shuffle` is inherited\n  describe('still random', () => {\n    test('random 4.1', async () => { /* ... */ })\n    test('random 4.2', async () => { /* ... */ })\n  })\n\n  // disable shuffle inside\n  describe('not random', { shuffle: false }, () => {\n    test('in order 5.1', async () => { /* ... */ })\n    test('in order 5.2', async () => { /* ... */ })\n  })\n})\n// order depends on sequence.seed option in config (Date.now() by default)"
+            }
+          ],
+          "notes": [
+            "Alias: suite.shuffle"
+          ],
+          "children": []
+        },
+        {
+          "name": "describe.todo",
+          "id": "describe-todo",
+          "level": 2,
+          "url": "https://vitest.dev/api/describe#describe-todo",
+          "description": "Use describe.todo to stub suites to be implemented later. An entry will be shown in the report for the tests so you know how many tests you still need to implement.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "// An entry will be shown in the report for this suite\ndescribe.todo('unimplemented suite')"
+            }
+          ],
+          "notes": [
+            "Alias: suite.todo"
+          ],
+          "children": []
+        },
+        {
+          "name": "describe.each",
+          "id": "describe-each",
+          "level": 2,
+          "url": "https://vitest.dev/api/describe#describe-each",
+          "description": "Use describe.each if you have more than one test that depends on the same data.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { describe, expect, test } from 'vitest'\n\ndescribe.each([\n  { a: 1, b: 1, expected: 2 },\n  { a: 1, b: 2, expected: 3 },\n  { a: 2, b: 1, expected: 3 },\n])('describe object add($a, $b)', ({ a, b, expected }) => {\n  test(`returns ${expected}`, () => {\n    expect(a + b).toBe(expected)\n  })\n\n  test(`returned value not be greater than ${expected}`, () => {\n    expect(a + b).not.toBeGreaterThan(expected)\n  })\n\n  test(`returned value not be less than ${expected}`, () => {\n    expect(a + b).not.toBeLessThan(expected)\n  })\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import { describe, expect, test } from 'vitest'\n\ndescribe.each`\n  a               | b      | expected\n  ${1}            | ${1}   | ${2}\n  ${'a'}          | ${'b'} | ${'ab'}\n  ${[]}           | ${'b'} | ${'b'}\n  ${{}}           | ${'b'} | ${'[object Object]b'}\n  ${{ asd: 1 }}   | ${'b'} | ${'[object Object]b'}\n`('describe template string add($a, $b)', ({ a, b, expected }) => {\n  test(`returns ${expected}`, () => {\n    expect(a + b).toBe(expected)\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Alias: suite.each",
+            "TIPWhile describe.each is provided for Jest compatibility, Vitest also has describe.for which simplifies argument types and aligns with test.for.",
+            "First row should be column names, separated by |;",
+            "One or more subsequent rows of data supplied as template literal expressions using ${value} syntax."
+          ],
+          "children": []
+        },
+        {
+          "name": "describe.for",
+          "id": "describe-for",
+          "level": 2,
+          "url": "https://vitest.dev/api/describe#describe-for",
+          "description": "The difference from describe.each is how array case is provided in the arguments. Other non array case (including template string usage) works exactly same.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "// `each` spreads array case\ndescribe.each([\n  [1, 1, 2],\n  [1, 2, 3],\n  [2, 1, 3],\n])('add(%i, %i) -> %i', (a, b, expected) => { \n  test('test', () => {\n    expect(a + b).toBe(expected)\n  })\n})\n\n// `for` doesn't spread array case\ndescribe.for([\n  [1, 1, 2],\n  [1, 2, 3],\n  [2, 1, 3],\n])('add(%i, %i) -> %i', ([a, b, expected]) => { \n  test('test', () => {\n    expect(a + b).toBe(expected)\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Alias: suite.for"
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

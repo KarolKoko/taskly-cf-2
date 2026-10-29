@@ -1,0 +1,1886 @@
+{
+  "title": "expect",
+  "url": "https://vitest.dev/api/expect",
+  "description": "The following types are used in the type signatures below\n\nexpect is used to create assertions. In this context assertions are functions that can be called to assert a statement. Vitest provides chai assertions by default and also Jest compatible assertions built on top of chai. Since Vitest 4.1, for spy/mock testing, Vitest also provides Chai-style assertions (e.g., expect(spy).to.have.been.called()) alongside Jest-style assertions (e.g., expect(spy).toHaveBeenCalled()). Unlike Jest, Vitest supports a message as the second argument - if the assertion fails, the error message will be equal to it.\n\nFor example, this code asserts that an input value is equal to 2. If it's not, the assertion will throw an error, and the test will fail.\n\nTechnically this example doesn't use test function, so in the console you will see Node.js error instead of Vitest output. To learn more about test, please read Test API Reference.\n\nAlso, expect can be used statically to access matcher functions, described later, and more.",
+  "entries": [
+    {
+      "name": "expect",
+      "id": "expect",
+      "level": 1,
+      "url": "https://vitest.dev/api/expect#expect",
+      "description": "The following types are used in the type signatures below\n\nexpect is used to create assertions. In this context assertions are functions that can be called to assert a statement. Vitest provides chai assertions by default and also Jest compatible assertions built on top of chai. Since Vitest 4.1, for spy/mock testing, Vitest also provides Chai-style assertions (e.g., expect(spy).to.have.been.called()) alongside Jest-style assertions (e.g., expect(spy).toHaveBeenCalled()). Unlike Jest, Vitest supports a message as the second argument - if the assertion fails, the error message will be equal to it.\n\nFor example, this code asserts that an input value is equal to 2. If it's not, the assertion will throw an error, and the test will fail.\n\nTechnically this example doesn't use test function, so in the console you will see Node.js error instead of Vitest output. To learn more about test, please read Test API Reference.\n\nAlso, expect can be used statically to access matcher functions, described later, and more.",
+      "signatures": [
+        "type Awaitable<T> = T | PromiseLike<T>",
+        "export interface ExpectStatic\n  extends Chai.ExpectStatic,\n  Matchers<any>,\n  AsymmetricMatchersContaining {\n  <T>(actual: T, message?: string): Assertion<void, T>\n  extend: (expects: MatchersObject) => void\n  anything: () => any\n  any: (constructor: unknown) => any\n  getState: () => MatcherState\n  setState: (state: Partial<MatcherState>) => void\n  not: AsymmetricMatchersContaining\n}"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "type Awaitable<T> = T | PromiseLike<T>"
+        },
+        {
+          "language": "ts",
+          "code": "export interface ExpectStatic\n  extends Chai.ExpectStatic,\n  Matchers<any>,\n  AsymmetricMatchersContaining {\n  <T>(actual: T, message?: string): Assertion<void, T>\n  extend: (expects: MatchersObject) => void\n  anything: () => any\n  any: (constructor: unknown) => any\n  getState: () => MatcherState\n  setState: (state: Partial<MatcherState>) => void\n  not: AsymmetricMatchersContaining\n}"
+        },
+        {
+          "language": "ts",
+          "code": "import { expect } from 'vitest'\n\nconst input = Math.sqrt(4)\n\nexpect(input).to.equal(2) // chai API\nexpect(input).toBe(2) // jest API"
+        }
+      ],
+      "notes": [
+        "WARNINGexpect has no effect on testing types, if the expression doesn't have a type error. If you want to use Vitest as type checker, use expectTypeOf or assertType."
+      ],
+      "children": [
+        {
+          "name": "assert",
+          "id": "assert",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#assert",
+          "description": "Vitest reexports chai's assert API as expect.assert for convenience. You can see the supported methods on the Assert API page.\n\nThis is especially useful if you need to narrow down the type, since expect.to* methods do not support that:",
+          "signatures": [
+            "interface Cat {\n  __type: 'Cat'\n  mew(): void\n}\ninterface Dog {\n  __type: 'Dog'\n  bark(): void\n}\ntype Animal = Cat | Dog\n\nconst animal: Animal = { __type: 'Dog', bark: () => {} }\n\nexpect.assert(animal.__type === 'Dog')\n// does not show a type error!\nexpect(animal.bark()).toBeUndefined()"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "interface Cat {\n  __type: 'Cat'\n  mew(): void\n}\ninterface Dog {\n  __type: 'Dog'\n  bark(): void\n}\ntype Animal = Cat | Dog\n\nconst animal: Animal = { __type: 'Dog', bark: () => {} }\n\nexpect.assert(animal.__type === 'Dog')\n// does not show a type error!\nexpect(animal.bark()).toBeUndefined()"
+            }
+          ],
+          "notes": [
+            "Type: Chai.AssertStatic",
+            "TIPNote that expect.assert also supports other type-narrowing methods (like assert.isDefined, assert.exists and so on)."
+          ],
+          "children": []
+        },
+        {
+          "name": "soft",
+          "id": "soft",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#soft",
+          "description": "expect.soft functions similarly to expect, but instead of terminating the test execution upon a failed assertion, it continues running and marks the failure as a test failure. All errors encountered during the test will be displayed until the test is completed.\n\nIt can also be used with expect. if expect assertion fails, the test will be terminated and all errors will be displayed.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('expect.soft test', () => {\n  expect.soft(1 + 1).toBe(3) // mark the test as fail and continue\n  expect.soft(1 + 2).toBe(4) // mark the test as fail and continue\n})\n// reporter will report both errors at the end of the run"
+            },
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('expect.soft test', () => {\n  expect.soft(1 + 1).toBe(3) // mark the test as fail and continue\n  expect(1 + 2).toBe(4) // failed and terminate the test, all previous errors will be output\n  expect.soft(1 + 3).toBe(5) // do not run\n})"
+            }
+          ],
+          "notes": [
+            "Type: ExpectStatic & (actual: any) => Assertions",
+            "WARNINGexpect.soft can only be used inside the test function."
+          ],
+          "children": []
+        },
+        {
+          "name": "poll",
+          "id": "poll",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#poll",
+          "description": "expect.poll reruns the assertion until it is succeeded. You can configure how often Vitest retries and how long it waits by setting interval and timeout options. The timeout applies to the whole polling operation, including pending callback and async matcher execution.\n\nThe callback receives an AbortSignal that is aborted when the poll timeout is reached.\n\nIf an error is thrown inside the expect.poll callback, Vitest will retry again until the timeout runs out.",
+          "signatures": [
+            "interface ExpectPoll extends ExpectStatic {\n  (actual: (options: { signal: AbortSignal }) => T, options?: { interval?: number; timeout?: number; message?: string }): Promise<Assertions<Awaited<T>>>\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "interface ExpectPoll extends ExpectStatic {\n  (actual: (options: { signal: AbortSignal }) => T, options?: { interval?: number; timeout?: number; message?: string }): Promise<Assertions<Awaited<T>>>\n}"
+            },
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('element exists', async () => {\n  asyncInjectElement()\n\n  await expect.poll(() => document.querySelector('.element')).toBeTruthy()\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import { expect, vi } from 'vitest'\n\nconst flakyValue = await vi.waitFor(() => getFlakyValue())\nexpect(flakyValue).toMatchSnapshot()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "not",
+          "id": "not",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#not",
+          "description": "Using not will negate the assertion. For example, this code asserts that an input value is not equal to 2. If it's equal, the assertion will throw an error, and the test will fail.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nconst input = Math.sqrt(16)\n\nexpect(input).not.to.equal(2) // chai API\nexpect(input).not.toBe(2) // jest API"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toBe",
+          "id": "tobe",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobe",
+          "description": "toBe can be used to assert if primitives are equal or that objects share the same reference. It is equivalent of calling expect(Object.is(3, 3)).toBe(true). If the objects are not the same, but you want to check if their structures are identical, you can use toEqual.\n\nFor example, the code below checks if the trader has 13 apples.\n\nTry not to use toBe with floating-point numbers. Since JavaScript rounds them, 0.1 + 0.2 is not strictly 0.3. To reliably assert floating-point numbers, use toBeCloseTo assertion.",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nconst stock = {\n  type: 'apples',\n  count: 13,\n}\n\ntest('stock has 13 apples', () => {\n  expect(stock.type).toBe('apples')\n  expect(stock.count).toBe(13)\n})\n\ntest('stocks are the same', () => {\n  const refStock = stock // same reference\n\n  expect(stock).toBe(refStock)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nconst stock = {\n  type: 'apples',\n  count: 13,\n}\n\ntest('stock has 13 apples', () => {\n  expect(stock.type).toBe('apples')\n  expect(stock.count).toBe(13)\n})\n\ntest('stocks are the same', () => {\n  const refStock = stock // same reference\n\n  expect(stock).toBe(refStock)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (value: any) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeCloseTo",
+          "id": "tobecloseto",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobecloseto",
+          "description": "Use toBeCloseTo to compare floating-point numbers. The optional numDigits argument limits the number of digits to check after the decimal point. The default for numDigits is 2. For example:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest.fails('decimals are not equal in javascript', () => {\n  expect(0.2 + 0.1).toBe(0.3) // 0.2 + 0.1 is 0.30000000000000004\n})\n\ntest('decimals are rounded to 5 after the point', () => {\n  // 0.2 + 0.1 is 0.30000 | \"000000000004\" removed\n  expect(0.2 + 0.1).toBeCloseTo(0.3, 5)\n  // nothing from 0.30000000000000004 is removed\n  expect(0.2 + 0.1).not.toBeCloseTo(0.3, 50)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (value: number, numDigits?: number) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeDefined",
+          "id": "tobedefined",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobedefined",
+          "description": "toBeDefined asserts that the value is not equal to undefined. Useful use case would be to check if function returned anything.",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nfunction getApples() {\n  return 3\n}\n\ntest('function returned something', () => {\n  expect(getApples()).toBeDefined()\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nfunction getApples() {\n  return 3\n}\n\ntest('function returned something', () => {\n  expect(getApples()).toBeDefined()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeUndefined",
+          "id": "tobeundefined",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobeundefined",
+          "description": "Opposite of toBeDefined, toBeUndefined asserts that the value is equal to undefined. Useful use case would be to check if function hasn't returned anything.",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nfunction getApplesFromStock(stock: string) {\n  if (stock === 'Bill') {\n    return 13\n  }\n}\n\ntest('mary doesn\\'t have a stock', () => {\n  expect(getApplesFromStock('Mary')).toBeUndefined()\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nfunction getApplesFromStock(stock: string) {\n  if (stock === 'Bill') {\n    return 13\n  }\n}\n\ntest('mary doesn\\'t have a stock', () => {\n  expect(getApplesFromStock('Mary')).toBeUndefined()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeTruthy",
+          "id": "tobetruthy",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobetruthy",
+          "description": "toBeTruthy asserts that the value is true when converted to boolean. Useful if you don't care for the value, but just want to know it can be converted to true.\n\nFor example, having this code you don't care for the return value of stocks.getInfo - it maybe a complex object, a string, or anything else. The code will still work.\n\nSo if you want to test that stocks.getInfo will be truthy, you could write:\n\nEverything in JavaScript is truthy, except false, null, undefined, NaN, 0, -0, 0n, \"\" and document.all.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { Stocks } from './stocks.js'\n\nconst stocks = new Stocks()\nstocks.sync('Bill')\nif (stocks.getInfo('Bill')) {\n  stocks.sell('apples', 'Bill')\n}"
+            },
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { Stocks } from './stocks.js'\n\nconst stocks = new Stocks()\n\ntest('if we know Bill stock, sell apples to him', () => {\n  stocks.sync('Bill')\n  expect(stocks.getInfo('Bill')).toBeTruthy()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeFalsy",
+          "id": "tobefalsy",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobefalsy",
+          "description": "toBeFalsy asserts that the value is false when converted to boolean. Useful if you don't care for the value, but just want to know if it can be converted to false.\n\nFor example, having this code you don't care for the return value of stocks.stockFailed - it may return any falsy value, but the code will still work.\n\nSo if you want to test that stocks.stockFailed will be falsy, you could write:\n\nEverything in JavaScript is truthy, except false, null, undefined, NaN, 0, -0, 0n, \"\" and document.all.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { Stocks } from './stocks.js'\n\nconst stocks = new Stocks()\nstocks.sync('Bill')\nif (!stocks.stockFailed('Bill')) {\n  stocks.sell('apples', 'Bill')\n}"
+            },
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { Stocks } from './stocks.js'\n\nconst stocks = new Stocks()\n\ntest('if Bill stock hasn\\'t failed, sell apples to him', () => {\n  stocks.syncStocks('Bill')\n  expect(stocks.stockFailed('Bill')).toBeFalsy()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeNull",
+          "id": "tobenull",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobenull",
+          "description": "toBeNull simply asserts if something is null. Alias for .toBe(null).",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nfunction apples() {\n  return null\n}\n\ntest('we don\\'t have apples', () => {\n  expect(apples()).toBeNull()\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nfunction apples() {\n  return null\n}\n\ntest('we don\\'t have apples', () => {\n  expect(apples()).toBeNull()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeNullable",
+          "id": "tobenullable",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobenullable",
+          "description": "toBeNullable simply asserts if something is nullable (null or undefined).",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nfunction apples() {\n  return null\n}\n\nfunction bananas() {\n  return undefined\n}\n\ntest('we don\\'t have apples', () => {\n  expect(apples()).toBeNullable()\n})\n\ntest('we don\\'t have bananas', () => {\n  expect(bananas()).toBeNullable()\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nfunction apples() {\n  return null\n}\n\nfunction bananas() {\n  return undefined\n}\n\ntest('we don\\'t have apples', () => {\n  expect(apples()).toBeNullable()\n})\n\ntest('we don\\'t have bananas', () => {\n  expect(bananas()).toBeNullable()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeNaN",
+          "id": "tobenan",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobenan",
+          "description": "toBeNaN simply asserts if something is NaN. Alias for .toBe(NaN).",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nlet i = 0\n\nfunction getApplesCount() {\n  i++\n  return i > 1 ? Number.NaN : i\n}\n\ntest('getApplesCount has some unusual side effects...', () => {\n  expect(getApplesCount()).not.toBeNaN()\n  expect(getApplesCount()).toBeNaN()\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nlet i = 0\n\nfunction getApplesCount() {\n  i++\n  return i > 1 ? Number.NaN : i\n}\n\ntest('getApplesCount has some unusual side effects...', () => {\n  expect(getApplesCount()).not.toBeNaN()\n  expect(getApplesCount()).toBeNaN()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeOneOf",
+          "id": "tobeoneof",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobeoneof",
+          "description": "toBeOneOf asserts if a value matches any of the values in the provided array or set. Values are compared with the same deep equality as toEqual.\n\nThe asymmetric matcher is particularly useful when testing optional properties that could be either null or undefined:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('fruit is one of the allowed values', () => {\n  expect(fruit).toBeOneOf(['apple', 'banana', 'orange'])\n})"
+            },
+            {
+              "language": "ts",
+              "code": "test('optional properties can be null or undefined', () => {\n  const user = {\n    firstName: 'John',\n    middleName: undefined,\n    lastName: 'Doe'\n  }\n\n  expect(user).toEqual({\n    firstName: expect.any(String),\n    middleName: expect.toBeOneOf([expect.any(String), undefined]),\n    lastName: expect.any(String),\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (sample: Array<any> | Set<any>) => any",
+            "EXPERIMENTALProviding a Set is an experimental feature and may change in a future release.",
+            "TIPYou can use expect.not with this matcher to ensure a value does NOT match any of the provided options."
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeTypeOf",
+          "id": "tobetypeof",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobetypeof",
+          "description": "toBeTypeOf asserts if an actual value is of type of received type.",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nconst actual = 'stock'\n\ntest('stock is type of string', () => {\n  expect(actual).toBeTypeOf('string')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nconst actual = 'stock'\n\ntest('stock is type of string', () => {\n  expect(actual).toBeTypeOf('string')\n})"
+            },
+            {
+              "language": "ts",
+              "code": "test('toBeTypeOf cannot check for null or array', () => {\n  expect(null).toBeTypeOf('object')\n  expect([]).toBeTypeOf('object')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (c: 'bigint' | 'boolean' | 'function' | 'number' | 'object' | 'string' | 'symbol' | 'undefined') => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeInstanceOf",
+          "id": "tobeinstanceof",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobeinstanceof",
+          "description": "toBeInstanceOf asserts if an actual value is instance of received class.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { Stocks } from './stocks.js'\n\nconst stocks = new Stocks()\n\ntest('stocks are instance of Stocks', () => {\n  expect(stocks).toBeInstanceOf(Stocks)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (c: any) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeGreaterThan",
+          "id": "tobegreaterthan",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobegreaterthan",
+          "description": "toBeGreaterThan asserts if actual value is greater than received one. Equal values will fail the test.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { getApples } from './stocks.js'\n\ntest('have more then 10 apples', () => {\n  expect(getApples()).toBeGreaterThan(10)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (n: number | bigint) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeGreaterThanOrEqual",
+          "id": "tobegreaterthanorequal",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobegreaterthanorequal",
+          "description": "toBeGreaterThanOrEqual asserts if actual value is greater than received one or equal to it.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { getApples } from './stocks.js'\n\ntest('have 11 apples or more', () => {\n  expect(getApples()).toBeGreaterThanOrEqual(11)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (n: number | bigint) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeLessThan",
+          "id": "tobelessthan",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobelessthan",
+          "description": "toBeLessThan asserts if actual value is less than received one. Equal values will fail the test.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { getApples } from './stocks.js'\n\ntest('have less then 20 apples', () => {\n  expect(getApples()).toBeLessThan(20)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (n: number | bigint) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeLessThanOrEqual",
+          "id": "tobelessthanorequal",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tobelessthanorequal",
+          "description": "toBeLessThanOrEqual asserts if actual value is less than received one or equal to it.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { getApples } from './stocks.js'\n\ntest('have 11 apples or less', () => {\n  expect(getApples()).toBeLessThanOrEqual(11)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (n: number | bigint) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toEqual",
+          "id": "toequal",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#toequal",
+          "description": "toEqual asserts if actual value is equal to received one or has the same structure, if it is an object (compares them recursively). You can see the difference between toEqual and toBe in this example:",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nconst stockBill = {\n  type: 'apples',\n  count: 13,\n}\n\nconst stockMary = {\n  type: 'apples',\n  count: 13,\n}\n\ntest('stocks have the same properties', () => {\n  expect(stockBill).toEqual(stockMary)\n})\n\ntest('stocks are not the same', () => {\n  expect(stockBill).not.toBe(stockMary)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nconst stockBill = {\n  type: 'apples',\n  count: 13,\n}\n\nconst stockMary = {\n  type: 'apples',\n  count: 13,\n}\n\ntest('stocks have the same properties', () => {\n  expect(stockBill).toEqual(stockMary)\n})\n\ntest('stocks are not the same', () => {\n  expect(stockBill).not.toBe(stockMary)\n})"
+            },
+            {
+              "language": "ts",
+              "code": "// success\nexpect(new Error('hi', { cause: 'x' })).toEqual(new Error('hi'))\n\n// fail\nexpect(new Error('hi')).toEqual(new Error('hi', { cause: 'x' }))"
+            }
+          ],
+          "notes": [
+            "Type: (received: any) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toStrictEqual",
+          "id": "tostrictequal",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tostrictequal",
+          "description": "toStrictEqual asserts if the actual value is equal to the received one or has the same structure if it is an object (compares them recursively), and of the same type.\n\nDifferences from .toEqual:",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nclass Stock {\n  constructor(type) {\n    this.type = type\n  }\n}\n\ntest('structurally the same, but semantically different', () => {\n  expect(new Stock('apples')).toEqual({ type: 'apples' })\n  expect(new Stock('apples')).not.toStrictEqual({ type: 'apples' })\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nclass Stock {\n  constructor(type) {\n    this.type = type\n  }\n}\n\ntest('structurally the same, but semantically different', () => {\n  expect(new Stock('apples')).toEqual({ type: 'apples' })\n  expect(new Stock('apples')).not.toStrictEqual({ type: 'apples' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (received: any) => Awaitable<void>",
+            "Keys with undefined properties are checked. e.g. {a: undefined, b: 2} does not match {b: 2} when using .toStrictEqual.",
+            "Array sparseness is checked. e.g. [, 1] does not match [undefined, 1] when using .toStrictEqual.",
+            "Object types are checked to be equal. e.g. A class instance with fields a and b will not equal a literal object with fields a and b."
+          ],
+          "children": []
+        },
+        {
+          "name": "toContain",
+          "id": "tocontain",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tocontain",
+          "description": "toContain asserts if the actual value is in an array. toContain can also check whether a string is a substring of another string. If you are running tests in a browser-like environment, this assertion can also check if class is contained in a classList, or an element is inside another one.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { getAllFruits } from './stocks.js'\n\ntest('the fruit list contains orange', () => {\n  expect(getAllFruits()).toContain('orange')\n})\n\ntest('pineapple contains apple', () => {\n  expect('pineapple').toContain('apple')\n})\n\ntest('the element contains a class and is contained', () => {\n  const element = document.querySelector('#el')\n  // element has a class\n  expect(element.classList).toContain('flex')\n  // element is inside another one\n  expect(document.querySelector('#wrapper')).toContain(element)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (received: string) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toContainEqual",
+          "id": "tocontainequal",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tocontainequal",
+          "description": "toContainEqual asserts if an item with a specific structure and values is contained in an array. It works like toEqual inside for each element.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { getFruitStock } from './stocks.js'\n\ntest('apple available', () => {\n  expect(getFruitStock()).toContainEqual({ fruit: 'apple', count: 5 })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (received: any) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveLength",
+          "id": "tohavelength",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavelength",
+          "description": "toHaveLength asserts if an object has a .length property and it is set to a certain numeric value.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('toHaveLength', () => {\n  expect('abc').toHaveLength(3)\n  expect([1, 2, 3]).toHaveLength(3)\n\n  expect('').not.toHaveLength(3) // doesn't have .length of 3\n  expect({ length: 3 }).toHaveLength(3)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (received: number) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveProperty",
+          "id": "tohaveproperty",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohaveproperty",
+          "description": "toHaveProperty asserts if a property at provided reference key exists for an object.\n\nYou can provide an optional value argument also known as deep equality, like the toEqual matcher to compare the received property value.",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nconst invoice = {\n  'isActive': true,\n  'P.O': '12345',\n  'customer': {\n    first_name: 'John',\n    last_name: 'Doe',\n    location: 'China',\n  },\n  'total_amount': 5000,\n  'items': [\n    {\n      type: 'apples',\n      quantity: 10,\n    },\n    {\n      type: 'oranges',\n      quantity: 5,\n    },\n  ],\n}\n\ntest('John Doe Invoice', () => {\n  expect(invoice).toHaveProperty('isActive') // assert that the key exists\n  expect(invoice).toHaveProperty('total_amount', 5000) // assert that the key exists and the value is equal\n\n  expect(invoice).not.toHaveProperty('account') // assert that this key does not exist\n\n  // Deep referencing using dot notation\n  expect(invoice).toHaveProperty('customer.first_name')\n  expect(invoice).toHaveProperty('customer.last_name', 'Doe')\n  expect(invoice).not.toHaveProperty('customer.location', 'India')\n\n  // Deep referencing using an array containing the key\n  expect(invoice).toHaveProperty('items[0].type', 'apples')\n  expect(invoice).toHaveProperty('items.0.type', 'apples') // dot notation also works\n\n  // Deep referencing using an array containing the keyPath\n  expect(invoice).toHaveProperty(['items', 0, 'type'], 'apples')\n  expect(invoice).toHaveProperty(['items', '0', 'type'], 'apples') // string notation also works\n\n  // Wrap your key in an array to avoid the key from being parsed as a deep reference\n  expect(invoice).toHaveProperty(['P.O'], '12345')\n\n  // Deep equality of object property\n  expect(invoice).toHaveProperty('items[0]', { type: 'apples', quantity: 10 })\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nconst invoice = {\n  'isActive': true,\n  'P.O': '12345',\n  'customer': {\n    first_name: 'John',\n    last_name: 'Doe',\n    location: 'China',\n  },\n  'total_amount': 5000,\n  'items': [\n    {\n      type: 'apples',\n      quantity: 10,\n    },\n    {\n      type: 'oranges',\n      quantity: 5,\n    },\n  ],\n}\n\ntest('John Doe Invoice', () => {\n  expect(invoice).toHaveProperty('isActive') // assert that the key exists\n  expect(invoice).toHaveProperty('total_amount', 5000) // assert that the key exists and the value is equal\n\n  expect(invoice).not.toHaveProperty('account') // assert that this key does not exist\n\n  // Deep referencing using dot notation\n  expect(invoice).toHaveProperty('customer.first_name')\n  expect(invoice).toHaveProperty('customer.last_name', 'Doe')\n  expect(invoice).not.toHaveProperty('customer.location', 'India')\n\n  // Deep referencing using an array containing the key\n  expect(invoice).toHaveProperty('items[0].type', 'apples')\n  expect(invoice).toHaveProperty('items.0.type', 'apples') // dot notation also works\n\n  // Deep referencing using an array containing the keyPath\n  expect(invoice).toHaveProperty(['items', 0, 'type'], 'apples')\n  expect(invoice).toHaveProperty(['items', '0', 'type'], 'apples') // string notation also works\n\n  // Wrap your key in an array to avoid the key from being parsed as a deep reference\n  expect(invoice).toHaveProperty(['P.O'], '12345')\n\n  // Deep equality of object property\n  expect(invoice).toHaveProperty('items[0]', { type: 'apples', quantity: 10 })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (key: any, received?: any) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toMatch",
+          "id": "tomatch",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tomatch",
+          "description": "toMatch asserts if a string matches a regular expression or a string.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('top fruits', () => {\n  expect('top fruits include apple, orange and grape').toMatch(/apple/)\n  expect('applefruits').toMatch('fruit') // toMatch also accepts a string\n})"
+            }
+          ],
+          "notes": [
+            "Type: (received: string | regexp) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toMatchObject",
+          "id": "tomatchobject",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tomatchobject",
+          "description": "toMatchObject asserts if an object matches a subset of the properties of an object.\n\nYou can also pass an array of objects. This is useful if you want to check that two arrays match in their number and order of elements, as opposed to arrayContaining, which allows for extra elements in the received array.",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nconst johnInvoice = {\n  isActive: true,\n  customer: {\n    first_name: 'John',\n    last_name: 'Doe',\n    location: 'China',\n  },\n  total_amount: 5000,\n  items: [\n    {\n      type: 'apples',\n      quantity: 10,\n    },\n    {\n      type: 'oranges',\n      quantity: 5,\n    },\n  ],\n}\n\nconst johnDetails = {\n  customer: {\n    first_name: 'John',\n    last_name: 'Doe',\n    location: 'China',\n  },\n}\n\ntest('invoice has john personal details', () => {\n  expect(johnInvoice).toMatchObject(johnDetails)\n})\n\ntest('the number of elements must match exactly', () => {\n  // Assert that an array of object matches\n  expect([{ foo: 'bar' }, { baz: 1 }]).toMatchObject([\n    { foo: 'bar' },\n    { baz: 1 },\n  ])\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nconst johnInvoice = {\n  isActive: true,\n  customer: {\n    first_name: 'John',\n    last_name: 'Doe',\n    location: 'China',\n  },\n  total_amount: 5000,\n  items: [\n    {\n      type: 'apples',\n      quantity: 10,\n    },\n    {\n      type: 'oranges',\n      quantity: 5,\n    },\n  ],\n}\n\nconst johnDetails = {\n  customer: {\n    first_name: 'John',\n    last_name: 'Doe',\n    location: 'China',\n  },\n}\n\ntest('invoice has john personal details', () => {\n  expect(johnInvoice).toMatchObject(johnDetails)\n})\n\ntest('the number of elements must match exactly', () => {\n  // Assert that an array of object matches\n  expect([{ foo: 'bar' }, { baz: 1 }]).toMatchObject([\n    { foo: 'bar' },\n    { baz: 1 },\n  ])\n})"
+            }
+          ],
+          "notes": [
+            "Type: (received: object | array) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toThrow",
+          "id": "tothrow",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tothrow",
+          "description": "toThrow asserts if a function throws an error when it is called.\n\nYou can provide an optional argument to test that a specific error is thrown:\n\nFor example, if we want to test that getFruitStock('pineapples') throws, we could write:",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nfunction getFruitStock(type: string) {\n  if (type === 'pineapples') {\n    throw new Error('Pineapples are not in stock')\n  }\n\n  // Do some other stuff\n}\n\ntest('throws on pineapples', () => {\n  // Test that the error message says \"stock\" somewhere: these are equivalent\n  expect(() => getFruitStock('pineapples')).toThrow(/stock/)\n  expect(() => getFruitStock('pineapples')).toThrow('stock')\n\n  // Test the exact error message\n  expect(() => getFruitStock('pineapples')).toThrow(\n    /^Pineapples are not in stock$/,\n  )\n\n  expect(() => getFruitStock('pineapples')).toThrow(\n    new Error('Pineapples are not in stock'),\n  )\n  expect(() => getFruitStock('pineapples')).toThrow(expect.objectContaining({\n    message: 'Pineapples are not in stock',\n  }))\n})",
+            "function getAsyncFruitStock() {\n  return Promise.reject(new Error('empty'))\n}\n\ntest('throws on pineapples', async () => {\n  await expect(() => getAsyncFruitStock()).rejects.toThrow('empty')\n})",
+            "async function foo() {\n  await new Promise(resolve => setTimeout(resolve, 100))\n  throw new Error('boom')\n}\n\ntest('rejects', async () => {\n  const result = foo()\n\n  await vi.advanceTimersByTimeAsync(100)\n\n  // The assertion passes, but the error was already \"unhandled\" during advanceTimersByTimeAsync\n  await expect(result).rejects.toThrow()\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "test('expect rejects toThrow', async ({ expect }) => {\n  const promise = Promise.reject(new Error('Test'))\n  await expect(promise).rejects.toThrow()\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nfunction getFruitStock(type: string) {\n  if (type === 'pineapples') {\n    throw new Error('Pineapples are not in stock')\n  }\n\n  // Do some other stuff\n}\n\ntest('throws on pineapples', () => {\n  // Test that the error message says \"stock\" somewhere: these are equivalent\n  expect(() => getFruitStock('pineapples')).toThrow(/stock/)\n  expect(() => getFruitStock('pineapples')).toThrow('stock')\n\n  // Test the exact error message\n  expect(() => getFruitStock('pineapples')).toThrow(\n    /^Pineapples are not in stock$/,\n  )\n\n  expect(() => getFruitStock('pineapples')).toThrow(\n    new Error('Pineapples are not in stock'),\n  )\n  expect(() => getFruitStock('pineapples')).toThrow(expect.objectContaining({\n    message: 'Pineapples are not in stock',\n  }))\n})"
+            },
+            {
+              "language": "js",
+              "code": "function getAsyncFruitStock() {\n  return Promise.reject(new Error('empty'))\n}\n\ntest('throws on pineapples', async () => {\n  await expect(() => getAsyncFruitStock()).rejects.toThrow('empty')\n})"
+            },
+            {
+              "language": "ts",
+              "code": "test('throws non-Error values', () => {\n  expect(() => { throw 42 }).toThrow(42)\n  expect(() => { throw { message: 'error' } }).toThrow({ message: 'error' })\n})"
+            },
+            {
+              "language": "ts",
+              "code": "async function foo() {\n  await new Promise(resolve => setTimeout(resolve, 100))\n  throw new Error('boom')\n}\n\ntest('rejects', async () => {\n  const result = foo()\n\n  await vi.advanceTimersByTimeAsync(100)\n\n  // The assertion passes, but the error was already \"unhandled\" during advanceTimersByTimeAsync\n  await expect(result).rejects.toThrow()\n})"
+            },
+            {
+              "language": "ts",
+              "code": "beforeEach(() => {\n  vi.useFakeTimers()\n  vi.setTimerTickMode('nextTimerAsync')\n})\n\ntest('rejects', async () => {\n  // No advanceTimersByTimeAsync needed — the error is caught by rejects.toThrow()\n  await expect(foo()).rejects.toThrow('boom')\n})"
+            },
+            {
+              "language": "ts",
+              "code": "test('rejects', async () => {\n  const result = foo()\n  const assertion = expect(result).rejects.toThrow('boom')\n\n  await vi.advanceTimersByTimeAsync(100)\n  await assertion\n})"
+            }
+          ],
+          "notes": [
+            "Type: (expected?: any) => Awaitable<void>",
+            "Alias: toThrowError deprecated",
+            "RegExp: error message matches the pattern",
+            "string: error message includes the substring",
+            "any other value: compare with thrown value using deep equality (similar to toEqual)"
+          ],
+          "children": []
+        },
+        {
+          "name": "toMatchSnapshot",
+          "id": "tomatchsnapshot",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tomatchsnapshot",
+          "description": "This ensures that a value matches the most recent snapshot.\n\nYou can provide an optional hint string argument that is appended to the test name. Although Vitest always appends a number at the end of a snapshot name, short descriptive hints might be more useful than numbers to differentiate multiple snapshots in a single it or test block. Vitest sorts snapshots by name in the corresponding .snap file.\n\nYou can also provide a shape of an object, if you are testing just a shape of an object, and don't need it to be 100% compatible:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('matches snapshot', () => {\n  const data = { foo: new Set(['bar', 'snapshot']) }\n  expect(data).toMatchSnapshot()\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('matches snapshot', () => {\n  const data = { foo: new Set(['bar', 'snapshot']) }\n  expect(data).toMatchSnapshot({ foo: expect.any(Set) })\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(shape?: Partial<T> | string, hint?: string) => void",
+            "TIPWhen a snapshot mismatches and causes the test to fail, if the mismatch is expected, you can press u key to update the snapshot once. Or you can pass -u or --update CLI options to make Vitest always update the tests."
+          ],
+          "children": []
+        },
+        {
+          "name": "toMatchInlineSnapshot",
+          "id": "tomatchinlinesnapshot",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tomatchinlinesnapshot",
+          "description": "This ensures that a value matches the most recent snapshot.\n\nVitest adds and updates the inlineSnapshot string argument to the matcher in the test file (instead of an external .snap file).\n\nYou can also provide a shape of an object, if you are testing just a shape of an object, and don't need it to be 100% compatible:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('matches inline snapshot', () => {\n  const data = { foo: new Set(['bar', 'snapshot']) }\n  // Vitest will update following content when updating the snapshot\n  expect(data).toMatchInlineSnapshot(`\n    {\n      \"foo\": Set {\n        \"bar\",\n        \"snapshot\",\n      },\n    }\n  `)\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('matches snapshot', () => {\n  const data = { foo: new Set(['bar', 'snapshot']) }\n  expect(data).toMatchInlineSnapshot(\n    { foo: expect.any(Set) },\n    `\n    {\n      \"foo\": Any<Set>,\n    }\n  `\n  )\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(shape?: Partial<T> | string, snapshot?: string, hint?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toMatchFileSnapshot",
+          "id": "tomatchfilesnapshot",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tomatchfilesnapshot",
+          "description": "Compare or update the snapshot with the content of a file explicitly specified (instead of the .snap file).\n\nNote that since file system operation is async, you need to use await with toMatchFileSnapshot(). If await is not used, Vitest treats it like expect.soft, meaning the code after the statement will continue to run even if the snapshot mismatches. After the test finishes, Vitest will check the snapshot and fail if there is a mismatch.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, it } from 'vitest'\n\nit('render basic', async () => {\n  const result = renderHTML(h('div', { class: 'foo' }))\n  await expect(result).toMatchFileSnapshot('./test/basic.output.html')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(filepath: string, hint?: string) => Promise<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toThrowErrorMatchingSnapshot",
+          "id": "tothrowerrormatchingsnapshot",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tothrowerrormatchingsnapshot",
+          "description": "The same as toMatchSnapshot, but expects the same value as toThrow.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "Type: (hint?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toThrowErrorMatchingInlineSnapshot",
+          "id": "tothrowerrormatchinginlinesnapshot",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tothrowerrormatchinginlinesnapshot",
+          "description": "The same as toMatchInlineSnapshot, but expects the same value as toThrow.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "Type: (snapshot?: string, hint?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toMatchAriaSnapshot 4.1.4+ experimental",
+          "id": "tomatcharisnapshot",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tomatcharisnapshot",
+          "description": "Captures the accessibility tree of a DOM element and generate a snapshot file or compares it against a stored snapshot. See the ARIA Snapshots guide for more details.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('navigation accessibility', () => {\n  document.body.innerHTML = `\n    <nav aria-label=\"Actions\">\n      <button>Save</button>\n      <button>Cancel</button>\n    </nav>\n  `\n  expect(document.querySelector('nav')).toMatchAriaSnapshot()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toMatchAriaInlineSnapshot 4.1.4+ experimental",
+          "id": "tomatchariainlinesnapshot",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tomatchariainlinesnapshot",
+          "description": "Same as toMatchAriaSnapshot, but stores the snapshot inline in the test file. See the ARIA Snapshots guide for more details.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('user profile', () => {\n  expect(document.body).toMatchAriaInlineSnapshot(`\n    - heading \"Dashboard\" [level=1]\n    - button /User \\\\d+/: Profile\n  `)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (snapshot?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveBeenCalled",
+          "id": "tohavebeencalled",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavebeencalled",
+          "description": "This assertion is useful for testing that a function has been called. Requires a spy function to be passed to expect.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('spy function', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  expect(buySpy).not.toHaveBeenCalled()\n\n  market.buy('apples', 10)\n\n  expect(buySpy).toHaveBeenCalled()\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('spy function', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  expect(buySpy).not.toHaveBeenCalled()\n\n  market.buy('apples', 10)\n\n  expect(buySpy).toHaveBeenCalled()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveBeenCalledTimes",
+          "id": "tohavebeencalledtimes",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavebeencalledtimes",
+          "description": "This assertion checks if a function was called a certain amount of times. Requires a spy function to be passed to expect.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('spy function called two times', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  market.buy('apples', 10)\n  market.buy('apples', 20)\n\n  expect(buySpy).toHaveBeenCalledTimes(2)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('spy function called two times', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  market.buy('apples', 10)\n  market.buy('apples', 20)\n\n  expect(buySpy).toHaveBeenCalledTimes(2)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (amount: number) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveBeenCalledWith",
+          "id": "tohavebeencalledwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavebeencalledwith",
+          "description": "This assertion checks if a function was called at least once with certain parameters. Requires a spy function to be passed to expect.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('spy function', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  market.buy('apples', 10)\n  market.buy('apples', 20)\n\n  expect(buySpy).toHaveBeenCalledWith('apples', 10)\n  expect(buySpy).toHaveBeenCalledWith('apples', 20)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('spy function', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  market.buy('apples', 10)\n  market.buy('apples', 20)\n\n  expect(buySpy).toHaveBeenCalledWith('apples', 10)\n  expect(buySpy).toHaveBeenCalledWith('apples', 20)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (...args: any[]) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveBeenCalledBefore",
+          "id": "tohavebeencalledbefore",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavebeencalledbefore",
+          "description": "This assertion checks if a Mock was called before another Mock.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "test('calls mock1 before mock2', () => {\n  const mock1 = vi.fn()\n  const mock2 = vi.fn()\n\n  mock1()\n  mock2()\n  mock1()\n\n  expect(mock1).toHaveBeenCalledBefore(mock2)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (mock: MockInstance, failIfNoFirstInvocation?: boolean) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveBeenCalledAfter",
+          "id": "tohavebeencalledafter",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavebeencalledafter",
+          "description": "This assertion checks if a Mock was called after another Mock.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "test('calls mock1 after mock2', () => {\n  const mock1 = vi.fn()\n  const mock2 = vi.fn()\n\n  mock2()\n  mock1()\n  mock2()\n\n  expect(mock1).toHaveBeenCalledAfter(mock2)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (mock: MockInstance, failIfNoFirstInvocation?: boolean) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveBeenCalledExactlyOnceWith",
+          "id": "tohavebeencalledexactlyoncewith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavebeencalledexactlyoncewith",
+          "description": "This assertion checks if a function was called exactly once and with certain parameters. Requires a spy function to be passed to expect.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('spy function', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  market.buy('apples', 10)\n\n  expect(buySpy).toHaveBeenCalledExactlyOnceWith('apples', 10)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('spy function', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  market.buy('apples', 10)\n\n  expect(buySpy).toHaveBeenCalledExactlyOnceWith('apples', 10)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (...args: any[]) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveBeenLastCalledWith",
+          "id": "tohavebeenlastcalledwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavebeenlastcalledwith",
+          "description": "This assertion checks if a function was called with certain parameters at its last invocation. Requires a spy function to be passed to expect.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('spy function', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  market.buy('apples', 10)\n  market.buy('apples', 20)\n\n  expect(buySpy).not.toHaveBeenLastCalledWith('apples', 10)\n  expect(buySpy).toHaveBeenLastCalledWith('apples', 20)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('spy function', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  market.buy('apples', 10)\n  market.buy('apples', 20)\n\n  expect(buySpy).not.toHaveBeenLastCalledWith('apples', 10)\n  expect(buySpy).toHaveBeenLastCalledWith('apples', 20)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (...args: any[]) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveBeenNthCalledWith",
+          "id": "tohavebeennthcalledwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavebeennthcalledwith",
+          "description": "This assertion checks if a function was called with certain parameters at the certain time. The count starts at 1. So, to check the second entry, you would write .toHaveBeenNthCalledWith(2, ...).\n\nRequires a spy function to be passed to expect.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('first call of spy function called with right params', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  market.buy('apples', 10)\n  market.buy('apples', 20)\n\n  expect(buySpy).toHaveBeenNthCalledWith(1, 'apples', 10)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\nconst market = {\n  buy(subject: string, amount: number) {\n    // ...\n  },\n}\n\ntest('first call of spy function called with right params', () => {\n  const buySpy = vi.spyOn(market, 'buy')\n\n  market.buy('apples', 10)\n  market.buy('apples', 20)\n\n  expect(buySpy).toHaveBeenNthCalledWith(1, 'apples', 10)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (time: number, ...args: any[]) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveReturned",
+          "id": "tohavereturned",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavereturned",
+          "description": "This assertion checks if a function has successfully returned a value at least once (i.e., did not throw an error). Requires a spy function to be passed to expect.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\nfunction getApplesPrice(amount: number) {\n  const PRICE = 10\n  return amount * PRICE\n}\n\ntest('spy function returned a value', () => {\n  const getPriceSpy = vi.fn(getApplesPrice)\n\n  const price = getPriceSpy(10)\n\n  expect(price).toBe(100)\n  expect(getPriceSpy).toHaveReturned()\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\nfunction getApplesPrice(amount: number) {\n  const PRICE = 10\n  return amount * PRICE\n}\n\ntest('spy function returned a value', () => {\n  const getPriceSpy = vi.fn(getApplesPrice)\n\n  const price = getPriceSpy(10)\n\n  expect(price).toBe(100)\n  expect(getPriceSpy).toHaveReturned()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveReturnedTimes",
+          "id": "tohavereturnedtimes",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavereturnedtimes",
+          "description": "This assertion checks if a function has successfully returned a value an exact amount of times (i.e., did not throw an error). Requires a spy function to be passed to expect.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\ntest('spy function returns a value two times', () => {\n  const sell = vi.fn((product: string) => ({ product }))\n\n  sell('apples')\n  sell('bananas')\n\n  expect(sell).toHaveReturnedTimes(2)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy function returns a value two times', () => {\n  const sell = vi.fn((product: string) => ({ product }))\n\n  sell('apples')\n  sell('bananas')\n\n  expect(sell).toHaveReturnedTimes(2)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (amount: number) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveReturnedWith",
+          "id": "tohavereturnedwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavereturnedwith",
+          "description": "You can call this assertion to check if a function has successfully returned a certain value at least once. Requires a spy function to be passed to expect. Values are compared with the same deep equality as toEqual.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\ntest('spy function returns a product', () => {\n  const sell = vi.fn((product: string) => ({ product }))\n\n  sell('apples')\n\n  expect(sell).toHaveReturnedWith({ product: 'apples' })\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy function returns a product', () => {\n  const sell = vi.fn((product: string) => ({ product }))\n\n  sell('apples')\n\n  expect(sell).toHaveReturnedWith({ product: 'apples' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (returnValue: any) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveLastReturnedWith",
+          "id": "tohavelastreturnedwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavelastreturnedwith",
+          "description": "You can call this assertion to check if a function has successfully returned a certain value when it was last invoked. Requires a spy function to be passed to expect. Values are compared with the same deep equality as toEqual.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\ntest('spy function returns bananas on a last call', () => {\n  const sell = vi.fn((product: string) => ({ product }))\n\n  sell('apples')\n  sell('bananas')\n\n  expect(sell).toHaveLastReturnedWith({ product: 'bananas' })\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy function returns bananas on a last call', () => {\n  const sell = vi.fn((product: string) => ({ product }))\n\n  sell('apples')\n  sell('bananas')\n\n  expect(sell).toHaveLastReturnedWith({ product: 'bananas' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (returnValue: any) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveNthReturnedWith",
+          "id": "tohaventhreturnedwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohaventhreturnedwith",
+          "description": "You can call this assertion to check if a function has successfully returned a certain value on a certain call. Requires a spy function to be passed to expect. Values are compared with the same deep equality as toEqual.\n\nThe count starts at 1. So, to check the second entry, you would write .toHaveNthReturnedWith(2, ...).",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\ntest('spy function returns bananas on second call', () => {\n  const sell = vi.fn((product: string) => ({ product }))\n\n  sell('apples')\n  sell('bananas')\n\n  expect(sell).toHaveNthReturnedWith(2, { product: 'bananas' })\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy function returns bananas on second call', () => {\n  const sell = vi.fn((product: string) => ({ product }))\n\n  sell('apples')\n  sell('bananas')\n\n  expect(sell).toHaveNthReturnedWith(2, { product: 'bananas' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (time: number, returnValue: any) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveResolved",
+          "id": "tohaveresolved",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohaveresolved",
+          "description": "This assertion checks if a function has successfully resolved a value at least once (i.e., did not reject). Requires a spy function to be passed to expect.\n\nIf the function returned a promise, but it was not resolved yet, this will fail.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\nimport db from './db/apples.js'\n\nasync function getApplesPrice(amount: number) {\n  return amount * await db.get('price')\n}\n\ntest('spy function resolved a value', async () => {\n  const getPriceSpy = vi.fn(getApplesPrice)\n\n  const price = await getPriceSpy(10)\n\n  expect(price).toBe(100)\n  expect(getPriceSpy).toHaveResolved()\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\nimport db from './db/apples.js'\n\nasync function getApplesPrice(amount: number) {\n  return amount * await db.get('price')\n}\n\ntest('spy function resolved a value', async () => {\n  const getPriceSpy = vi.fn(getApplesPrice)\n\n  const price = await getPriceSpy(10)\n\n  expect(price).toBe(100)\n  expect(getPriceSpy).toHaveResolved()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveResolvedTimes",
+          "id": "tohaveresolvedtimes",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohaveresolvedtimes",
+          "description": "This assertion checks if a function has successfully resolved a value an exact amount of times (i.e., did not reject). Requires a spy function to be passed to expect.\n\nThis will only count resolved promises. If the function returned a promise, but it was not resolved yet, it will not be counted.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\ntest('spy function resolved a value two times', async () => {\n  const sell = vi.fn((product: string) => Promise.resolve({ product }))\n\n  await sell('apples')\n  await sell('bananas')\n\n  expect(sell).toHaveResolvedTimes(2)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy function resolved a value two times', async () => {\n  const sell = vi.fn((product: string) => Promise.resolve({ product }))\n\n  await sell('apples')\n  await sell('bananas')\n\n  expect(sell).toHaveResolvedTimes(2)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (amount: number) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveResolvedWith",
+          "id": "tohaveresolvedwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohaveresolvedwith",
+          "description": "You can call this assertion to check if a function has successfully resolved a certain value at least once. Requires a spy function to be passed to expect. Values are compared with the same deep equality as toEqual.\n\nIf the function returned a promise, but it was not resolved yet, this will fail.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\ntest('spy function resolved a product', async () => {\n  const sell = vi.fn((product: string) => Promise.resolve({ product }))\n\n  await sell('apples')\n\n  expect(sell).toHaveResolvedWith({ product: 'apples' })\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy function resolved a product', async () => {\n  const sell = vi.fn((product: string) => Promise.resolve({ product }))\n\n  await sell('apples')\n\n  expect(sell).toHaveResolvedWith({ product: 'apples' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (returnValue: any) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveLastResolvedWith",
+          "id": "tohavelastresolvedwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavelastresolvedwith",
+          "description": "You can call this assertion to check if a function has successfully resolved a certain value when it was last invoked. Requires a spy function to be passed to expect. Values are compared with the same deep equality as toEqual.\n\nIf the function returned a promise, but it was not resolved yet, this will fail.",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\ntest('spy function resolves bananas on a last call', async () => {\n  const sell = vi.fn((product: string) => Promise.resolve({ product }))\n\n  await sell('apples')\n  await sell('bananas')\n\n  expect(sell).toHaveLastResolvedWith({ product: 'bananas' })\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy function resolves bananas on a last call', async () => {\n  const sell = vi.fn((product: string) => Promise.resolve({ product }))\n\n  await sell('apples')\n  await sell('bananas')\n\n  expect(sell).toHaveLastResolvedWith({ product: 'bananas' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (returnValue: any) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveNthResolvedWith",
+          "id": "tohaventhresolvedwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohaventhresolvedwith",
+          "description": "You can call this assertion to check if a function has successfully resolved a certain value on a specific invocation. Requires a spy function to be passed to expect. Values are compared with the same deep equality as toEqual.\n\nIf the function returned a promise, but it was not resolved yet, this will fail.\n\nThe count starts at 1. So, to check the second entry, you would write .toHaveNthResolvedWith(2, ...).",
+          "signatures": [
+            "import { expect, test, vi } from 'vitest'\n\ntest('spy function returns bananas on second call', async () => {\n  const sell = vi.fn((product: string) => Promise.resolve({ product }))\n\n  await sell('apples')\n  await sell('bananas')\n\n  expect(sell).toHaveNthResolvedWith(2, { product: 'bananas' })\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy function returns bananas on second call', async () => {\n  const sell = vi.fn((product: string) => Promise.resolve({ product }))\n\n  await sell('apples')\n  await sell('bananas')\n\n  expect(sell).toHaveNthResolvedWith(2, { product: 'bananas' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (time: number, returnValue: any) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveBeenExhausted 5.0.0+",
+          "id": "tohavebeenexhausted",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tohavebeenexhausted",
+          "description": "This assertion checks that every behavior registered on a vi.when chain has been consumed. A behavior is considered exhausted when it has been called the number of times specified by its times option, or at least once for behaviors that apply indefinitely.\n\nRequires a When chain returned by vi.when to be passed to expect.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('all behaviors were consumed', () => {\n  const spy = vi.fn()\n  const w = vi.when(spy)\n    .calledWith(1)\n    .thenReturnOnce('once')\n    .calledWith(2)\n    .thenReturn('always')\n\n  expect(w).not.toHaveBeenExhausted()\n\n  spy(1) // consumes the `thenReturnOnce` behavior\n  spy(2) // satisfies the `thenReturn` behavior (called at least once)\n\n  expect(w).toHaveBeenExhausted()\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => void",
+            "WARNINGA When chain with no registered behaviors is never considered exhausted. toHaveBeenExhausted only passes when at least one calledWith with an associated action (then*) has been registered and every registered behavior has been fully consumed."
+          ],
+          "children": []
+        },
+        {
+          "name": "called 4.1.0+",
+          "id": "called",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#called",
+          "description": "Chai-style assertion that checks if a spy was called at least once. This is equivalent to toHaveBeenCalled().",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy was called', () => {\n  const spy = vi.fn()\n\n  spy()\n\n  expect(spy).to.have.been.called\n  expect(spy).to.not.have.been.called // negation\n})"
+            }
+          ],
+          "notes": [
+            "Type: Assertion (property, not a method)",
+            "TIPThis is a property assertion following sinon-chai conventions. Access it without parentheses: expect(spy).to.have.been.called"
+          ],
+          "children": []
+        },
+        {
+          "name": "callCount 4.1.0+",
+          "id": "callcount",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#callcount",
+          "description": "Chai-style assertion that checks if a spy was called a specific number of times. This is equivalent to toHaveBeenCalledTimes(count).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy call count', () => {\n  const spy = vi.fn()\n\n  spy()\n  spy()\n  spy()\n\n  expect(spy).to.have.callCount(3)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (count: number) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "calledWith 4.1.0+",
+          "id": "calledwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#calledwith",
+          "description": "Chai-style assertion that checks if a spy was called with specific arguments at least once. This is equivalent to toHaveBeenCalledWith(...args).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy called with arguments', () => {\n  const spy = vi.fn()\n\n  spy('apple', 10)\n  spy('banana', 20)\n\n  expect(spy).to.have.been.calledWith('apple', 10)\n  expect(spy).to.have.been.calledWith('banana', 20)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (...args: any[]) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "calledOnce 4.1.0+",
+          "id": "calledonce",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#calledonce",
+          "description": "Chai-style assertion that checks if a spy was called exactly once. This is equivalent to toHaveBeenCalledOnce().",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy called once', () => {\n  const spy = vi.fn()\n\n  spy()\n\n  expect(spy).to.have.been.calledOnce\n})"
+            }
+          ],
+          "notes": [
+            "Type: Assertion (property, not a method)",
+            "TIPThis is a property assertion following sinon-chai conventions. Access it without parentheses: expect(spy).to.have.been.calledOnce"
+          ],
+          "children": []
+        },
+        {
+          "name": "calledOnceWith 4.1.0+",
+          "id": "calledoncewith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#calledoncewith",
+          "description": "Chai-style assertion that checks if a spy was called exactly once with specific arguments. This is equivalent to toHaveBeenCalledExactlyOnceWith(...args).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy called once with arguments', () => {\n  const spy = vi.fn()\n\n  spy('apple', 10)\n\n  expect(spy).to.have.been.calledOnceWith('apple', 10)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (...args: any[]) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "calledTwice 4.1.0+",
+          "id": "calledtwice",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#calledtwice",
+          "description": "Chai-style assertion that checks if a spy was called exactly twice. This is equivalent to toHaveBeenCalledTimes(2).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy called twice', () => {\n  const spy = vi.fn()\n\n  spy()\n  spy()\n\n  expect(spy).to.have.been.calledTwice\n})"
+            }
+          ],
+          "notes": [
+            "Type: Assertion (property, not a method)",
+            "TIPThis is a property assertion following sinon-chai conventions. Access it without parentheses: expect(spy).to.have.been.calledTwice"
+          ],
+          "children": []
+        },
+        {
+          "name": "calledThrice 4.1.0+",
+          "id": "calledthrice",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#calledthrice",
+          "description": "Chai-style assertion that checks if a spy was called exactly three times. This is equivalent to toHaveBeenCalledTimes(3).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy called thrice', () => {\n  const spy = vi.fn()\n\n  spy()\n  spy()\n  spy()\n\n  expect(spy).to.have.been.calledThrice\n})"
+            }
+          ],
+          "notes": [
+            "Type: Assertion (property, not a method)",
+            "TIPThis is a property assertion following sinon-chai conventions. Access it without parentheses: expect(spy).to.have.been.calledThrice"
+          ],
+          "children": []
+        },
+        {
+          "name": "lastCalledWith",
+          "id": "lastcalledwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#lastcalledwith",
+          "description": "Chai-style assertion that checks if the last call to a spy was made with specific arguments. This is equivalent to toHaveBeenLastCalledWith(...args).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy last called with', () => {\n  const spy = vi.fn()\n\n  spy('apple', 10)\n  spy('banana', 20)\n\n  expect(spy).to.have.been.lastCalledWith('banana', 20)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (...args: any[]) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "nthCalledWith",
+          "id": "nthcalledwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#nthcalledwith",
+          "description": "Chai-style assertion that checks if the nth call to a spy was made with specific arguments. This is equivalent to toHaveBeenNthCalledWith(n, ...args).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy nth called with', () => {\n  const spy = vi.fn()\n\n  spy('apple', 10)\n  spy('banana', 20)\n  spy('cherry', 30)\n\n  expect(spy).to.have.been.nthCalledWith(2, 'banana', 20)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (n: number, ...args: any[]) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "returned 4.1.0+",
+          "id": "returned",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#returned",
+          "description": "Chai-style assertion that checks if a spy returned a specific value at least once. This is equivalent to toHaveReturnedWith(value).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy returned', () => {\n  const spy = vi.fn(() => 'value')\n\n  spy()\n\n  expect(spy).to.have.returned('value')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (value: any) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "returnedWith 4.1.0+",
+          "id": "returnedwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#returnedwith",
+          "description": "Chai-style assertion that checks if a spy returned a specific value at least once. This is equivalent to toHaveReturnedWith(value).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy returned with value', () => {\n  const spy = vi.fn()\n    .mockReturnValueOnce('apple')\n    .mockReturnValueOnce('banana')\n\n  spy()\n  spy()\n\n  expect(spy).to.have.returnedWith('apple')\n  expect(spy).to.have.returnedWith('banana')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (value: any) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "returnedTimes 4.1.0+",
+          "id": "returnedtimes",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#returnedtimes",
+          "description": "Chai-style assertion that checks if a spy returned successfully a specific number of times. This is equivalent to toHaveReturnedTimes(count).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy returned times', () => {\n  const spy = vi.fn(() => 'result')\n\n  spy()\n  spy()\n  spy()\n\n  expect(spy).to.have.returnedTimes(3)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (count: number) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "lastReturnedWith",
+          "id": "lastreturnedwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#lastreturnedwith",
+          "description": "Chai-style assertion that checks if the last return value of a spy matches the expected value. This is equivalent to toHaveLastReturnedWith(value).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy last returned with', () => {\n  const spy = vi.fn()\n    .mockReturnValueOnce('apple')\n    .mockReturnValueOnce('banana')\n\n  spy()\n  spy()\n\n  expect(spy).to.have.lastReturnedWith('banana')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (value: any) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "nthReturnedWith",
+          "id": "nthreturnedwith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#nthreturnedwith",
+          "description": "Chai-style assertion that checks if the nth return value of a spy matches the expected value. This is equivalent to toHaveNthReturnedWith(n, value).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy nth returned with', () => {\n  const spy = vi.fn()\n    .mockReturnValueOnce('apple')\n    .mockReturnValueOnce('banana')\n    .mockReturnValueOnce('cherry')\n\n  spy()\n  spy()\n  spy()\n\n  expect(spy).to.have.nthReturnedWith(2, 'banana')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (n: number, value: any) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "calledBefore 4.1.0+",
+          "id": "calledbefore",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#calledbefore",
+          "description": "Chai-style assertion that checks if a spy was called before another spy. This is equivalent to toHaveBeenCalledBefore(mock, failIfNoFirstInvocation).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy called before another', () => {\n  const spy1 = vi.fn()\n  const spy2 = vi.fn()\n\n  spy1()\n  spy2()\n\n  expect(spy1).to.have.been.calledBefore(spy2)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (mock: MockInstance, failIfNoFirstInvocation?: boolean) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "calledAfter 4.1.0+",
+          "id": "calledafter",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#calledafter",
+          "description": "Chai-style assertion that checks if a spy was called after another spy. This is equivalent to toHaveBeenCalledAfter(mock, failIfNoFirstInvocation).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test, vi } from 'vitest'\n\ntest('spy called after another', () => {\n  const spy1 = vi.fn()\n  const spy2 = vi.fn()\n\n  spy1()\n  spy2()\n\n  expect(spy2).to.have.been.calledAfter(spy1)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (mock: MockInstance, failIfNoFirstInvocation?: boolean) => void",
+            "Migration GuideFor a complete guide on migrating from Mocha+Chai+Sinon to Vitest, see the Migration Guide."
+          ],
+          "children": []
+        },
+        {
+          "name": "toSatisfy",
+          "id": "tosatisfy",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#tosatisfy",
+          "description": "This assertion checks if a value satisfies a certain predicate.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { describe, expect, it } from 'vitest'\n\nconst isOdd = (value: number) => value % 2 !== 0\n\ndescribe('toSatisfy()', () => {\n  it('pass with 0', () => {\n    expect(1).toSatisfy(isOdd)\n  })\n\n  it('pass with negation', () => {\n    expect(2).not.toSatisfy(isOdd)\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (predicate: (value: any) => boolean) => Awaitable<void>"
+          ],
+          "children": []
+        },
+        {
+          "name": "resolves",
+          "id": "resolves",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#resolves",
+          "description": "resolves is intended to remove boilerplate when asserting asynchronous code. Use it to unwrap value from the pending promise and assert its value with usual assertions. If the promise rejects, the assertion will fail.\n\nIt returns the same Assertions object, but all matchers now return Promise, so you would need to await it. Also works with chai assertions.\n\nFor example, if you have a function, that makes an API call and returns some data, you may use this code to assert its return value:",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nasync function buyApples() {\n  return fetch('/buy/apples').then(r => r.json())\n}\n\ntest('buyApples returns new stock id', async () => {\n  // toEqual returns a promise now, so you HAVE to await it\n  await expect(buyApples()).resolves.toEqual({ id: 1 }) // jest API\n  await expect(buyApples()).resolves.to.equal({ id: 1 }) // chai API\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nasync function buyApples() {\n  return fetch('/buy/apples').then(r => r.json())\n}\n\ntest('buyApples returns new stock id', async () => {\n  // toEqual returns a promise now, so you HAVE to await it\n  await expect(buyApples()).resolves.toEqual({ id: 1 }) // jest API\n  await expect(buyApples()).resolves.to.equal({ id: 1 }) // chai API\n})"
+            }
+          ],
+          "notes": [
+            "Type: Promisify<Assertions>",
+            "WARNINGIf the assertion is not awaited, the test will be marked as \"failed\" at the end of the test."
+          ],
+          "children": []
+        },
+        {
+          "name": "rejects",
+          "id": "rejects",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#rejects",
+          "description": "rejects is intended to remove boilerplate when asserting asynchronous code. Use it to unwrap reason why the promise was rejected, and assert its value with usual assertions. If the promise successfully resolves, the assertion will fail.\n\nIt returns the same Assertions object, but all matchers now return Promise, so you would need to await it. Also works with chai assertions.\n\nFor example, if you have a function that fails when you call it, you may use this code to assert the reason:",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nasync function buyApples(id) {\n  if (!id) {\n    throw new Error('no id')\n  }\n}\n\ntest('buyApples throws an error when no id provided', async () => {\n  // toThrow returns a promise now, so you HAVE to await it\n  await expect(buyApples()).rejects.toThrow('no id')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nasync function buyApples(id) {\n  if (!id) {\n    throw new Error('no id')\n  }\n}\n\ntest('buyApples throws an error when no id provided', async () => {\n  // toThrow returns a promise now, so you HAVE to await it\n  await expect(buyApples()).rejects.toThrow('no id')\n})"
+            }
+          ],
+          "notes": [
+            "Type: Promisify<Assertions>",
+            "WARNINGIf the assertion is not awaited, the test will be marked as \"failed\" at the end of the test."
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.assertions",
+          "id": "expect-assertions",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-assertions",
+          "description": "After the test has passed or failed verify that a certain number of assertions was called during a test. A useful case would be to check if an asynchronous code was called.\n\nFor example, if we have a function that asynchronously calls two matchers, we can assert that they were actually called.",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nasync function doAsync(...cbs) {\n  await Promise.all(\n    cbs.map((cb, index) => cb({ index })),\n  )\n}\n\ntest('all assertions are called', async () => {\n  expect.assertions(2)\n  function callback1(data) {\n    expect(data).toBeTruthy()\n  }\n  function callback2(data) {\n    expect(data).toBeTruthy()\n  }\n\n  await doAsync(callback1, callback2)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nasync function doAsync(...cbs) {\n  await Promise.all(\n    cbs.map((cb, index) => cb({ index })),\n  )\n}\n\ntest('all assertions are called', async () => {\n  expect.assertions(2)\n  function callback1(data) {\n    expect(data).toBeTruthy()\n  }\n  function callback2(data) {\n    expect(data).toBeTruthy()\n  }\n\n  await doAsync(callback1, callback2)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (count: number) => void",
+            "WARNINGWhen using assertions with async concurrent tests, expect from the local Test Context must be used to ensure the right test is detected."
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.hasAssertions",
+          "id": "expect-hasassertions",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-hasassertions",
+          "description": "After the test has passed or failed verify that at least one assertion was called during a test. A useful case would be to check if an asynchronous code was called.\n\nFor example, if you have a code that calls a callback, we can make an assertion inside a callback, but the test will always pass if we don't check if an assertion was called.",
+          "signatures": [
+            "import { expect, test } from 'vitest'\nimport { db } from './db.js'\n\nconst cbs = []\n\nfunction onSelect(cb) {\n  cbs.push(cb)\n}\n\n// after selecting from db, we call all callbacks\nfunction select(id) {\n  return db.select({ id }).then((data) => {\n    return Promise.all(\n      cbs.map(cb => cb(data)),\n    )\n  })\n}\n\ntest('callback was called', async () => {\n  expect.hasAssertions()\n  onSelect((data) => {\n    // should be called on select\n    expect(data).toBeTruthy()\n  })\n  // if not awaited, test will fail\n  // if you don't have expect.hasAssertions(), test will pass\n  await select(3)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { db } from './db.js'\n\nconst cbs = []\n\nfunction onSelect(cb) {\n  cbs.push(cb)\n}\n\n// after selecting from db, we call all callbacks\nfunction select(id) {\n  return db.select({ id }).then((data) => {\n    return Promise.all(\n      cbs.map(cb => cb(data)),\n    )\n  })\n}\n\ntest('callback was called', async () => {\n  expect.hasAssertions()\n  onSelect((data) => {\n    // should be called on select\n    expect(data).toBeTruthy()\n  })\n  // if not awaited, test will fail\n  // if you don't have expect.hasAssertions(), test will pass\n  await select(3)\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.unreachable",
+          "id": "expect-unreachable",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-unreachable",
+          "description": "This method is used to assert that a line should never be reached.\n\nFor example, if we want to test that build() throws due to receiving directories having no src folder, and also handle each error separately, we could do this:",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nasync function build(dir) {\n  if (dir.includes('no-src')) {\n    throw new Error(`${dir}/src does not exist`)\n  }\n}\n\nconst errorDirs = [\n  'no-src-folder',\n  // ...\n]\n\ntest.each(errorDirs)('build fails with \"%s\"', async (dir) => {\n  try {\n    await build(dir)\n    expect.unreachable('Should not pass build')\n  }\n  catch (err: any) {\n    expect(err).toBeInstanceOf(Error)\n    expect(err.stack).toContain('build')\n\n    switch (dir) {\n      case 'no-src-folder':\n        expect(err.message).toBe(`${dir}/src does not exist`)\n        break\n      default:\n        // to exhaust all error tests\n        expect.unreachable('All error test must be handled')\n        break\n    }\n  }\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nasync function build(dir) {\n  if (dir.includes('no-src')) {\n    throw new Error(`${dir}/src does not exist`)\n  }\n}\n\nconst errorDirs = [\n  'no-src-folder',\n  // ...\n]\n\ntest.each(errorDirs)('build fails with \"%s\"', async (dir) => {\n  try {\n    await build(dir)\n    expect.unreachable('Should not pass build')\n  }\n  catch (err: any) {\n    expect(err).toBeInstanceOf(Error)\n    expect(err.stack).toContain('build')\n\n    switch (dir) {\n      case 'no-src-folder':\n        expect(err.message).toBe(`${dir}/src does not exist`)\n        break\n      default:\n        // to exhaust all error tests\n        expect.unreachable('All error test must be handled')\n        break\n    }\n  }\n})"
+            }
+          ],
+          "notes": [
+            "Type: (message?: string) => never"
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.fail",
+          "id": "expect-fail",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-fail",
+          "description": "Explicitly forces a test failure with an optional custom message.\n\nFor example, you can use it inside a try/catch block to ensure an error was thrown:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('fails when error is not thrown', async () => {\n  try {\n    await performAction()\n    expect.fail('Expected performAction to throw an error')\n  }\n  catch (error) {\n    expect(error).toBeInstanceOf(CustomError)\n  }\n})"
+            }
+          ],
+          "notes": [
+            "Type: (message?: string) => never"
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.anything",
+          "id": "expect-anything",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-anything",
+          "description": "This asymmetric matcher matches anything except null or undefined. Useful if you just want to be sure that a property exists with any value that's not either null or undefined.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('object has \"apples\" key', () => {\n  expect({ apples: 22 }).toEqual({ apples: expect.anything() })\n})"
+            }
+          ],
+          "notes": [
+            "Type: () => any"
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.any",
+          "id": "expect-any",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-any",
+          "description": "This asymmetric matcher, when used with an equality check, will return true only if the value is an instance of a specified constructor. Useful, if you have a value that is generated each time, and you only want to know that it exists with a proper type.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { generateId } from './generators.js'\n\ntest('\"id\" is a number', () => {\n  expect({ id: generateId() }).toEqual({ id: expect.any(Number) })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (constructor: unknown) => any"
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.closeTo",
+          "id": "expect-closeto",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-closeto",
+          "description": "expect.closeTo is useful when comparing floating point numbers in object properties or array item. If you need to compare a number, please use .toBeCloseTo instead.\n\nThe optional precision argument limits the number of digits to check after the decimal point. For the default value 2, the test criterion is Math.abs(expected - received) < 0.005 (that is, 10 ** -2 / 2).\n\nFor example, this test passes with a precision of 5 digits:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "js",
+              "code": "test('compare float in object properties', () => {\n  expect({\n    title: '0.1 + 0.2',\n    sum: 0.1 + 0.2,\n  }).toEqual({\n    title: '0.1 + 0.2',\n    sum: expect.closeTo(0.3, 5),\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (expected: any, precision?: number) => any"
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.arrayContaining",
+          "id": "expect-arraycontaining",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-arraycontaining",
+          "description": "When used with an equality check, this asymmetric matcher will return true if the value is an array and contains specified items.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('basket includes fuji', () => {\n  const basket = {\n    varieties: [\n      'Empire',\n      'Fuji',\n      'Gala',\n    ],\n    count: 3\n  }\n  expect(basket).toEqual({\n    count: 3,\n    varieties: expect.arrayContaining(['Fuji'])\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(expected: T[]) => any",
+            "TIPYou can use expect.not with this matcher to negate the expected value."
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.objectContaining",
+          "id": "expect-objectcontaining",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-objectcontaining",
+          "description": "When used with an equality check, this asymmetric matcher will return true if the value has a similar shape.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('basket has empire apples', () => {\n  const basket = {\n    varieties: [\n      {\n        name: 'Empire',\n        count: 1,\n      }\n    ],\n  }\n  expect(basket).toEqual({\n    varieties: [\n      expect.objectContaining({ name: 'Empire' }),\n    ]\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (expected: any) => any",
+            "TIPYou can use expect.not with this matcher to negate the expected value."
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.stringContaining",
+          "id": "expect-stringcontaining",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-stringcontaining",
+          "description": "When used with an equality check, this asymmetric matcher will return true if the value is a string and contains a specified substring.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('variety has \"Emp\" in its name', () => {\n  const variety = {\n    name: 'Empire',\n    count: 1,\n  }\n  expect(variety).toEqual({\n    name: expect.stringContaining('Emp'),\n    count: 1,\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (expected: any) => any",
+            "TIPYou can use expect.not with this matcher to negate the expected value."
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.stringMatching",
+          "id": "expect-stringmatching",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-stringmatching",
+          "description": "When used with an equality check, this asymmetric matcher will return true if the value is a string and contains a specified substring or if the string matches a regular expression.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('variety ends with \"re\"', () => {\n  const variety = {\n    name: 'Empire',\n    count: 1,\n  }\n  expect(variety).toEqual({\n    name: expect.stringMatching(/re$/),\n    count: 1,\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (expected: any) => any",
+            "TIPYou can use expect.not with this matcher to negate the expected value."
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.schemaMatching",
+          "id": "expect-schemamatching",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-schemamatching",
+          "description": "When used with an equality check, this asymmetric matcher will return true if the value matches the provided schema. The schema must implement the Standard Schema v1 specification.",
+          "signatures": [
+            "import { expect, test } from 'vitest'\nimport { z } from 'zod'\nimport * as v from 'valibot'\nimport { type } from 'arktype'\n\ntest('email validation', () => {\n  const user = { email: 'john@example.com' }\n\n  // using Zod\n  expect(user).toEqual({\n    email: expect.schemaMatching(z.string().email()),\n  })\n\n  // using Valibot\n  expect(user).toEqual({\n    email: expect.schemaMatching(v.pipe(v.string(), v.email()))\n  })\n\n  // using ArkType\n  expect(user).toEqual({\n    email: expect.schemaMatching(type('string.email')),\n  })\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\nimport { z } from 'zod'\nimport * as v from 'valibot'\nimport { type } from 'arktype'\n\ntest('email validation', () => {\n  const user = { email: 'john@example.com' }\n\n  // using Zod\n  expect(user).toEqual({\n    email: expect.schemaMatching(z.string().email()),\n  })\n\n  // using Valibot\n  expect(user).toEqual({\n    email: expect.schemaMatching(v.pipe(v.string(), v.email()))\n  })\n\n  // using ArkType\n  expect(user).toEqual({\n    email: expect.schemaMatching(type('string.email')),\n  })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (expected: StandardSchemaV1) => any",
+            "TIPYou can use expect.not with this matcher to negate the expected value."
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.addSnapshotSerializer",
+          "id": "expect-addsnapshotserializer",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-addsnapshotserializer",
+          "description": "This method adds custom serializers that are called when creating a snapshot. This is an advanced feature - if you want to know more, please read a guide on custom serializers.\n\nIf you are adding custom serializers, you should call this method inside setupFiles. This will affect every snapshot.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "Type: (plugin: PrettyFormatPlugin) => void",
+            "TIPIf you previously used Vue CLI with Jest, you might want to install jest-serializer-vue. Otherwise, your snapshots will be wrapped in a string, which cases \" to be escaped."
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.extend",
+          "id": "expect-extend",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-extend",
+          "description": "You can extend default matchers with your own. This function is used to extend the matchers object with custom matchers.\n\nWhen you define matchers that way, you also create asymmetric matchers that can be used like expect.stringContaining.\n\nThis function is compatible with Jest's expect.extend, so any library that uses it to create custom matchers will work with Vitest.\n\nIf you are using TypeScript, you can extend the default Matchers interface in an ambient declaration file (e.g: vitest.d.ts) with the code below:\n\nR is the assertion return type, and T is the type of the received value.",
+          "signatures": [
+            "import 'vitest'\n\ndeclare module 'vitest' {\n  interface Matchers<R, T> {\n    toBeFoo: () => R\n  }\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest('custom matchers', () => {\n  expect.extend({\n    toBeFoo(received) {\n      const { isNot } = this\n      return {\n        message: () => `expected ${received} is${isNot ? ' not' : ''} foo`,\n        pass: received === 'foo',\n      }\n    },\n  })\n\n  expect('foo').toBeFoo()\n  expect({ foo: 'foo' }).toEqual({ foo: expect.toBeFoo() })\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import 'vitest'\n\ndeclare module 'vitest' {\n  interface Matchers<R, T> {\n    toBeFoo: () => R\n  }\n}"
+            }
+          ],
+          "notes": [
+            "Type: (matchers: MatchersObject) => void",
+            "TIPIf you want your matchers to appear in every test, you should call this method inside setupFiles.",
+            "WARNINGDon't forget to include the ambient declaration file in your tsconfig.json.",
+            "TIPIf you want to know more, checkout guide on extending matchers."
+          ],
+          "children": []
+        },
+        {
+          "name": "expect.addEqualityTesters",
+          "id": "expect-addequalitytesters",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect#expect-addequalitytesters",
+          "description": "You can use this method to define custom testers, which are methods used by matchers, to test if two objects are equal. It is compatible with Jest's expect.addEqualityTesters.",
+          "signatures": [
+            "import { expect, test } from 'vitest'\n\nclass AnagramComparator {\n  public word: string\n\n  constructor(word: string) {\n    this.word = word\n  }\n\n  equals(other: AnagramComparator): boolean {\n    const cleanStr1 = this.word.replace(/ /g, '').toLowerCase()\n    const cleanStr2 = other.word.replace(/ /g, '').toLowerCase()\n\n    const sortedStr1 = cleanStr1.split('').sort().join('')\n    const sortedStr2 = cleanStr2.split('').sort().join('')\n\n    return sortedStr1 === sortedStr2\n  }\n}\n\nfunction isAnagramComparator(a: unknown): a is AnagramComparator {\n  return a instanceof AnagramComparator\n}\n\nfunction areAnagramsEqual(a: unknown, b: unknown): boolean | undefined {\n  const isAAnagramComparator = isAnagramComparator(a)\n  const isBAnagramComparator = isAnagramComparator(b)\n\n  if (isAAnagramComparator && isBAnagramComparator) {\n    return a.equals(b)\n  }\n  else if (isAAnagramComparator === isBAnagramComparator) {\n    return undefined\n  }\n  else {\n    return false\n  }\n}\n\nexpect.addEqualityTesters([areAnagramsEqual])\n\ntest('custom equality tester', () => {\n  expect(new AnagramComparator('listen')).toEqual(new AnagramComparator('silent'))\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\nclass AnagramComparator {\n  public word: string\n\n  constructor(word: string) {\n    this.word = word\n  }\n\n  equals(other: AnagramComparator): boolean {\n    const cleanStr1 = this.word.replace(/ /g, '').toLowerCase()\n    const cleanStr2 = other.word.replace(/ /g, '').toLowerCase()\n\n    const sortedStr1 = cleanStr1.split('').sort().join('')\n    const sortedStr2 = cleanStr2.split('').sort().join('')\n\n    return sortedStr1 === sortedStr2\n  }\n}\n\nfunction isAnagramComparator(a: unknown): a is AnagramComparator {\n  return a instanceof AnagramComparator\n}\n\nfunction areAnagramsEqual(a: unknown, b: unknown): boolean | undefined {\n  const isAAnagramComparator = isAnagramComparator(a)\n  const isBAnagramComparator = isAnagramComparator(b)\n\n  if (isAAnagramComparator && isBAnagramComparator) {\n    return a.equals(b)\n  }\n  else if (isAAnagramComparator === isBAnagramComparator) {\n    return undefined\n  }\n  else {\n    return false\n  }\n}\n\nexpect.addEqualityTesters([areAnagramsEqual])\n\ntest('custom equality tester', () => {\n  expect(new AnagramComparator('listen')).toEqual(new AnagramComparator('silent'))\n})"
+            }
+          ],
+          "notes": [
+            "Type: (tester: Array<Tester>) => void"
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

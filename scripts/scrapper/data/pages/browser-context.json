@@ -1,0 +1,293 @@
+{
+  "title": "Context API",
+  "url": "https://vitest.dev/api/browser/context",
+  "description": "Vitest exposes a context module via vitest/browser entry point. As of 2.0, it exposes a small set of utilities that might be useful to you in tests.",
+  "entries": [
+    {
+      "name": "Context API",
+      "id": "context-api",
+      "level": 1,
+      "url": "https://vitest.dev/api/browser/context#context-api",
+      "description": "Vitest exposes a context module via vitest/browser entry point. As of 2.0, it exposes a small set of utilities that might be useful to you in tests.",
+      "signatures": [],
+      "aliases": [],
+      "examples": [],
+      "notes": [],
+      "children": [
+        {
+          "name": "userEvent",
+          "id": "userevent",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/context#userevent",
+          "description": "",
+          "signatures": [
+            "/**\n * Handler for user interactions. The support is implemented by the browser provider (`playwright` or `webdriverio`).\n * If used with `preview` provider, fallbacks to simulated events via `@testing-library/user-event`.\n * @experimental\n */\nexport const userEvent: {\n  setup: () => UserEvent\n  cleanup: () => Promise<void>\n  click: (element: Element, options?: UserEventClickOptions) => Promise<void>\n  dblClick: (element: Element, options?: UserEventDoubleClickOptions) => Promise<void>\n  tripleClick: (element: Element, options?: UserEventTripleClickOptions) => Promise<void>\n  selectOptions: (\n    element: Element,\n    values: HTMLElement | HTMLElement[] | string | string[],\n    options?: UserEventSelectOptions,\n  ) => Promise<void>\n  keyboard: (text: string) => Promise<void>\n  type: (element: Element, text: string, options?: UserEventTypeOptions) => Promise<void>\n  clear: (element: Element) => Promise<void>\n  tab: (options?: UserEventTabOptions) => Promise<void>\n  hover: (element: Element, options?: UserEventHoverOptions) => Promise<void>\n  unhover: (element: Element, options?: UserEventHoverOptions) => Promise<void>\n  fill: (element: Element, text: string, options?: UserEventFillOptions) => Promise<void>\n  dragAndDrop: (source: Element, target: Element, options?: UserEventDragAndDropOptions) => Promise<void>\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "/**\n * Handler for user interactions. The support is implemented by the browser provider (`playwright` or `webdriverio`).\n * If used with `preview` provider, fallbacks to simulated events via `@testing-library/user-event`.\n * @experimental\n */\nexport const userEvent: {\n  setup: () => UserEvent\n  cleanup: () => Promise<void>\n  click: (element: Element, options?: UserEventClickOptions) => Promise<void>\n  dblClick: (element: Element, options?: UserEventDoubleClickOptions) => Promise<void>\n  tripleClick: (element: Element, options?: UserEventTripleClickOptions) => Promise<void>\n  selectOptions: (\n    element: Element,\n    values: HTMLElement | HTMLElement[] | string | string[],\n    options?: UserEventSelectOptions,\n  ) => Promise<void>\n  keyboard: (text: string) => Promise<void>\n  type: (element: Element, text: string, options?: UserEventTypeOptions) => Promise<void>\n  clear: (element: Element) => Promise<void>\n  tab: (options?: UserEventTabOptions) => Promise<void>\n  hover: (element: Element, options?: UserEventHoverOptions) => Promise<void>\n  unhover: (element: Element, options?: UserEventHoverOptions) => Promise<void>\n  fill: (element: Element, text: string, options?: UserEventFillOptions) => Promise<void>\n  dragAndDrop: (source: Element, target: Element, options?: UserEventDragAndDropOptions) => Promise<void>\n}"
+            }
+          ],
+          "notes": [
+            "TIPThe userEvent API is explained in detail at Interactivity API."
+          ],
+          "children": []
+        },
+        {
+          "name": "commands",
+          "id": "commands",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/context#commands",
+          "description": "",
+          "signatures": [
+            "/**\n * Available commands for the browser.\n * A shortcut to `server.commands`.\n */\nexport const commands: BrowserCommands"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "/**\n * Available commands for the browser.\n * A shortcut to `server.commands`.\n */\nexport const commands: BrowserCommands"
+            }
+          ],
+          "notes": [
+            "TIPThis API is explained in detail at Commands API."
+          ],
+          "children": []
+        },
+        {
+          "name": "page",
+          "id": "page",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/context#page",
+          "description": "The page export provides utilities to interact with the current page.",
+          "signatures": [
+            "export const page: {\n  /**\n   * Change the size of iframe's viewport.\n   */\n  viewport(width: number, height: number): Promise<void>\n  /**\n   * Make a screenshot of the test iframe or a specific element.\n   * @returns Path to the screenshot file or path and base64.\n   */\n  screenshot(options: Omit<ScreenshotOptions, 'base64'> & { base64: true }): Promise<{\n    path: string\n    base64: string\n  }>\n  screenshot(options?: ScreenshotOptions): Promise<string>\n  /**\n   * Add a trace marker when browser tracing is enabled.\n   */\n  mark(name: string, options?: { stack?: string; kind?: BrowserTraceEntryKind }): Promise<void>\n  /**\n   * Group multiple operations under a trace marker when browser tracing is enabled.\n   */\n  mark<T>(name: string, body: () => T | Promise<T>, options?: { stack?: string; kind?: BrowserTraceEntryKind }): Promise<T>\n  /**\n   * Extend default `page` object with custom methods.\n   */\n  extend(methods: Partial<BrowserPage>): BrowserPage\n  /**\n   * Wrap an HTML element in a `Locator`. When querying for elements, the search will always return this element.\n   */\n  elementLocator(element: Element): Locator\n  /**\n   * The iframe locator. This is a document locator that enters the iframe body\n   * and works similarly to the `page` object.\n   * **Warning:** At the moment, this is supported only by the `playwright` provider.\n   */\n  frameLocator(iframeElement: Locator): FrameLocator\n\n  /**\n   * Locator APIs. See its documentation for more details.\n   */\n  getByRole(role: ARIARole | string, options?: LocatorByRoleOptions): Locator\n  getByLabelText(text: string | RegExp, options?: LocatorOptions): Locator\n  getByTestId(text: string | RegExp): Locator\n  getByAltText(text: string | RegExp, options?: LocatorOptions): Locator\n  getByPlaceholder(text: string | RegExp, options?: LocatorOptions): Locator\n  getByText(text: string | RegExp, options?: LocatorOptions): Locator\n  getByTitle(text: string | RegExp, options?: LocatorOptions): Locator\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "export const page: {\n  /**\n   * Change the size of iframe's viewport.\n   */\n  viewport(width: number, height: number): Promise<void>\n  /**\n   * Make a screenshot of the test iframe or a specific element.\n   * @returns Path to the screenshot file or path and base64.\n   */\n  screenshot(options: Omit<ScreenshotOptions, 'base64'> & { base64: true }): Promise<{\n    path: string\n    base64: string\n  }>\n  screenshot(options?: ScreenshotOptions): Promise<string>\n  /**\n   * Add a trace marker when browser tracing is enabled.\n   */\n  mark(name: string, options?: { stack?: string; kind?: BrowserTraceEntryKind }): Promise<void>\n  /**\n   * Group multiple operations under a trace marker when browser tracing is enabled.\n   */\n  mark<T>(name: string, body: () => T | Promise<T>, options?: { stack?: string; kind?: BrowserTraceEntryKind }): Promise<T>\n  /**\n   * Extend default `page` object with custom methods.\n   */\n  extend(methods: Partial<BrowserPage>): BrowserPage\n  /**\n   * Wrap an HTML element in a `Locator`. When querying for elements, the search will always return this element.\n   */\n  elementLocator(element: Element): Locator\n  /**\n   * The iframe locator. This is a document locator that enters the iframe body\n   * and works similarly to the `page` object.\n   * **Warning:** At the moment, this is supported only by the `playwright` provider.\n   */\n  frameLocator(iframeElement: Locator): FrameLocator\n\n  /**\n   * Locator APIs. See its documentation for more details.\n   */\n  getByRole(role: ARIARole | string, options?: LocatorByRoleOptions): Locator\n  getByLabelText(text: string | RegExp, options?: LocatorOptions): Locator\n  getByTestId(text: string | RegExp): Locator\n  getByAltText(text: string | RegExp, options?: LocatorOptions): Locator\n  getByPlaceholder(text: string | RegExp, options?: LocatorOptions): Locator\n  getByText(text: string | RegExp, options?: LocatorOptions): Locator\n  getByTitle(text: string | RegExp, options?: LocatorOptions): Locator\n}"
+            }
+          ],
+          "notes": [
+            "WARNINGWhile it exposes some utilities from Playwright's page, it is not the same object. Since the browser context is evaluated in the browser, your tests don't have access to Playwright's page because it runs on the server.Use Commands API if you need to have access to Playwright's page object.",
+            "TIPThe getBy* API is explained at Locators API.",
+            "WARNING 3.2.0+ Note that screenshot will always return a base64 string if save is set to false. The path is also ignored in that case."
+          ],
+          "children": [
+            {
+              "name": "mark",
+              "id": "mark",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/context#mark",
+              "description": "Adds a named marker to the trace timeline for the current test.\n\nPass options.stack to override the callsite location in trace metadata. This is useful for wrapper libraries that need to preserve the end-user source location.\n\nPass options.kind to categorize your marker as specific type, for example as 'action'.\n\nIf you pass a callback, Vitest creates a trace group with this name, runs the callback, and closes the group automatically.",
+              "signatures": [
+                "function mark(name: string, options?: { stack?: string; kind?: BrowserTraceEntryKind }): Promise<void>\nfunction mark<T>(\n  name: string,\n  body: () => T | Promise<T>,\n  options?: { stack?: string; kind?: BrowserTraceEntryKind },\n): Promise<T>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function mark(name: string, options?: { stack?: string; kind?: BrowserTraceEntryKind }): Promise<void>\nfunction mark<T>(\n  name: string,\n  body: () => T | Promise<T>,\n  options?: { stack?: string; kind?: BrowserTraceEntryKind },\n): Promise<T>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nawait page.mark('before submit')\nawait page.getByRole('button', { name: 'Submit' }).click()\nawait page.mark('after submit')\n\nawait page.mark('submit flow', async () => {\n  await page.getByRole('textbox', { name: 'Email' }).fill('john@example.com')\n  await page.getByRole('button', { name: 'Submit' }).click()\n}, { kind: 'action' })"
+                }
+              ],
+              "notes": [
+                "TIPThis method is useful only when browser.trace is enabled.A server-side equivalent is available on the BrowserCommandContext so custom commands can record markers attributed to the test that triggered them."
+              ],
+              "children": []
+            },
+            {
+              "name": "frameLocator",
+              "id": "framelocator",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/context#framelocator",
+              "description": "The frameLocator method returns a FrameLocator instance that can be used to find elements inside the iframe.\n\nThe frame locator is similar to page. It does not refer to the Iframe HTML element, but to the iframe's document.",
+              "signatures": [
+                "function frameLocator(iframeElement: Locator): FrameLocator"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function frameLocator(iframeElement: Locator): FrameLocator"
+                },
+                {
+                  "language": "ts",
+                  "code": "const frame = page.frameLocator(\n  page.getByTestId('iframe')\n)\n\nawait frame.getByText('Hello World').click() // ✅\nawait frame.click() // ❌ Not available"
+                },
+                {
+                  "language": "ts",
+                  "code": "const frame = page.frameLocator(page.getByTestId('cross-origin-iframe'))\nconst button = frame.getByRole('button', { name: 'Submit' })\n\nawait button.click() // Interactive methods work fine ✅\nawait expect.element(button).toBeVisible() // Querying elements does not work ❌"
+                }
+              ],
+              "notes": [
+                "IMPORTANTAt the moment, the frameLocator method is only supported by the playwright provider.The interactive methods (like click or fill) are always available on elements within the iframe, but assertions with expect.element require the iframe to have the same-origin policy."
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "cdp",
+          "id": "cdp",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/context#cdp",
+          "description": "The cdp export returns the current Chrome DevTools Protocol session. It is mostly useful to library authors to build tools on top of it.",
+          "signatures": [
+            "function cdp(): CDPSession",
+            "export const cdp: () => CDPSession"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function cdp(): CDPSession"
+            },
+            {
+              "language": "ts",
+              "code": "export const cdp: () => CDPSession"
+            }
+          ],
+          "notes": [
+            "WARNINGCDP session works only with playwright provider and only when using chromium browser. You can read more about it in playwright's CDPSession documentation.CDP is a privileged debugging API. It is available only when browser API write and exec operations are enabled through api.allowWrite, and api.allowExec."
+          ],
+          "children": []
+        },
+        {
+          "name": "server",
+          "id": "server",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/context#server",
+          "description": "The server export represents the Node.js environment where the Vitest server is running. It is mostly useful for debugging or limiting your tests based on the environment.",
+          "signatures": [
+            "export const server: {\n  /**\n   * Platform the Vitest server is running on.\n   * The same as calling `process.platform` on the server.\n   */\n  platform: Platform\n  /**\n   * Runtime version of the Vitest server.\n   * The same as calling `process.version` on the server.\n   */\n  version: string\n  /**\n   * Name of the browser provider.\n   */\n  provider: string\n  /**\n   * Name of the current browser.\n   */\n  browser: string\n  /**\n   * Available commands for the browser.\n   */\n  commands: BrowserCommands\n  /**\n   * Serialized test config.\n   */\n  config: SerializedConfig\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "export const server: {\n  /**\n   * Platform the Vitest server is running on.\n   * The same as calling `process.platform` on the server.\n   */\n  platform: Platform\n  /**\n   * Runtime version of the Vitest server.\n   * The same as calling `process.version` on the server.\n   */\n  version: string\n  /**\n   * Name of the browser provider.\n   */\n  provider: string\n  /**\n   * Name of the current browser.\n   */\n  browser: string\n  /**\n   * Available commands for the browser.\n   */\n  commands: BrowserCommands\n  /**\n   * Serialized test config.\n   */\n  config: SerializedConfig\n}"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "utils",
+          "id": "utils",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/context#utils",
+          "description": "Utility functions useful for custom render libraries.",
+          "signatures": [
+            "export const utils: {\n  /**\n   * This is similar to calling `page.elementLocator`, but it returns only\n   * locator selectors.\n   */\n  getElementLocatorSelectors(element: Element): LocatorSelectors\n  /**\n   * Prints prettified HTML of an element.\n   */\n  debug(\n    el?: Element | Locator | null | (Element | Locator)[],\n    maxLength?: number,\n    options?: PrettyDOMOptions,\n  ): void\n  /**\n   * Returns prettified HTML of an element.\n   */\n  prettyDOM(\n    dom?: Element | Locator | undefined | null,\n    maxLength?: number,\n    prettyFormatOptions?: PrettyDOMOptions,\n  ): string\n  /**\n   * Configures default options of `prettyDOM` and `debug` functions.\n   * This will also affect `vitest-browser-{framework}` package.\n   */\n  configurePrettyDOM(options: StringifyOptions): void\n  /**\n   * Creates \"Cannot find element\" error. Useful for custom locators.\n   */\n  getElementError(selector: string, container?: Element): Error\n  /**\n   * Utilities for generating and working with ARIA trees and templates.\n   * @experimental\n   */\n  aria: {\n    generateAriaTree(rootElement: Element): AriaNode\n    renderAriaTree(root: AriaNode): string\n    renderAriaTemplate(template: AriaTemplateNode): string\n    parseAriaTemplate(text: string): AriaTemplateNode\n    matchAriaTree(root: AriaNode, template: AriaTemplateNode): { pass: boolean; resolved: string }\n  }\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "export const utils: {\n  /**\n   * This is similar to calling `page.elementLocator`, but it returns only\n   * locator selectors.\n   */\n  getElementLocatorSelectors(element: Element): LocatorSelectors\n  /**\n   * Prints prettified HTML of an element.\n   */\n  debug(\n    el?: Element | Locator | null | (Element | Locator)[],\n    maxLength?: number,\n    options?: PrettyDOMOptions,\n  ): void\n  /**\n   * Returns prettified HTML of an element.\n   */\n  prettyDOM(\n    dom?: Element | Locator | undefined | null,\n    maxLength?: number,\n    prettyFormatOptions?: PrettyDOMOptions,\n  ): string\n  /**\n   * Configures default options of `prettyDOM` and `debug` functions.\n   * This will also affect `vitest-browser-{framework}` package.\n   */\n  configurePrettyDOM(options: StringifyOptions): void\n  /**\n   * Creates \"Cannot find element\" error. Useful for custom locators.\n   */\n  getElementError(selector: string, container?: Element): Error\n  /**\n   * Utilities for generating and working with ARIA trees and templates.\n   * @experimental\n   */\n  aria: {\n    generateAriaTree(rootElement: Element): AriaNode\n    renderAriaTree(root: AriaNode): string\n    renderAriaTemplate(template: AriaTemplateNode): string\n    parseAriaTemplate(text: string): AriaTemplateNode\n    matchAriaTree(root: AriaNode, template: AriaTemplateNode): { pass: boolean; resolved: string }\n  }\n}"
+            }
+          ],
+          "notes": [],
+          "children": [
+            {
+              "name": "configurePrettyDOM 4.0.0+",
+              "id": "configureprettydom",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/context#configureprettydom",
+              "description": "The configurePrettyDOM function allows you to configure default options for the prettyDOM and debug functions. This is useful for customizing how HTML is formatted in test failure messages.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { utils } from 'vitest/browser'\n\nutils.configurePrettyDOM({\n  maxDepth: 3,\n  filterNode: 'script, style, [data-test-hide]'\n})"
+                }
+              ],
+              "notes": [],
+              "children": [
+                {
+                  "name": "Options",
+                  "id": "options",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/context#options",
+                  "description": "",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [],
+                  "notes": [
+                    "maxDepth - Maximum depth to print nested elements (default: Infinity)",
+                    "maxLength - Maximum length of the output string (default: 7000)",
+                    "filterNode - A CSS selector string or function to filter out nodes from the output. When a string is provided, elements matching the selector will be excluded. When a function is provided, it should return false to exclude a node.",
+                    "highlight - Enable syntax highlighting (default: true)",
+                    "And other options from @vitest/pretty-format"
+                  ],
+                  "children": []
+                },
+                {
+                  "name": "Filtering with CSS Selectors 4.1.0+",
+                  "id": "filtering-with-css-selectors",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/context#filtering-with-css-selectors",
+                  "description": "The filterNode option allows you to hide irrelevant markup (like scripts, styles, or hidden elements) from test failure messages, making it easier to identify the actual cause of failures.\n\nCommon Patterns:\n\nFilter out scripts and styles:\n\nHide specific elements with data attributes:\n\nHide nested content within an element:\n\nCombine multiple selectors:",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "ts",
+                      "code": "import { utils } from 'vitest/browser'\n\n// Filter out common noise elements\nutils.configurePrettyDOM({\n  filterNode: 'script, style, [data-test-hide]'\n})\n\n// Or use directly with prettyDOM\nconst html = utils.prettyDOM(element, undefined, {\n  filterNode: 'script, style'\n})"
+                    },
+                    {
+                      "language": "ts",
+                      "code": "utils.configurePrettyDOM({ filterNode: 'script, style' })"
+                    },
+                    {
+                      "language": "ts",
+                      "code": "utils.configurePrettyDOM({ filterNode: '[data-test-hide]' })"
+                    },
+                    {
+                      "language": "ts",
+                      "code": "// Hides all children of elements with data-test-hide-content\nutils.configurePrettyDOM({ filterNode: '[data-test-hide-content] *' })"
+                    },
+                    {
+                      "language": "ts",
+                      "code": "utils.configurePrettyDOM({\n  filterNode: 'script, style, [data-test-hide], svg'\n})"
+                    }
+                  ],
+                  "notes": [
+                    "TIPThis feature is inspired by Testing Library's defaultIgnore configuration."
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "aria 5.0.0+",
+              "id": "aria",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/context#aria",
+              "description": "The aria namespace exposes low-level utilities used by Vitest's ARIA snapshot matchers.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { utils } from 'vitest/browser'\n\ndocument.body.innerHTML = `\n  <h1>Hello, World!</h1>\n  <button aria-hidden=\"true\">Hidden</button>\n  <button>Visible</button>\n`\nconst tree = utils.aria.generateAriaTree(document.body)\nconst yaml = utils.aria.renderAriaNode(tree)\nconsole.log(yaml)\n// - heading \"Hello, World!\" [level=1]\n// - button \"Visible\"\""
+                }
+              ],
+              "notes": [],
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "title": "Test Artifacts advanced 4.0.11+ experimental",
+  "url": "https://vitest.dev/api/advanced/artifacts",
+  "description": "Test artifacts allow attaching or recording structured data, files, or metadata during test execution. This is a low-level feature primarily designed for:\n\nEach artifact includes:\n\nVitest automatically manages attachment serialization (files are copied to attachmentsDir) and injects source location metadata, so you can focus on the data you want to record. All artifacts must extend from TestArtifactBase and all attachments from TestAttachment to be correctly handled internally.",
+  "entries": [
+    {
+      "name": "Test Artifacts advanced 4.0.11+ experimental",
+      "id": "test-artifacts-4-0-11",
+      "level": 1,
+      "url": "https://vitest.dev/api/advanced/artifacts#test-artifacts-4-0-11",
+      "description": "Test artifacts allow attaching or recording structured data, files, or metadata during test execution. This is a low-level feature primarily designed for:\n\nEach artifact includes:\n\nVitest automatically manages attachment serialization (files are copied to attachmentsDir) and injects source location metadata, so you can focus on the data you want to record. All artifacts must extend from TestArtifactBase and all attachments from TestAttachment to be correctly handled internally.",
+      "signatures": [],
+      "aliases": [],
+      "examples": [],
+      "notes": [
+        "WARNINGThis is an advanced API. As a user, you most likely want to use test annotations to add notes or context to your tests instead. This is primarily used internally and by library authors.",
+        "Internal use (annotate is built on top of the artifact system)",
+        "Framework authors creating custom testing tools on top of Vitest",
+        "A type discriminator which is a unique identifier for the artifact type",
+        "Custom data, can be any relevant information",
+        "Optional attachments, either files or inline content associated with the artifact",
+        "A source code location indicating where the artifact was created"
+      ],
+      "children": [
+        {
+          "name": "API",
+          "id": "api",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/artifacts#api",
+          "description": "",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": [
+            {
+              "name": "recordArtifact experimental",
+              "id": "recordartifact",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/artifacts#recordartifact",
+              "description": "The recordArtifact function records an artifact during test execution and returns it. It expects a task as the first parameter and an object assignable to TestArtifact as the second.\n\nWhen an artifact is recorded on a test, it emits an onTestArtifactRecord runner event and a onTestCaseArtifactRecord reporter event. To retrieve recorded artifacts from a test case, use the artifacts() method.\n\nNote: annotations, even though they're built on top of this feature, won't appear in the task.artifacts array for backwards compatibility reasons until the next major version.",
+              "signatures": [
+                "function recordArtifact<Artifact extends TestArtifact>(task: Test, artifact: Artifact): Promise<Artifact>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function recordArtifact<Artifact extends TestArtifact>(task: Test, artifact: Artifact): Promise<Artifact>"
+                }
+              ],
+              "notes": [
+                "WARNINGrecordArtifact is an experimental API. Breaking changes might not follow SemVer, please pin Vitest's version when using it.The API surface may change based on feedback. We encourage you to try it out and share your experience with the team.",
+                "INFOArtifacts must be recorded before the task is reported. Any artifacts recorded after that will not be included in the task."
+              ],
+              "children": []
+            },
+            {
+              "name": "TestArtifact",
+              "id": "testartifact",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/artifacts#testartifact",
+              "description": "The TestArtifact type is a union containing all artifacts Vitest can produce, including custom ones. All artifacts extend from TestArtifactBase",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "TestArtifactBase experimental",
+              "id": "testartifactbase",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/artifacts#testartifactbase",
+              "description": "The TestArtifactBase interface is the base for all test artifacts.\n\nExtend this interface when creating custom test artifacts. Vitest automatically manages the attachments array and injects the location property to indicate where the artifact was created in your test code.",
+              "signatures": [
+                "export interface TestArtifactBase {\n  /** File or data attachments associated with this artifact */\n  attachments?: TestAttachment[]\n  /** Source location where this artifact was created */\n  location?: TestArtifactLocation\n}"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "export interface TestArtifactBase {\n  /** File or data attachments associated with this artifact */\n  attachments?: TestAttachment[]\n  /** Source location where this artifact was created */\n  location?: TestArtifactLocation\n}"
+                }
+              ],
+              "notes": [
+                "DANGERWhen running with api.allowWrite disabled, Vitest empties the attachments array on every artifact before reporting it.If your custom artifact narrows the attachments type (e.g. to a tuple), include | [] in the union so the type reflects what actually happens at runtime."
+              ],
+              "children": []
+            },
+            {
+              "name": "TestAttachment",
+              "id": "testattachment",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/artifacts#testattachment",
+              "description": "The TestAttachment interface represents a file or data attachment associated with a test artifact.\n\nAttachments can be either path-based (via path) or inline content (via body). The contentType helps consumers understand how to interpret the attachment data.\n\nAttachment path can point to a local file or an external http/https URL. Relative local paths are resolved from the project root. Local files are copied into Vitest's attachments directory before reporters receive them. External URLs are preserved as-is.\n\nIf you pass a string body, Vitest assumes it is already base64-encoded unless you set bodyEncoding: 'utf-8'. When you pass body as a Uint8Array, Vitest automatically encodes it as base64. The bodyEncoding option only applies to inline body attachments, not path attachments.",
+              "signatures": [
+                "export interface TestAttachment {\n  /** MIME type of the attachment (e.g., 'image/png', 'text/plain') */\n  contentType?: string\n  /** Local file path or external HTTP(S) URL to the attachment. Relative paths are resolved from the project root. */\n  path?: string\n  /** Inline attachment content as a string or raw binary data */\n  body?: string | Uint8Array\n  /**\n   * @experimental\n   * How the string `body` is encoded.\n   * - `'base64'` (default): body is already base64-encoded\n   * - `'utf-8'`: body is a utf8 string\n   */\n  bodyEncoding?: 'base64' | 'utf-8'\n}"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "export interface TestAttachment {\n  /** MIME type of the attachment (e.g., 'image/png', 'text/plain') */\n  contentType?: string\n  /** Local file path or external HTTP(S) URL to the attachment. Relative paths are resolved from the project root. */\n  path?: string\n  /** Inline attachment content as a string or raw binary data */\n  body?: string | Uint8Array\n  /**\n   * @experimental\n   * How the string `body` is encoded.\n   * - `'base64'` (default): body is already base64-encoded\n   * - `'utf-8'`: body is a utf8 string\n   */\n  bodyEncoding?: 'base64' | 'utf-8'\n}"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "TestArtifactLocation",
+              "id": "testartifactlocation",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/artifacts#testartifactlocation",
+              "description": "The TestArtifactLocation interface represents the source code location information for a test artifact. It indicates where in the source code the artifact originated from.",
+              "signatures": [
+                "export interface TestArtifactLocation {\n  /** Line number in the source file (1-indexed) */\n  line: number\n  /** Column number in the line (1-indexed) */\n  column: number\n  /** Path to the source file */\n  file: string\n}"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "export interface TestArtifactLocation {\n  /** Line number in the source file (1-indexed) */\n  line: number\n  /** Column number in the line (1-indexed) */\n  column: number\n  /** Path to the source file */\n  file: string\n}"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "TestArtifactRegistry",
+              "id": "testartifactregistry",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/artifacts#testartifactregistry",
+              "description": "The TestArtifactRegistry interface is a registry for custom test artifact types.\n\nAugmenting this interface using TypeScript's module augmentation feature allows registering custom artifact types that tests can produce.\n\nEach custom artifact should extend TestArtifactBase and include a unique type discriminator property.\n\nHere are a few guidelines or best practices to follow:",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [
+                "Try using a Symbol as the registry key to guarantee uniqueness",
+                "The type property should follow the pattern 'package-name:artifact-name', 'internal:' is a reserved prefix",
+                "Use attachments to include files or data; extend TestAttachment for custom metadata",
+                "If you narrow the attachments type (e.g. to a tuple), include | [] in the union since Vitest may empty the array at runtime (see TestArtifactBase)",
+                "location property is automatically injected"
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Custom Artifacts",
+          "id": "custom-artifacts",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/artifacts#custom-artifacts",
+          "description": "To use and manage artifacts in a type-safe manner, you need to create its type and register it:\n\nAs long as the types are assignable to their bases and don't have errors, everything should work fine and you should be able to record artifacts using recordArtifact:",
+          "signatures": [
+            "import type { TestArtifactBase, TestAttachment } from 'vitest'\n\ninterface A11yReportAttachment extends TestAttachment {\n  contentType: 'text/html'\n  path: string\n}\n\ninterface AccessibilityArtifact extends TestArtifactBase {\n  type: 'a11y:report'\n  passed: boolean\n  wcagLevel: 'A' | 'AA' | 'AAA'\n  attachments: [A11yReportAttachment] | []\n}\n\nconst a11yReportKey = Symbol('report')\n\ndeclare module 'vitest' {\n  interface TestArtifactRegistry {\n    [a11yReportKey]: AccessibilityArtifact\n  }\n}",
+            "async function toBeAccessible(\n  this: MatcherState,\n  actual: Element,\n  wcagLevel: 'A' | 'AA' | 'AAA' = 'AA'\n): AsyncExpectationResult {\n  const report = await runAccessibilityAudit(actual, wcagLevel)\n\n  await recordArtifact(this.task, {\n    type: 'a11y:report',\n    passed: report.violations.length === 0,\n    wcagLevel,\n    attachments: [{\n      contentType: 'text/html',\n      path: report.path,\n    }],\n  })\n\n  return {\n    pass: violations.length === 0,\n    message: () => `Found ${report.violations.length} accessibility violation(s)`\n  }\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import type { TestArtifactBase, TestAttachment } from 'vitest'\n\ninterface A11yReportAttachment extends TestAttachment {\n  contentType: 'text/html'\n  path: string\n}\n\ninterface AccessibilityArtifact extends TestArtifactBase {\n  type: 'a11y:report'\n  passed: boolean\n  wcagLevel: 'A' | 'AA' | 'AAA'\n  attachments: [A11yReportAttachment] | []\n}\n\nconst a11yReportKey = Symbol('report')\n\ndeclare module 'vitest' {\n  interface TestArtifactRegistry {\n    [a11yReportKey]: AccessibilityArtifact\n  }\n}"
+            },
+            {
+              "language": "ts",
+              "code": "async function toBeAccessible(\n  this: MatcherState,\n  actual: Element,\n  wcagLevel: 'A' | 'AA' | 'AAA' = 'AA'\n): AsyncExpectationResult {\n  const report = await runAccessibilityAudit(actual, wcagLevel)\n\n  await recordArtifact(this.task, {\n    type: 'a11y:report',\n    passed: report.violations.length === 0,\n    wcagLevel,\n    attachments: [{\n      contentType: 'text/html',\n      path: report.path,\n    }],\n  })\n\n  return {\n    pass: violations.length === 0,\n    message: () => `Found ${report.violations.length} accessibility violation(s)`\n  }\n}"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "Relationship with Annotations",
+          "id": "relationship-with-annotations",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/artifacts#relationship-with-annotations",
+          "description": "Test annotations are built on top of the artifact system. When using annotations in tests, they create internal:annotation artifacts under the hood. However, annotations are:\n\nUse annotations if you just want to add notes to your tests. Use artifacts if you need custom data.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "Simpler to use",
+            "Designed for end-users, not developers"
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

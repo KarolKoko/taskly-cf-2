@@ -1,0 +1,102 @@
+{
+  "title": "Runner API advanced",
+  "url": "https://vitest.dev/api/advanced/runner",
+  "description": "You can specify a path to your test runner with the runner option in your configuration file. This file should have a default export with a class constructor implementing these methods:\n\nWhen initiating this class, Vitest passes down Vitest config, - you should expose it as a config property:",
+  "entries": [
+    {
+      "name": "Runner API advanced",
+      "id": "runner-api-advanced",
+      "level": 1,
+      "url": "https://vitest.dev/api/advanced/runner#runner-api-advanced",
+      "description": "You can specify a path to your test runner with the runner option in your configuration file. This file should have a default export with a class constructor implementing these methods:\n\nWhen initiating this class, Vitest passes down Vitest config, - you should expose it as a config property:",
+      "signatures": [
+        "import type { RunnerTestFile, SerializedConfig, TestRunner, VitestTestRunner } from 'vitest'\n\nclass CustomRunner extends TestRunner implements VitestTestRunner {\n  public config: SerializedConfig\n\n  constructor(config: SerializedConfig) {\n    this.config = config\n  }\n\n  onAfterRunFiles(files: RunnerTestFile[]) {\n    console.log('finished running', files)\n  }\n}\n\nexport default CustomRunner"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "export interface VitestRunner {\n  /**\n   * First thing that's getting called before actually collecting and running tests.\n   */\n  onBeforeCollect?: (paths: string[]) => unknown\n  /**\n   * Called after collecting tests and before \"onBeforeRun\".\n   */\n  onCollected?: (files: File[]) => unknown\n\n  /**\n   * Called when test runner should cancel next test runs.\n   * Runner should listen for this method and mark tests and suites as skipped in\n   * \"onBeforeRunSuite\" and \"onBeforeRunTask\" when called.\n   */\n  onCancel?: (reason: CancelReason) => unknown\n\n  /**\n   * Called before running a single test. Doesn't have \"result\" yet.\n   */\n  onBeforeRunTask?: (test: Test) => unknown\n  /**\n   * Called before actually running the test function. Already has \"result\" with \"state\" and \"startTime\".\n   */\n  onBeforeTryTask?: (test: Test, options: { retry: number; repeats: number }) => unknown\n  /**\n   * Called after result and state are set.\n   */\n  onAfterRunTask?: (test: Test) => unknown\n  /**\n   * Called right after running the test function. Doesn't have new state yet. Will not be called, if the test function throws.\n   */\n  onAfterTryTask?: (test: Test, options: { retry: number; repeats: number }) => unknown\n  /**\n   * Called after the retry resolution happened. Unlike `onAfterTryTask`, the test now has a new state.\n   * All `after` hooks were also called by this point.\n   */\n  onAfterRetryTask?: (test: Test, options: { retry: number; repeats: number }) => unknown\n\n  /**\n   * Called before running a single suite. Doesn't have \"result\" yet.\n   */\n  onBeforeRunSuite?: (suite: Suite) => unknown\n  /**\n   * Called after running a single suite. Has state and result.\n   */\n  onAfterRunSuite?: (suite: Suite) => unknown\n\n  /**\n   * If defined, will be called instead of usual Vitest suite partition and handling.\n   * \"before\" and \"after\" hooks will not be ignored.\n   */\n  runSuite?: (suite: Suite) => Promise<void>\n  /**\n   * If defined, will be called instead of usual Vitest handling. Useful, if you have your custom test function.\n   * \"before\" and \"after\" hooks will not be ignored.\n   */\n  runTask?: (test: TaskPopulated) => Promise<void>\n\n  /**\n   * Called, when a task is updated. The same as \"onTaskUpdate\" in a reporter, but this is running in the same thread as tests.\n   */\n  onTaskUpdate?: (task: [string, TaskResult | undefined, TaskMeta | undefined][]) => Promise<void>\n\n  /**\n   * Called before running all tests in collected paths.\n   */\n  onBeforeRunFiles?: (files: File[]) => unknown\n  /**\n   * Called right after running all tests in collected paths.\n   */\n  onAfterRunFiles?: (files: File[]) => unknown\n  /**\n   * Called when new context for a test is defined. Useful, if you want to add custom properties to the context.\n   * If you only want to define custom context with a runner, consider using \"beforeAll\" in \"setupFiles\" instead.\n   */\n  extendTaskContext?: (context: TestContext) => TestContext\n  /**\n   * Called when certain files are imported. Can be called in two situations: to collect tests and to import setup files.\n   */\n  importFile: (filepath: string, source: VitestRunnerImportSource) => unknown\n  /**\n   * Function that is called when the runner attempts to get the value when `test.extend` is used with `{ injected: true }`\n   */\n  injectValue?: (key: string) => unknown\n  /**\n   * Publicly available configuration.\n   */\n  config: SerializedConfig\n  /**\n   * The name of the current pool. Can affect how stack trace is inferred on the server side.\n   */\n  pool?: string\n}"
+        },
+        {
+          "language": "ts",
+          "code": "import type { RunnerTestFile, SerializedConfig, TestRunner, VitestTestRunner } from 'vitest'\n\nclass CustomRunner extends TestRunner implements VitestTestRunner {\n  public config: SerializedConfig\n\n  constructor(config: SerializedConfig) {\n    this.config = config\n  }\n\n  onAfterRunFiles(files: RunnerTestFile[]) {\n    console.log('finished running', files)\n  }\n}\n\nexport default CustomRunner"
+        },
+        {
+          "language": "ts",
+          "code": "export default class Runner {\n  async importFile(filepath: string) {\n    await this.moduleRunner.import(filepath)\n  }\n}"
+        }
+      ],
+      "notes": [
+        "WARNINGThis is advanced API. If you just want to run tests, you probably don't need this. It is primarily used by library authors.",
+        "WARNINGIf you don't have a custom runner or didn't define runTest method, Vitest will try to retrieve a task automatically. If you didn't add a function with setFn, it will fail.",
+        "TIPSnapshot support and some other features depend on the runner. If you don't want to lose it, you can extend your runner from TestRunner imported from vitest. It also exposes NodeBenchmarkRunner, if you want to extend benchmark functionality."
+      ],
+      "children": [
+        {
+          "name": "Tasks",
+          "id": "tasks",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/runner#tasks",
+          "description": "Suites and tests are called tasks internally. Vitest runner initiates a File task before collecting any tests - this is a superset of Suite with a few additional properties. It is available on every task (including File) as a file property.\n\nEvery suite has a tasks property that is populated during collection phase. It is useful to traverse the task tree from the top down.\n\nEvery task has a suite property that references a suite it is located in. If test or describe are initiated at the top level, they will not have a suite property (it will not be equal to file!). File also never has a suite property. It is useful to traverse the tasks from the bottom up.\n\nEvery task can have a result field. Suites can only have this field if an error thrown within a suite callback or beforeAll/afterAll callbacks prevents them from collecting tests. Tests always have this field after their callbacks are called - the state and errors fields are present depending on the outcome. If an error was thrown in beforeEach or afterEach callbacks, the thrown error will be present in task.result.errors.",
+          "signatures": [
+            "interface File extends Suite {\n  /**\n   * The name of the pool that the file belongs to.\n   * @default 'forks'\n   */\n  pool?: string\n  /**\n   * The path to the file in UNIX format.\n   */\n  filepath: string\n  /**\n   * The name of the test project the file belongs to.\n   */\n  projectName: string | undefined\n  /**\n   * The time it took to collect all tests in the file.\n   * This time also includes importing all the file dependencies.\n   */\n  collectDuration?: number\n  /**\n   * The time it took to import the setup file.\n   */\n  setupDuration?: number\n}",
+            "interface Suite extends TaskBase {\n  type: 'suite'\n  /**\n   * File task. It's the root task of the file.\n   */\n  file: File\n  /**\n   * An array of tasks that are part of the suite.\n   */\n  tasks: Task[]\n}",
+            "interface Test<ExtraContext = object> extends TaskBase {\n  type: 'test'\n  /**\n   * Test context that will be passed to the test function.\n   */\n  context: TestContext & ExtraContext\n  /**\n   * File task. It's the root task of the file.\n   */\n  file: File\n  /**\n   * Whether the task was skipped by calling `context.skip()`.\n   */\n  pending?: boolean\n  /**\n   * Whether the task should succeed if it fails. If the task fails, it will be marked as passed.\n   */\n  fails?: boolean\n  /**\n   * Store promises (from async expects) to wait for them before finishing the test\n   */\n  promises?: Promise<any>[]\n}",
+            "export interface TaskResult {\n  /**\n   * State of the task. Inherits the `task.mode` during collection.\n   * When the task has finished, it will be changed to `pass` or `fail`.\n   * - **pass**: task ran successfully\n   * - **fail**: task failed\n   */\n  state: TaskState\n  /**\n   * Errors that occurred during the task execution. It is possible to have several errors\n   * if `expect.soft()` failed multiple times.\n   */\n  errors?: TestError[]\n  /**\n   * How long in milliseconds the task took to run.\n   */\n  duration?: number\n  /**\n   * Time in milliseconds when the task started running.\n   */\n  startTime?: number\n  /**\n   * Heap size in bytes after the task finished.\n   * Only available if `logHeapUsage` option is set and `process.memoryUsage` is defined.\n   */\n  heap?: number\n  /**\n   * State of related to this task hooks. Useful during reporting.\n   */\n  hooks?: Partial<Record<'afterAll' | 'beforeAll' | 'beforeEach' | 'afterEach', TaskState>>\n  /**\n   * The number of times the task has been retried across all repeats.\n   */\n  retryCount?: number\n  /**\n   * The zero-based index of the current repeat.\n   */\n  repeatCount?: number\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "interface File extends Suite {\n  /**\n   * The name of the pool that the file belongs to.\n   * @default 'forks'\n   */\n  pool?: string\n  /**\n   * The path to the file in UNIX format.\n   */\n  filepath: string\n  /**\n   * The name of the test project the file belongs to.\n   */\n  projectName: string | undefined\n  /**\n   * The time it took to collect all tests in the file.\n   * This time also includes importing all the file dependencies.\n   */\n  collectDuration?: number\n  /**\n   * The time it took to import the setup file.\n   */\n  setupDuration?: number\n}"
+            },
+            {
+              "language": "ts",
+              "code": "interface Suite extends TaskBase {\n  type: 'suite'\n  /**\n   * File task. It's the root task of the file.\n   */\n  file: File\n  /**\n   * An array of tasks that are part of the suite.\n   */\n  tasks: Task[]\n}"
+            },
+            {
+              "language": "ts",
+              "code": "interface Test<ExtraContext = object> extends TaskBase {\n  type: 'test'\n  /**\n   * Test context that will be passed to the test function.\n   */\n  context: TestContext & ExtraContext\n  /**\n   * File task. It's the root task of the file.\n   */\n  file: File\n  /**\n   * Whether the task was skipped by calling `context.skip()`.\n   */\n  pending?: boolean\n  /**\n   * Whether the task should succeed if it fails. If the task fails, it will be marked as passed.\n   */\n  fails?: boolean\n  /**\n   * Store promises (from async expects) to wait for them before finishing the test\n   */\n  promises?: Promise<any>[]\n}"
+            },
+            {
+              "language": "ts",
+              "code": "export interface TaskResult {\n  /**\n   * State of the task. Inherits the `task.mode` during collection.\n   * When the task has finished, it will be changed to `pass` or `fail`.\n   * - **pass**: task ran successfully\n   * - **fail**: task failed\n   */\n  state: TaskState\n  /**\n   * Errors that occurred during the task execution. It is possible to have several errors\n   * if `expect.soft()` failed multiple times.\n   */\n  errors?: TestError[]\n  /**\n   * How long in milliseconds the task took to run.\n   */\n  duration?: number\n  /**\n   * Time in milliseconds when the task started running.\n   */\n  startTime?: number\n  /**\n   * Heap size in bytes after the task finished.\n   * Only available if `logHeapUsage` option is set and `process.memoryUsage` is defined.\n   */\n  heap?: number\n  /**\n   * State of related to this task hooks. Useful during reporting.\n   */\n  hooks?: Partial<Record<'afterAll' | 'beforeAll' | 'beforeEach' | 'afterEach', TaskState>>\n  /**\n   * The number of times the task has been retried across all repeats.\n   */\n  retryCount?: number\n  /**\n   * The zero-based index of the current repeat.\n   */\n  repeatCount?: number\n}"
+            }
+          ],
+          "notes": [
+            "WARNINGThe \"Runner Tasks API\" is experimental and should primarily be used only in the test runtime. Vitest also exposes the \"Reported Tasks API\", which should be preferred when working in the main thread (inside the reporter, for example).The team is currently discussing if \"Runner Tasks\" should be replaced by \"Reported Tasks\" in the future."
+          ],
+          "children": []
+        },
+        {
+          "name": "Your Task Function",
+          "id": "your-task-function",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/runner#your-task-function",
+          "description": "Vitest exposes createTaskCollector utility to create your own test method. It behaves the same way as a test, but calls a custom method during collection.\n\nA task is an object that is part of a suite. It is automatically added to the current suite with a suite.task method:",
+          "signatures": [
+            "export { afterAll, beforeAll, describe, TestRunner } from 'vitest'\n\n// this function will be called during collection phase:\n// don't call function handler here, add it to suite tasks\n// with \"getCurrentSuite().task()\" method\n// note: createTaskCollector provides support for \"todo\"/\"each\"/...\nexport const myCustomTask = TestRunner.createTaskCollector(\n  function (name, fn, timeout) {\n    TestRunner.getCurrentSuite().task(name, {\n      ...this, // so \"todo\"/\"skip\"/... is tracked correctly\n      meta: {\n        customPropertyToDifferentiateTask: true\n      },\n      handler: fn,\n      timeout,\n    })\n  }\n)"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "js",
+              "code": "export { afterAll, beforeAll, describe, TestRunner } from 'vitest'\n\n// this function will be called during collection phase:\n// don't call function handler here, add it to suite tasks\n// with \"getCurrentSuite().task()\" method\n// note: createTaskCollector provides support for \"todo\"/\"each\"/...\nexport const myCustomTask = TestRunner.createTaskCollector(\n  function (name, fn, timeout) {\n    TestRunner.getCurrentSuite().task(name, {\n      ...this, // so \"todo\"/\"skip\"/... is tracked correctly\n      meta: {\n        customPropertyToDifferentiateTask: true\n      },\n      handler: fn,\n      timeout,\n    })\n  }\n)"
+            },
+            {
+              "language": "js",
+              "code": "import {\n  afterAll,\n  beforeAll,\n  describe,\n  myCustomTask\n} from './custom.js'\nimport { gardener } from './gardener.js'\n\ndescribe('take care of the garden', () => {\n  beforeAll(() => {\n    gardener.putWorkingClothes()\n  })\n\n  myCustomTask('weed the grass', () => {\n    gardener.weedTheGrass()\n  })\n  myCustomTask.todo('mow the lawn', () => {\n    gardener.mowerTheLawn()\n  })\n  myCustomTask('water flowers', () => {\n    gardener.waterFlowers()\n  })\n\n  afterAll(() => {\n    gardener.goHome()\n  })\n})"
+            },
+            {
+              "language": "bash",
+              "code": "vitest ./garden/tasks.test.js"
+            }
+          ],
+          "notes": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

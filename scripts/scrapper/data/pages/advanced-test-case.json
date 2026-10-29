@@ -1,0 +1,358 @@
+{
+  "title": "TestCase",
+  "url": "https://vitest.dev/api/advanced/test-case",
+  "description": "The TestCase class represents a single test. This class is only available in the main thread. Refer to the \"Runner API\" if you are working with runtime tasks.\n\nThe TestCase instance always has a type property with the value of test. You can use it to distinguish between different task types:",
+  "entries": [
+    {
+      "name": "TestCase",
+      "id": "testcase",
+      "level": 1,
+      "url": "https://vitest.dev/api/advanced/test-case#testcase",
+      "description": "The TestCase class represents a single test. This class is only available in the main thread. Refer to the \"Runner API\" if you are working with runtime tasks.\n\nThe TestCase instance always has a type property with the value of test. You can use it to distinguish between different task types:",
+      "signatures": [
+        "if (task.type === 'test') {\n  task // TestCase\n}"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "if (task.type === 'test') {\n  task // TestCase\n}"
+        }
+      ],
+      "notes": [],
+      "children": [
+        {
+          "name": "project",
+          "id": "project",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#project",
+          "description": "This references the TestProject that the test belongs to.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "module",
+          "id": "module",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#module",
+          "description": "This is a direct reference to the TestModule where the test is defined.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "name",
+          "id": "name",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#name",
+          "description": "This is a test name that was passed to the test function.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { test } from 'vitest'\n\ntest('the validation works correctly', () => {\n  // ...\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "fullName",
+          "id": "fullname",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#fullname",
+          "description": "The name of the test including all parent suites separated with > symbol. This test has a full name \"the validation logic > the validation works correctly\":",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { describe, test } from 'vitest'\n\ndescribe('the validation logic', () => {\n  test('the validation works correctly', () => {\n    // ...\n  })\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "id",
+          "id": "id",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#id",
+          "description": "This is test's unique identifier. This ID is deterministic and will be the same for the same test across multiple runs. The ID is based on the project name, module ID and test order.\n\nThe ID looks like this:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": null,
+              "code": "1223128da3_0_0\n^^^^^^^^^^ the file hash\n           ^ suite index\n             ^ test index"
+            },
+            {
+              "language": "ts",
+              "code": "import { generateFileHash } from 'vitest/node'\n\nconst hash = generateFileHash(\n  '/file/path.js', // relative path\n  undefined, // the project name or `undefined` is not set\n)"
+            }
+          ],
+          "notes": [
+            "DANGERDon't try to parse the ID. It can have a minus at the start: -1223128da3_0_0_0."
+          ],
+          "children": []
+        },
+        {
+          "name": "location",
+          "id": "location",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#location",
+          "description": "The location in the module where the test was defined. Locations are collected only if includeTaskLocation is enabled in the config. Note that this option is automatically enabled if --reporter=html, --ui or --browser flags are used.\n\nThe location of this test will be equal to { line: 3, column: 1 }:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { test } from 'vitest'\n\ntest('the validation works correctly', () => {\n  // ...\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "parent",
+          "id": "parent",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#parent",
+          "description": "Parent suite. If the test was called directly inside the module, the parent will be the module itself.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "options",
+          "id": "options",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#options",
+          "description": "The options that test was collected with.",
+          "signatures": [
+            "interface TaskOptions {\n  readonly each: boolean | undefined\n  readonly fails: boolean | undefined\n  readonly concurrent: boolean | undefined\n  readonly shuffle: boolean | undefined\n  readonly retry: number | undefined\n  readonly repeats: number | undefined\n  readonly tags: string[] | undefined\n  readonly timeout: number | undefined\n  readonly mode: 'run' | 'only' | 'skip' | 'todo'\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "interface TaskOptions {\n  readonly each: boolean | undefined\n  readonly fails: boolean | undefined\n  readonly concurrent: boolean | undefined\n  readonly shuffle: boolean | undefined\n  readonly retry: number | undefined\n  readonly repeats: number | undefined\n  readonly tags: string[] | undefined\n  readonly timeout: number | undefined\n  readonly mode: 'run' | 'only' | 'skip' | 'todo'\n}"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "tags 4.1.0+",
+          "id": "tags",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#tags",
+          "description": "Tags that were implicitly or explicitly assigned to the test.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "ok",
+          "id": "ok",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#ok",
+          "description": "Checks if the test did not fail the suite. If the test is not finished yet or was skipped, it will return true.",
+          "signatures": [
+            "function ok(): boolean"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function ok(): boolean"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "meta",
+          "id": "meta",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#meta",
+          "description": "Custom metadata that was attached to the test during its execution. The meta can be attached by assigning a property to the ctx.task.meta object during a test run:\n\nIf the test did not finish running yet, the meta will be an empty object, unless it has static meta:\n\nSince Vitest 4.1, Vitest inherits meta property defined on the suite.",
+          "signatures": [
+            "function meta(): TaskMeta"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function meta(): TaskMeta"
+            },
+            {
+              "language": "ts",
+              "code": "import { test } from 'vitest'\n\ntest('the validation works correctly', ({ task }) => {\n  // ...\n\n  task.meta.decorated = false\n})"
+            },
+            {
+              "language": "ts",
+              "code": "test('the validation works correctly', { meta: { decorated: true } })"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "result",
+          "id": "result",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#result",
+          "description": "Test results. If test is not finished yet or was just collected, it will be equal to TestResultPending:\n\nIf the test was skipped, the return value will be TestResultSkipped:\n\nIf the test failed, the return value will be TestResultFailed:\n\nIf the test passed, the return value will be TestResultPassed:",
+          "signatures": [
+            "function result(): TestResult",
+            "export interface TestResultPending {\n  /**\n   * The test was collected, but didn't finish running yet.\n   */\n  readonly state: 'pending'\n  /**\n   * Pending tests have no errors.\n   */\n  readonly errors: undefined\n}",
+            "interface TestResultSkipped {\n  /**\n   * The test was skipped with `skip` or `todo` flag.\n   * You can see which one was used in the `options.mode` option.\n   */\n  readonly state: 'skipped'\n  /**\n   * Skipped tests have no errors.\n   */\n  readonly errors: undefined\n  /**\n   * A custom note passed down to `ctx.skip(note)`.\n   */\n  readonly note: string | undefined\n}",
+            "interface TestResultFailed {\n  /**\n   * The test failed to execute.\n   */\n  readonly state: 'failed'\n  /**\n   * Errors that were thrown during the test execution.\n   */\n  readonly errors: ReadonlyArray<TestError>\n}",
+            "interface TestResultPassed {\n  /**\n   * The test passed successfully.\n   */\n  readonly state: 'passed'\n  /**\n   * Errors that were thrown during the test execution.\n   */\n  readonly errors: ReadonlyArray<TestError> | undefined\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function result(): TestResult"
+            },
+            {
+              "language": "ts",
+              "code": "export interface TestResultPending {\n  /**\n   * The test was collected, but didn't finish running yet.\n   */\n  readonly state: 'pending'\n  /**\n   * Pending tests have no errors.\n   */\n  readonly errors: undefined\n}"
+            },
+            {
+              "language": "ts",
+              "code": "interface TestResultSkipped {\n  /**\n   * The test was skipped with `skip` or `todo` flag.\n   * You can see which one was used in the `options.mode` option.\n   */\n  readonly state: 'skipped'\n  /**\n   * Skipped tests have no errors.\n   */\n  readonly errors: undefined\n  /**\n   * A custom note passed down to `ctx.skip(note)`.\n   */\n  readonly note: string | undefined\n}"
+            },
+            {
+              "language": "ts",
+              "code": "interface TestResultFailed {\n  /**\n   * The test failed to execute.\n   */\n  readonly state: 'failed'\n  /**\n   * Errors that were thrown during the test execution.\n   */\n  readonly errors: ReadonlyArray<TestError>\n}"
+            },
+            {
+              "language": "ts",
+              "code": "interface TestResultPassed {\n  /**\n   * The test passed successfully.\n   */\n  readonly state: 'passed'\n  /**\n   * Errors that were thrown during the test execution.\n   */\n  readonly errors: ReadonlyArray<TestError> | undefined\n}"
+            }
+          ],
+          "notes": [
+            "TIPIf the test was skipped because another test has only flag, the options.mode will be equal to skip.",
+            "WARNINGNote that the test with passed state can still have errors attached - this can happen if retry was triggered at least once."
+          ],
+          "children": []
+        },
+        {
+          "name": "diagnostic",
+          "id": "diagnostic",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#diagnostic",
+          "description": "Useful information about the test like duration, memory usage, etc:",
+          "signatures": [
+            "function diagnostic(): TestDiagnostic | undefined",
+            "interface TestDiagnostic {\n  /**\n   * If the duration of the test is above `slowTestThreshold`.\n   */\n  readonly slow: boolean\n  /**\n   * The amount of memory used by the test in bytes.\n   * This value is only available if the test was executed with `logHeapUsage` flag.\n   */\n  readonly heap: number | undefined\n  /**\n   * The time it takes to execute the test in ms.\n   */\n  readonly duration: number\n  /**\n   * The time in ms when the test started.\n   */\n  readonly startTime: number\n  /**\n   * The amount of times the test was retried.\n   */\n  readonly retryCount: number\n  /**\n   * The amount of times the test was repeated as configured by `repeats` option.\n   * This value can be lower if the test failed during the repeat and no `retry` is configured.\n   */\n  readonly repeatCount: number\n  /**\n   * If test passed on a second retry.\n   */\n  readonly flaky: boolean\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function diagnostic(): TestDiagnostic | undefined"
+            },
+            {
+              "language": "ts",
+              "code": "interface TestDiagnostic {\n  /**\n   * If the duration of the test is above `slowTestThreshold`.\n   */\n  readonly slow: boolean\n  /**\n   * The amount of memory used by the test in bytes.\n   * This value is only available if the test was executed with `logHeapUsage` flag.\n   */\n  readonly heap: number | undefined\n  /**\n   * The time it takes to execute the test in ms.\n   */\n  readonly duration: number\n  /**\n   * The time in ms when the test started.\n   */\n  readonly startTime: number\n  /**\n   * The amount of times the test was retried.\n   */\n  readonly retryCount: number\n  /**\n   * The amount of times the test was repeated as configured by `repeats` option.\n   * This value can be lower if the test failed during the repeat and no `retry` is configured.\n   */\n  readonly repeatCount: number\n  /**\n   * If test passed on a second retry.\n   */\n  readonly flaky: boolean\n}"
+            }
+          ],
+          "notes": [
+            "INFOdiagnostic() will return undefined if the test was not scheduled to run yet."
+          ],
+          "children": []
+        },
+        {
+          "name": "annotations",
+          "id": "annotations",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#annotations",
+          "description": "Test annotations added via the task.annotate API during the test execution.",
+          "signatures": [
+            "function annotations(): ReadonlyArray<TestAnnotation>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function annotations(): ReadonlyArray<TestAnnotation>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "artifacts 4.0.11+ experimental",
+          "id": "artifacts",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#artifacts",
+          "description": "Test artifacts recorded via the recordArtifact API during the test execution.",
+          "signatures": [
+            "function artifacts(): ReadonlyArray<TestArtifact>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function artifacts(): ReadonlyArray<TestArtifact>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toTestSpecification 4.1.0+",
+          "id": "totestspecification",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#totestspecification",
+          "description": "Returns a new test specification that can be used to filter or run this specific test case.",
+          "signatures": [
+            "function toTestSpecification(): TestSpecification"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toTestSpecification(): TestSpecification"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "logs 5.0.0+",
+          "id": "logs",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-case#logs",
+          "description": "Console logs recorded during the test execution.",
+          "signatures": [
+            "function logs(): ReadonlyArray<UserConsoleLog>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function logs(): ReadonlyArray<UserConsoleLog>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

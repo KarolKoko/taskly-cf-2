@@ -1,0 +1,401 @@
+{
+  "title": "TestProject 3.0.0+",
+  "url": "https://vitest.dev/api/advanced/test-project",
+  "description": "",
+  "entries": [
+    {
+      "name": "TestProject 3.0.0+",
+      "id": "testproject",
+      "level": 1,
+      "url": "https://vitest.dev/api/advanced/test-project#testproject",
+      "description": "",
+      "signatures": [],
+      "aliases": [],
+      "examples": [],
+      "notes": [
+        "WARNINGThis guide describes the advanced Node.js API. If you just want to define projects, follow the \"Test Projects\" guide."
+      ],
+      "children": [
+        {
+          "name": "name",
+          "id": "name",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#name",
+          "description": "The name is a unique string assigned by the user or interpreted by Vitest. If user did not provide a name, Vitest tries to load a package.json in the root of the project and takes the name property from there. If there is no package.json, Vitest uses the name of the folder by default. Inline projects use numbers as the name (converted to string).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { createVitest } from 'vitest/node'\n\nconst vitest = await createVitest('test')\nvitest.projects.map(p => p.name) === [\n  '@pkg/server',\n  'utils',\n  '2',\n  'custom'\n]"
+            },
+            {
+              "language": "ts",
+              "code": "import { defineConfig } from 'vitest/config'\n\nexport default defineConfig({\n  test: {\n    projects: [\n      './packages/server', // has package.json with \"@pkg/server\"\n      './utils', // doesn't have a package.json file\n      {\n        // doesn't customize the name\n        test: {\n          pool: 'threads',\n        },\n      },\n      {\n        // customized the name\n        test: {\n          name: 'custom',\n        },\n      },\n    ],\n  },\n})"
+            }
+          ],
+          "notes": [
+            "INFOIf the root project is not part of user projects, its name will not be resolved."
+          ],
+          "children": []
+        },
+        {
+          "name": "vitest",
+          "id": "vitest",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#vitest",
+          "description": "vitest references the global Vitest process.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "serializedConfig",
+          "id": "serializedconfig",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#serializedconfig",
+          "description": "This is the config that test processes receive. Vitest serializes config manually by removing all functions and properties that are not possible to serialize. Since this value is available in both tests and node, its type is exported from the main entry point.",
+          "signatures": [
+            "import type { SerializedConfig } from 'vitest'\n\nconst config: SerializedConfig = vitest.projects[0].serializedConfig"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import type { SerializedConfig } from 'vitest'\n\nconst config: SerializedConfig = vitest.projects[0].serializedConfig"
+            },
+            {
+              "language": "ts",
+              "code": "project.serializedConfig === project.serializedConfig // ❌"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "globalConfig",
+          "id": "globalconfig",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#globalconfig",
+          "description": "The test config that Vitest was initialized with. If this is the root project, globalConfig and config will reference the same object. This config is useful for values that cannot be set on the project level, like coverage or reporters.",
+          "signatures": [
+            "import type { ResolvedConfig } from 'vitest/node'\n\nvitest.config === vitest.projects[0].globalConfig"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import type { ResolvedConfig } from 'vitest/node'\n\nvitest.config === vitest.projects[0].globalConfig"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "config",
+          "id": "config",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#config",
+          "description": "This is the project's resolved test config.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "hash 3.2.0+",
+          "id": "hash",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#hash",
+          "description": "The unique hash of this project. This value is consistent between the reruns.\n\nIt is based on the root of the project and its name. Note that the root path is not consistent between different OS, so the hash will also be different.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "vite",
+          "id": "vite",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#vite",
+          "description": "This is project's ViteDevServer. Note that the server is not necessarily exclusive to this project: other projects can reuse it when the sharedViteServer option applies, and browser instances of the same cluster share a single browser server.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "sharedViteServer",
+          "id": "sharedviteserver",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#sharedviteserver",
+          "description": "true when the project reuses the Vite server of the config that declared it instead of resolving its own (see the sharedViteServer option). The project that owns the server reports false even when other projects reuse it. To detect any two projects sharing a server (including browser instances), compare their vite references.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "const sharedViteServer: boolean"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "browser",
+          "id": "browser",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#browser",
+          "description": "This value will be set only if tests are running in the browser. If browser is enabled, but tests didn't run yet, this will be undefined. If you need to check if the project supports browser tests, use project.isBrowserEnabled() method.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "WARNINGThe browser API is even more experimental and doesn't follow SemVer. The browser API will be standardized separately from the rest of the APIs."
+          ],
+          "children": []
+        },
+        {
+          "name": "provide",
+          "id": "provide",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#provide",
+          "description": "A way to provide custom values to tests in addition to config.provide field. All values are validated with structuredClone before they are stored, but the values on providedContext themselves are not cloned.\n\nThe values can be provided dynamically. Provided value in tests will be updated on their next run.",
+          "signatures": [
+            "function provide<T extends keyof ProvidedContext & string>(\n  key: T,\n  value: ProvidedContext[T],\n): void",
+            "export default function setup({ provide }) {\n  provide('wsPort', 3000)\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function provide<T extends keyof ProvidedContext & string>(\n  key: T,\n  value: ProvidedContext[T],\n): void"
+            },
+            {
+              "language": "ts",
+              "code": "import { createVitest } from 'vitest/node'\n\nconst vitest = await createVitest('test')\nconst project = vitest.projects.find(p => p.name === 'custom')\nproject.provide('key', 'value')\nawait vitest.start()"
+            },
+            {
+              "language": "ts",
+              "code": "import { inject } from 'vitest'\nconst value = inject('key')"
+            },
+            {
+              "language": "js",
+              "code": "export default function setup({ provide }) {\n  provide('wsPort', 3000)\n}"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "getProvidedContext",
+          "id": "getprovidedcontext",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#getprovidedcontext",
+          "description": "This returns the context object. Every project also inherits the global context set by vitest.provide.",
+          "signatures": [
+            "function getProvidedContext(): ProvidedContext"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getProvidedContext(): ProvidedContext"
+            },
+            {
+              "language": "ts",
+              "code": "import { createVitest } from 'vitest/node'\n\nconst vitest = await createVitest('test')\nvitest.provide('global', true)\nconst project = vitest.projects.find(p => p.name === 'custom')\nproject.provide('key', 'value')\n\n// { global: true, key: 'value' }\nconst context = project.getProvidedContext()"
+            }
+          ],
+          "notes": [
+            "TIPProject context values will always override root project's context."
+          ],
+          "children": []
+        },
+        {
+          "name": "createSpecification",
+          "id": "createspecification",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#createspecification",
+          "description": "Create a test specification that can be used in vitest.runTestSpecifications. Specification scopes the test file to a specific project and test locations (optional). Test locations are code lines where the test is defined in the source code. If locations are provided, Vitest will only run tests defined on those lines. Note that if testNamePattern is defined, then it will also be applied.",
+          "signatures": [
+            "function createSpecification(\n  moduleId: string,\n  locations?: number[],\n): TestSpecification"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function createSpecification(\n  moduleId: string,\n  locations?: number[],\n): TestSpecification"
+            },
+            {
+              "language": "ts",
+              "code": "import { createVitest } from 'vitest/node'\nimport { resolve } from 'node:path/posix'\n\nconst vitest = await createVitest('test')\nconst project = vitest.projects[0]\nconst specification = project.createSpecification(\n  resolve('./example.test.ts'),\n  [20, 40], // optional test lines\n)\nawait vitest.runTestSpecifications([specification])"
+            }
+          ],
+          "notes": [
+            "WARNINGcreateSpecification expects resolved module ID. It doesn't auto-resolve the file or check that it exists on the file system.Also note that project.createSpecification always returns a new instance."
+          ],
+          "children": []
+        },
+        {
+          "name": "isRootProject",
+          "id": "isrootproject",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#isrootproject",
+          "description": "Checks if the current project is the root project. You can also get the root project by calling vitest.getRootProject().",
+          "signatures": [
+            "function isRootProject(): boolean"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function isRootProject(): boolean"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "globTestFiles",
+          "id": "globtestfiles",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#globtestfiles",
+          "description": "Globs all test files. This function returns an object with regular tests and typecheck tests.\n\nThis method accepts filters. Filters can only a part of the file path, unlike in other methods on the Vitest instance:",
+          "signatures": [
+            "function globTestFiles(filters?: string[]): {\n  /**\n   * Test files that match the filters.\n   */\n  testFiles: string[]\n  /**\n   * Typecheck test files that match the filters. This will be empty unless `typecheck.enabled` is `true`.\n   */\n  typecheckTestFiles: string[]\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function globTestFiles(filters?: string[]): {\n  /**\n   * Test files that match the filters.\n   */\n  testFiles: string[]\n  /**\n   * Typecheck test files that match the filters. This will be empty unless `typecheck.enabled` is `true`.\n   */\n  typecheckTestFiles: string[]\n}"
+            },
+            {
+              "language": "js",
+              "code": "project.globTestFiles(['foo']) // ✅\nproject.globTestFiles(['basic/foo.js:10']) // ❌"
+            }
+          ],
+          "notes": [
+            "TIPVitest uses fast-glob to find test files. test.dir, test.root, root or process.cwd() define the cwd option.This method looks at several config options:test.include, test.exclude to find regular test filestest.includeSource, test.exclude to find in-source teststest.typecheck.include, test.typecheck.exclude to find typecheck tests"
+          ],
+          "children": []
+        },
+        {
+          "name": "matchesTestGlob",
+          "id": "matchestestglob",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#matchestestglob",
+          "description": "This method checks if the file is a regular test file. It uses the same config properties that globTestFiles uses for validation.\n\nThis method also accepts a second parameter, which is the source code. This is used to validate if the file is an in-source test. If you are calling this method several times for several projects it is recommended to read the file once and pass it down directly. If the file is not a test file, but matches the includeSource glob, Vitest will synchronously read the file unless the source is provided.",
+          "signatures": [
+            "function matchesTestGlob(\n  moduleId: string,\n  source?: () => string\n): boolean"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function matchesTestGlob(\n  moduleId: string,\n  source?: () => string\n): boolean"
+            },
+            {
+              "language": "ts",
+              "code": "import { createVitest } from 'vitest/node'\nimport { resolve } from 'node:path/posix'\n\nconst vitest = await createVitest('test')\nconst project = vitest.projects[0]\n\nproject.matchesTestGlob(resolve('./basic.test.ts')) // true\nproject.matchesTestGlob(resolve('./basic.ts')) // false\nproject.matchesTestGlob(resolve('./basic.ts'), () => `\nif (import.meta.vitest) {\n  // ...\n}\n`) // true if `includeSource` is set"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "import",
+          "id": "import",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#import",
+          "description": "Import a file using Vite module runner. The file will be transformed by Vite with provided project's config and executed in a separate context. Note that moduleId will be relative to the config.root.",
+          "signatures": [
+            "function import<T>(moduleId: string): Promise<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function import<T>(moduleId: string): Promise<T>"
+            },
+            {
+              "language": "ts",
+              "code": "import * as staticExample from './example.js'\nconst dynamicExample = await project.import('./example.js')\n\ndynamicExample !== staticExample // ✅"
+            }
+          ],
+          "notes": [
+            "INFOInternally, Vitest uses this method to import global setups, custom coverage providers and custom reporters, meaning all of them share the same module graph as long as they belong to the same Vite server."
+          ],
+          "children": []
+        },
+        {
+          "name": "onTestsRerun",
+          "id": "ontestsrerun",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#ontestsrerun",
+          "description": "This is a shorthand for project.vitest.onTestsRerun. It accepts a callback that will be awaited when the tests have been scheduled to rerun (usually, due to a file change).",
+          "signatures": [
+            "function onTestsRerun(cb: OnTestsRerunHandler): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function onTestsRerun(cb: OnTestsRerunHandler): void"
+            },
+            {
+              "language": "ts",
+              "code": "project.onTestsRerun((specs) => {\n  console.log(specs)\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "isBrowserEnabled",
+          "id": "isbrowserenabled",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#isbrowserenabled",
+          "description": "Returns true if this project runs tests in the browser.",
+          "signatures": [
+            "function isBrowserEnabled(): boolean"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function isBrowserEnabled(): boolean"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "close",
+          "id": "close",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-project#close",
+          "description": "Closes the project and all associated resources. This can only be called once; the closing promise is cached until the server restarts. If the resources are needed again, create a new project.\n\nIn detail, this method closes the Vite server, stops the typechecker service, closes the browser if it's running, deletes the temporary directory that holds the source code, and resets the provided context.",
+          "signatures": [
+            "function close(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function close(): Promise<void>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

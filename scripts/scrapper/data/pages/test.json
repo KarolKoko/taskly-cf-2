@@ -1,0 +1,627 @@
+{
+  "title": "Test",
+  "url": "https://vitest.dev/api/test",
+  "description": "test or it defines a set of related expectations. It receives the test name and a function that holds the expectations to test.\n\nOptionally, you can provide a timeout (in milliseconds) for specifying how long to wait before terminating, or a set of additional options. The default timeout is 5 seconds, and can be configured globally with testTimeout.\n\nWhen a test function returns a promise, the runner will wait until it is resolved to collect async expectations. If the promise is rejected, the test will fail.",
+  "entries": [
+    {
+      "name": "Test",
+      "id": "test",
+      "level": 1,
+      "url": "https://vitest.dev/api/test#test",
+      "description": "test or it defines a set of related expectations. It receives the test name and a function that holds the expectations to test.\n\nOptionally, you can provide a timeout (in milliseconds) for specifying how long to wait before terminating, or a set of additional options. The default timeout is 5 seconds, and can be configured globally with testTimeout.\n\nWhen a test function returns a promise, the runner will wait until it is resolved to collect async expectations. If the promise is rejected, the test will fail.",
+      "signatures": [
+        "function test(\n  name: string | Function,\n  body?: () => unknown,\n  timeout?: number\n): void\nfunction test(\n  name: string | Function,\n  options: TestOptions,\n  body?: () => unknown,\n): void"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "function test(\n  name: string | Function,\n  body?: () => unknown,\n  timeout?: number\n): void\nfunction test(\n  name: string | Function,\n  options: TestOptions,\n  body?: () => unknown,\n): void"
+        },
+        {
+          "language": "ts",
+          "code": "import { expect, test } from 'vitest'\n\ntest('should work as expected', () => {\n  expect(Math.sqrt(4)).toBe(2)\n})"
+        }
+      ],
+      "notes": [
+        "Alias: it",
+        "WARNINGIf the first argument is a function, its name property will be used as the name of the test. The function itself will not be called.If test body is not provided, the test is marked as todo.",
+        "TIPIn Jest, TestFunction can also be of type (done: DoneCallback) => void. If this form is used, the test will not be concluded until done is called. You can achieve the same using an async function, see the Migration guide Done Callback section."
+      ],
+      "children": [
+        {
+          "name": "Test Options",
+          "id": "test-options",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-options",
+          "description": "You can define boolean options by chaining properties on a function:\n\nBut you can also provide an object as a second argument instead:\n\nThey both work in exactly the same way. To use either one is purely a stylistic choice.\n\nOptions set to undefined are ignored. They don't override values from the chain, the parent suite, or tags.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { test } from 'vitest'\n\ntest.skip('skipped test', () => {\n  // some logic that fails right now\n})\n\ntest.concurrent.skip('skipped concurrent test', () => {\n  // some logic that fails right now\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import { test } from 'vitest'\n\ntest('skipped test', { skip: true }, () => {\n  // some logic that fails right now\n})\n\ntest('skipped concurrent test', { skip: true, concurrent: true }, () => {\n  // some logic that fails right now\n})"
+            }
+          ],
+          "notes": [],
+          "children": [
+            {
+              "name": "timeout",
+              "id": "timeout",
+              "level": 3,
+              "url": "https://vitest.dev/api/test#timeout",
+              "description": "Test timeout in milliseconds.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { test } from 'vitest'\n\n// ✅ this works\ntest.skip('heavy test', () => {\n  // ...\n}, 10_000)\n\n// ❌ this doesn't work\ntest('heavy test', { skip: true }, () => {\n  // ...\n}, 10_000)"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { test } from 'vitest'\n\n// ✅ this works\ntest('heavy test', { skip: true, timeout: 10_000 }, () => {\n  // ...\n})"
+                }
+              ],
+              "notes": [
+                "Type: number",
+                "Default: 5_000 (configured by testTimeout)"
+              ],
+              "children": []
+            },
+            {
+              "name": "retry",
+              "id": "retry",
+              "level": 3,
+              "url": "https://vitest.dev/api/test#retry",
+              "description": "Retry configuration for the test. If a number, specifies how many times to retry. If an object, allows fine-grained retry control.\n\nNote that the object configuration is available only since Vitest 4.1.",
+              "signatures": [
+                "type Retry = number | {\n  /**\n   * The number of times to retry the test if it fails.\n   * @default 0\n   */\n  count?: number\n  /**\n   * Delay in milliseconds between retry attempts.\n   * @default 0\n   */\n  delay?: number\n  /**\n   * Condition to determine if a test should be retried based on the error.\n   * - If a RegExp, it is tested against the error message\n   * - If a function, called with the TestError object; return true to retry\n   *\n   * NOTE: Functions can only be used in test files, not in vitest.config.ts,\n   * because the configuration is serialized when passed to worker threads.\n   *\n   * @default undefined (retry on all errors)\n   */\n  condition?: RegExp | ((error: TestError) => boolean)\n}"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "type Retry = number | {\n  /**\n   * The number of times to retry the test if it fails.\n   * @default 0\n   */\n  count?: number\n  /**\n   * Delay in milliseconds between retry attempts.\n   * @default 0\n   */\n  delay?: number\n  /**\n   * Condition to determine if a test should be retried based on the error.\n   * - If a RegExp, it is tested against the error message\n   * - If a function, called with the TestError object; return true to retry\n   *\n   * NOTE: Functions can only be used in test files, not in vitest.config.ts,\n   * because the configuration is serialized when passed to worker threads.\n   *\n   * @default undefined (retry on all errors)\n   */\n  condition?: RegExp | ((error: TestError) => boolean)\n}"
+                }
+              ],
+              "notes": [
+                "Default: 0 (configured by retry)",
+                "Type:"
+              ],
+              "children": []
+            },
+            {
+              "name": "repeats",
+              "id": "repeats",
+              "level": 3,
+              "url": "https://vitest.dev/api/test#repeats",
+              "description": "How many times the test will run again. If set to 0 (the default), the test will run only one time.\n\nThis can be useful for debugging flaky tests.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [
+                "Type: number",
+                "Default: 0"
+              ],
+              "children": []
+            },
+            {
+              "name": "tags 4.1.0+",
+              "id": "tags",
+              "level": 3,
+              "url": "https://vitest.dev/api/test#tags",
+              "description": "Custom user tags. If the tag is not specified in the configuration, the test will fail before it starts, unless strictTags is disabled manually.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { it } from 'vitest'\n\nit('user returns data from db', { tags: ['db', 'flaky'] }, () => {\n  // ...\n})"
+                }
+              ],
+              "notes": [
+                "Type: string[]",
+                "Default: []"
+              ],
+              "children": []
+            },
+            {
+              "name": "meta 4.1.0+",
+              "id": "meta",
+              "level": 3,
+              "url": "https://vitest.dev/api/test#meta",
+              "description": "Attaches custom metadata available in reporters.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { describe, test } from 'vitest'\n\ndescribe(\n  'nested meta',\n  {\n    meta: {\n      nested: { object: true, array: false },\n    },\n  },\n  () => {\n    test(\n      'overrides part of meta',\n      {\n        meta: {\n          nested: { object: false }\n        },\n      },\n      ({ task }) => {\n        // task.meta === { nested: { object: false } }\n        // notice array got lost because \"nested\" object was overridden\n      }\n    )\n  }\n)"
+                }
+              ],
+              "notes": [
+                "Type: TaskMeta"
+              ],
+              "children": []
+            },
+            {
+              "name": "concurrent",
+              "id": "concurrent",
+              "level": 3,
+              "url": "https://vitest.dev/api/test#concurrent",
+              "description": "Whether this test run concurrently with other concurrent tests in the suite.\n\nSet concurrent to false to opt out of concurrency inherited from describe.concurrent or sequence.concurrent:",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "test('runs sequentially', { concurrent: false }, async () => {\n  // ...\n})"
+                }
+              ],
+              "notes": [
+                "Type: boolean",
+                "Default: false (configured by sequence.concurrent)",
+                "Alias: test.concurrent"
+              ],
+              "children": []
+            },
+            {
+              "name": "skip",
+              "id": "skip",
+              "level": 3,
+              "url": "https://vitest.dev/api/test#skip",
+              "description": "Whether the test should be skipped.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [
+                "Type: boolean",
+                "Default: false",
+                "Alias: test.skip"
+              ],
+              "children": []
+            },
+            {
+              "name": "only",
+              "id": "only",
+              "level": 3,
+              "url": "https://vitest.dev/api/test#only",
+              "description": "Should this test be the only one running in a suite.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [
+                "Type: boolean",
+                "Default: false",
+                "Alias: test.only"
+              ],
+              "children": []
+            },
+            {
+              "name": "todo",
+              "id": "todo",
+              "level": 3,
+              "url": "https://vitest.dev/api/test#todo",
+              "description": "Whether the test should be skipped and marked as a todo.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [
+                "Type: boolean",
+                "Default: false",
+                "Alias: test.todo"
+              ],
+              "children": []
+            },
+            {
+              "name": "fails",
+              "id": "fails",
+              "level": 3,
+              "url": "https://vitest.dev/api/test#fails",
+              "description": "Whether the test is expected to fail. If it does, the test will pass, otherwise it will fail.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [
+                "Type: boolean",
+                "Default: false",
+                "Alias: test.fails"
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "test.extend",
+          "id": "test-extend",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-extend",
+          "description": "Use test.extend to extend the test context with custom fixtures. This will return a new test and it's also extendable, so you can compose more fixtures or override existing ones by extending it as you need. See Extend Test Context for more information.",
+          "signatures": [
+            "import { test as baseTest, expect } from 'vitest'\n\nexport const test = baseTest\n  // Simple value - type is inferred as { port: number; host: string }\n  .extend('config', { port: 3000, host: 'localhost' })\n  // Function fixture - type is inferred from return value\n  .extend('server', async ({ config }) => {\n    // TypeScript knows config is { port: number; host: string }\n    return `http://${config.host}:${config.port}`\n  })\n\ntest('server uses correct port', ({ config, server }) => {\n  // TypeScript knows the types:\n  // - config is { port: number; host: string }\n  // - server is string\n  expect(server).toBe('http://localhost:3000')\n  expect(config.port).toBe(3000)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { test as baseTest, expect } from 'vitest'\n\nexport const test = baseTest\n  // Simple value - type is inferred as { port: number; host: string }\n  .extend('config', { port: 3000, host: 'localhost' })\n  // Function fixture - type is inferred from return value\n  .extend('server', async ({ config }) => {\n    // TypeScript knows config is { port: number; host: string }\n    return `http://${config.host}:${config.port}`\n  })\n\ntest('server uses correct port', ({ config, server }) => {\n  // TypeScript knows the types:\n  // - config is { port: number; host: string }\n  // - server is string\n  expect(server).toBe('http://localhost:3000')\n  expect(config.port).toBe(3000)\n})"
+            }
+          ],
+          "notes": [
+            "Alias: it.extend"
+          ],
+          "children": []
+        },
+        {
+          "name": "test.override 4.1.0+",
+          "id": "test-override",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-override",
+          "description": "Use test.override to override fixture values for all tests within the current suite and its nested suites. This must be called at the top level of a describe block. See Overriding Fixture Values for more information.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { test as baseTest, describe, expect } from 'vitest'\n\nconst test = baseTest\n  .extend('dependency', 'default')\n  .extend('dependant', ({ dependency }) => dependency)\n\ndescribe('use scoped values', () => {\n  test.override({ dependency: 'new' })\n\n  test('uses scoped value', ({ dependant }) => {\n    // `dependant` uses the new overridden value that is scoped\n    // to all tests in this suite\n    expect(dependant).toEqual({ dependency: 'new' })\n  })\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "test.scoped 3.1.0+ deprecated",
+          "id": "test-scoped",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-scoped",
+          "description": "Alias of test.override",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "Alias: it.scoped",
+            "DEPRECATEDtest.scoped is deprecated in favor of test.override and will be removed in a future major version."
+          ],
+          "children": []
+        },
+        {
+          "name": "test.skip",
+          "id": "test-skip",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-skip",
+          "description": "If you want to skip running certain tests, but you don't want to delete the code due to any reason, you can use test.skip to avoid running them.\n\nYou can also skip test by calling skip on its context dynamically:\n\nIf the condition is unknown, you can provide it to the skip method as the first arguments:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest.skip('skipped test', () => {\n  // Test skipped, no error\n  assert.equal(Math.sqrt(4), 3)\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('skipped test', (context) => {\n  context.skip()\n  // Test skipped, no error\n  assert.equal(Math.sqrt(4), 3)\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('skipped test', (context) => {\n  context.skip(Math.random() < 0.5, 'optional message')\n  // Test skipped, no error\n  assert.equal(Math.sqrt(4), 3)\n})"
+            }
+          ],
+          "notes": [
+            "Alias: it.skip"
+          ],
+          "children": []
+        },
+        {
+          "name": "test.skipIf",
+          "id": "test-skipif",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-skipif",
+          "description": "In some cases you might run tests multiple times with different environments, and some of the tests might be environment-specific. Instead of wrapping the test code with if, you can use test.skipIf to skip the test whenever the condition is truthy.\n\nUnlike test.skip, test.skipIf always sets the skip option: true if the condition is truthy, false otherwise. A falsy condition overrides skip inherited from tags, the same as test(name, { skip: false }).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst isDev = process.env.NODE_ENV === 'development'\n\ntest.skipIf(isDev)('prod only test', () => {\n  // this test only runs in production\n})"
+            }
+          ],
+          "notes": [
+            "Alias: it.skipIf"
+          ],
+          "children": []
+        },
+        {
+          "name": "test.runIf",
+          "id": "test-runif",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-runif",
+          "description": "Opposite of test.skipIf. It always sets the skip option: false if the condition is truthy, true otherwise.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst isDev = process.env.NODE_ENV === 'development'\n\ntest.runIf(isDev)('dev only test', () => {\n  // this test only runs in development\n})"
+            }
+          ],
+          "notes": [
+            "Alias: it.runIf"
+          ],
+          "children": []
+        },
+        {
+          "name": "test.only",
+          "id": "test-only",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-only",
+          "description": "Use test.only to only run certain tests in a given suite. This is useful when debugging.\n\nSometimes it is very useful to run only tests in a certain file, ignoring all other tests from the whole test suite, which pollute the output.\n\nIn order to do that, run vitest with specific file containing the tests in question:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest.only('test', () => {\n  // Only this test (and others marked with only) are run\n  assert.equal(Math.sqrt(4), 2)\n})"
+            },
+            {
+              "language": "shell",
+              "code": "vitest interesting.test.ts"
+            }
+          ],
+          "notes": [
+            "Alias: it.only",
+            "WARNINGVitest detects when tests are running in CI and will throw an error if any test has only flag. You can configure this behaviour via allowOnly option."
+          ],
+          "children": []
+        },
+        {
+          "name": "test.concurrent",
+          "id": "test-concurrent",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-concurrent",
+          "description": "test.concurrent marks consecutive tests to be run in parallel. It receives the test name, an async function with the tests to collect, and an optional timeout (in milliseconds).\n\ntest.skip, test.only, and test.todo works with concurrent tests. All the following combinations are valid:\n\nWhen running concurrent tests, Snapshots and Assertions must use expect from the local Test Context to ensure the right test is detected.\n\nNote that if tests are synchronous, Vitest will still run them sequentially.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { describe, test } from 'vitest'\n\n// The two tests marked with concurrent will be run in parallel\ndescribe('suite', () => {\n  test('serial test', async () => { /* ... */ })\n  test.concurrent('concurrent test 1', async () => { /* ... */ })\n  test.concurrent('concurrent test 2', async () => { /* ... */ })\n})"
+            },
+            {
+              "language": "ts",
+              "code": "test.concurrent(/* ... */)\ntest.skip.concurrent(/* ... */) // or test.concurrent.skip(/* ... */)\ntest.only.concurrent(/* ... */) // or test.concurrent.only(/* ... */)\ntest.todo.concurrent(/* ... */) // or test.concurrent.todo(/* ... */)"
+            },
+            {
+              "language": "ts",
+              "code": "test.concurrent('test 1', async ({ expect }) => {\n  expect(foo).toMatchSnapshot()\n})\ntest.concurrent('test 2', async ({ expect }) => {\n  expect(foo).toMatchSnapshot()\n})"
+            }
+          ],
+          "notes": [
+            "Alias: it.concurrent"
+          ],
+          "children": []
+        },
+        {
+          "name": "test.todo",
+          "id": "test-todo",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-todo",
+          "description": "Use test.todo to stub tests to be implemented later. An entry will be shown in the report for the tests so you know how many tests you still need to implement.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "// An entry will be shown in the report for this test\ntest.todo('unimplemented test', () => {\n  // failing implementation...\n})"
+            }
+          ],
+          "notes": [
+            "Alias: it.todo",
+            "TIPVitest will automatically mark test as todo if test has no body."
+          ],
+          "children": []
+        },
+        {
+          "name": "test.fails",
+          "id": "test-fails",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-fails",
+          "description": "Use test.fails to indicate that an assertion will fail explicitly.\n\nThis flag is useful to track difference in behaviour of your library over time. For example, you can define a failing test without fixing the issue yet due to time constraints. Tests marked with fails are tracked in the test summary since Vitest 4.1.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest.fails('repro #1234', () => {\n  expect(add(1, 2)).toBe(4)\n})"
+            }
+          ],
+          "notes": [
+            "Alias: it.fails"
+          ],
+          "children": []
+        },
+        {
+          "name": "test.each",
+          "id": "test-each",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-each",
+          "description": "Use test.each when you need to run the same test with different variables. You can inject parameters with printf formatting in the test name in the order of the test function parameters.\n\nYou can also access object properties and array elements with $ prefix:\n\nYou can also access Object attributes with ., if you are using objects as arguments:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest.each([\n  [1, 1, 2],\n  [1, 2, 3],\n  [2, 1, 3],\n])('add(%i, %i) -> %i', (a, b, expected) => {\n  expect(a + b).toBe(expected)\n})\n\n// this will return\n// ✓ add(1, 1) -> 2\n// ✓ add(1, 2) -> 3\n// ✓ add(2, 1) -> 3"
+            },
+            {
+              "language": "ts",
+              "code": "test.each([\n  { a: 1, b: 1, expected: 2 },\n  { a: 1, b: 2, expected: 3 },\n  { a: 2, b: 1, expected: 3 },\n])('add($a, $b) -> $expected', ({ a, b, expected }) => {\n  expect(a + b).toBe(expected)\n})\n\n// this will return\n// ✓ add(1, 1) -> 2\n// ✓ add(1, 2) -> 3\n// ✓ add(2, 1) -> 3\n\ntest.each([\n  [1, 1, 2],\n  [1, 2, 3],\n  [2, 1, 3],\n])('add($0, $1) -> $2', (a, b, expected) => {\n  expect(a + b).toBe(expected)\n})\n\n// this will return\n// ✓ add(1, 1) -> 2\n// ✓ add(1, 2) -> 3\n// ✓ add(2, 1) -> 3"
+            },
+            {
+              "language": "ts",
+              "code": "test.each`\na               | b      | expected\n${{ val: 1 }}   | ${'b'} | ${'1b'}\n${{ val: 2 }}   | ${'b'} | ${'2b'}\n${{ val: 3 }}   | ${'b'} | ${'3b'}\n`('add($a.val, $b) -> $expected', ({ a, b, expected }) => {\n  expect(a.val + b).toBe(expected)\n})\n\n// this will return\n// ✓ add(1, b) -> 1b\n// ✓ add(2, b) -> 2b\n// ✓ add(3, b) -> 3b"
+            },
+            {
+              "language": "ts",
+              "code": "import { expect, test } from 'vitest'\n\ntest.each`\n  a               | b      | expected\n  ${1}            | ${1}   | ${2}\n  ${'a'}          | ${'b'} | ${'ab'}\n  ${[]}           | ${'b'} | ${'b'}\n  ${{}}           | ${'b'} | ${'[object Object]b'}\n  ${{ asd: 1 }}   | ${'b'} | ${'[object Object]b'}\n`('returns $expected when $a is added $b', ({ a, b, expected }) => {\n  expect(a + b).toBe(expected)\n})"
+            }
+          ],
+          "notes": [
+            "Alias: it.each",
+            "TIPWhile test.each is provided for Jest compatibility, Vitest also has test.for with an additional feature to integrate TestContext.",
+            "%s: string",
+            "%d: number",
+            "%i: integer",
+            "%f: floating point value",
+            "%j: json",
+            "%o: object",
+            "%#: 0-based index of the test case",
+            "%$: 1-based index of the test case",
+            "%%: single percent sign ('%')",
+            "First row should be column names, separated by |;",
+            "One or more subsequent rows of data supplied as template literal expressions using ${value} syntax.",
+            "TIPVitest formats interpolated title values with its display formatter. If the value is too truncated, you can increase taskTitleValueFormatTruncate in your config file."
+          ],
+          "children": []
+        },
+        {
+          "name": "test.for",
+          "id": "test-for",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-for",
+          "description": "Alternative to test.each to provide TestContext.\n\nThe difference from test.each lies in how arrays are provided in the arguments. Non-array arguments to test.for (including template string usage) work exactly the same as for test.each.\n\nThe 2nd argument is TestContext and can be used for concurrent snapshots, for example:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "// `each` spreads arrays\ntest.each([\n  [1, 1, 2],\n  [1, 2, 3],\n  [2, 1, 3],\n])('add(%i, %i) -> %i', (a, b, expected) => { \n  expect(a + b).toBe(expected)\n})\n\n// `for` doesn't spread arrays (notice the square brackets around the arguments)\ntest.for([\n  [1, 1, 2],\n  [1, 2, 3],\n  [2, 1, 3],\n])('add(%i, %i) -> %i', ([a, b, expected]) => { \n  expect(a + b).toBe(expected)\n})"
+            },
+            {
+              "language": "ts",
+              "code": "test.concurrent.for([\n  [1, 1],\n  [1, 2],\n  [2, 1],\n])('add(%i, %i)', ([a, b], { expect }) => {\n  expect(a + b).toMatchSnapshot()\n})"
+            }
+          ],
+          "notes": [
+            "Alias: it.for"
+          ],
+          "children": []
+        },
+        {
+          "name": "test.describe 4.1.0+",
+          "id": "test-describe",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-describe",
+          "description": "Scoped describe. See describe for more information.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "test.suite 4.1.0+",
+          "id": "test-suite",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-suite",
+          "description": "Alias for suite. See describe for more information.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "test.beforeEach",
+          "id": "test-beforeeach",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-beforeeach",
+          "description": "Scoped beforeEach hook that inherits types from test.extend. See beforeEach for more information.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "test.afterEach",
+          "id": "test-aftereach",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-aftereach",
+          "description": "Scoped afterEach hook that inherits types from test.extend. See afterEach for more information.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "test.beforeAll",
+          "id": "test-beforeall",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-beforeall",
+          "description": "Scoped beforeAll hook that inherits types from test.extend. See beforeAll for more information.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "test.afterAll",
+          "id": "test-afterall",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-afterall",
+          "description": "Scoped afterAll hook that inherits types from test.extend. See afterAll for more information.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "test.aroundEach 4.1.0+",
+          "id": "test-aroundeach",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-aroundeach",
+          "description": "Scoped aroundEach hook that inherits types from test.extend. See aroundEach for more information.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "test.aroundAll 4.1.0+",
+          "id": "test-aroundall",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#test-aroundall",
+          "description": "Scoped aroundAll hook that inherits types from test.extend. See aroundAll for more information.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "bench experimental",
+          "id": "bench",
+          "level": 2,
+          "url": "https://vitest.dev/api/test#bench",
+          "description": "",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "Updated in Vitest 5The benchmarking API has been rewritten. bench is no longer a top-level import from vitest, and the bench.skip / bench.only / bench.todo helpers have been removed. bench is now a test-context fixture accessed from inside a test().See the Benchmarking guide for the new API."
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

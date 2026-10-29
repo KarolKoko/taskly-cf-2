@@ -1,0 +1,1191 @@
+{
+  "title": "Vitest",
+  "url": "https://vitest.dev/api/advanced/vitest",
+  "description": "",
+  "entries": [
+    {
+      "name": "Vitest",
+      "id": "vitest",
+      "level": 1,
+      "url": "https://vitest.dev/api/advanced/vitest#vitest",
+      "description": "",
+      "signatures": [],
+      "aliases": [],
+      "examples": [],
+      "notes": [],
+      "children": [
+        {
+          "name": "mode deprecated",
+          "id": "mode",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#mode",
+          "description": "Since Vitest 5, this property is always 'test'.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "config",
+          "id": "config",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#config",
+          "description": "The root (or global) config. If projects are defined, they will reference this as globalConfig.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "WARNINGThis is Vitest config, it doesn't extend Vite config. It only has resolved values from the test property."
+          ],
+          "children": []
+        },
+        {
+          "name": "vite",
+          "id": "vite",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#vite",
+          "description": "This is a global ViteDevServer.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "state experimental",
+          "id": "state",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#state",
+          "description": "Global state stores information about the current tests. It uses internal serializable Task API by default, but we recommend using the Reported Tasks API instead by calling state.getReportedEntity():\n\nIn the future, the old API won't be exposed anymore.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "const task = vitest.state.idMap.get(taskId) // old API\nconst testCase = vitest.state.getReportedEntity(task) // new API"
+            }
+          ],
+          "notes": [
+            "WARNINGPublic state is an experimental API (except vitest.state.getReportedEntity). Breaking changes might not follow SemVer, please pin Vitest's version when using it."
+          ],
+          "children": []
+        },
+        {
+          "name": "snapshot",
+          "id": "snapshot",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#snapshot",
+          "description": "The global snapshot manager. Vitest keeps track of all snapshots using the snapshot.add method.\n\nYou can get the latest summary of snapshots via the vitest.snapshot.summary property.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "cache",
+          "id": "cache",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#cache",
+          "description": "Cache manager that stores the results of the previous test runs. In Vitest itself this is only used by the default sequencer to sort tests.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": [
+            {
+              "name": "cache.getTestSpecificationResult 5.0.4+",
+              "id": "cache-gettestspecificationresult",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/vitest#cache-gettestspecificationresult",
+              "description": "Returns the result of the test file from the previous test runs, or undefined if Vitest has no result for it.\n\nA run is not complete if it was cancelled or if it executed only a part of the file, for example, because of a test name pattern, a line filter or .only.",
+              "signatures": [
+                "function getTestSpecificationResult(\n  specification: TestSpecification\n): CachedTestFileResult | undefined\n\ninterface CachedTestFileResult {\n  /**\n   * The file has a known failure.\n   * Only a complete run of the file clears it.\n   */\n  failed: boolean\n  /**\n   * Duration of the last complete run in milliseconds.\n   */\n  duration: number\n  /**\n   * Unix timestamp in milliseconds of the start of the last complete run.\n   * It is not set if the file never ran completely.\n   */\n  lastRun?: number\n}"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function getTestSpecificationResult(\n  specification: TestSpecification\n): CachedTestFileResult | undefined\n\ninterface CachedTestFileResult {\n  /**\n   * The file has a known failure.\n   * Only a complete run of the file clears it.\n   */\n  failed: boolean\n  /**\n   * Duration of the last complete run in milliseconds.\n   */\n  duration: number\n  /**\n   * Unix timestamp in milliseconds of the start of the last complete run.\n   * It is not set if the file never ran completely.\n   */\n  lastRun?: number\n}"
+                }
+              ],
+              "notes": [
+                "WARNINGvitest.cache.getFileTestResults and vitest.cache.getFileStats are deprecated and will be removed in the next major version. Use getTestSpecificationResult instead of getFileTestResults. Vitest does not cache file sizes anymore; read the size from the file system if your sequencer needs it."
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "watcher 4.0.0+",
+          "id": "watcher",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#watcher",
+          "description": "The instance of a Vitest watcher with useful methods to track file changes and rerun tests. You can use onFileChange, onFileDelete or onFileCreate with your own watcher, if the built-in watcher is disabled.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "projects",
+          "id": "projects",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#projects",
+          "description": "An array of test projects that belong to user's projects. If the user did not specify a them, this array will only contain a root project.\n\nVitest will ensure that there is always at least one project in this array. If the user specifies a non-existent --project name, Vitest will throw an error before this array is defined.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "getRootProject",
+          "id": "getrootproject",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#getrootproject",
+          "description": "This returns the root test project. The root project generally doesn't run any tests and is not included in vitest.projects unless the user explicitly includes the root config in their configuration, or projects are not defined at all.\n\nThe primary goal of the root project is to setup the global config. In fact, rootProject.config references rootProject.globalConfig and vitest.config directly:",
+          "signatures": [
+            "function getRootProject(): TestProject"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getRootProject(): TestProject"
+            },
+            {
+              "language": "ts",
+              "code": "rootProject.config === rootProject.globalConfig === rootProject.vitest.config"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "provide",
+          "id": "provide",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#provide",
+          "description": "Vitest exposes provide method which is a shorthand for vitest.getRootProject().provide. With this method you can pass down values from the main thread to tests. All values are checked with structuredClone before they are stored, but the values themselves are not cloned.\n\nTo receive the values in the test, you need to import inject method from vitest entrypoint:\n\nFor better type safety, we encourage you to augment the type of ProvidedContext:",
+          "signatures": [
+            "function provide<T extends keyof ProvidedContext & string>(\n  key: T,\n  value: ProvidedContext[T],\n): void",
+            "import { createVitest } from 'vitest/node'\n\nconst vitest = await createVitest('test', {\n  watch: false,\n})\nvitest.provide('wsPort', 3000)\n\ndeclare module 'vitest' {\n  export interface ProvidedContext {\n    wsPort: number\n  }\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function provide<T extends keyof ProvidedContext & string>(\n  key: T,\n  value: ProvidedContext[T],\n): void"
+            },
+            {
+              "language": "ts",
+              "code": "import { inject } from 'vitest'\nconst port = inject('wsPort') // 3000"
+            },
+            {
+              "language": "ts",
+              "code": "import { createVitest } from 'vitest/node'\n\nconst vitest = await createVitest('test', {\n  watch: false,\n})\nvitest.provide('wsPort', 3000)\n\ndeclare module 'vitest' {\n  export interface ProvidedContext {\n    wsPort: number\n  }\n}"
+            }
+          ],
+          "notes": [
+            "WARNINGTechnically, provide is a method of TestProject, so it is limited to the specific project. However, all projects inherit the values from the root project which makes vitest.provide universal way of passing down values to tests."
+          ],
+          "children": []
+        },
+        {
+          "name": "getProvidedContext",
+          "id": "getprovidedcontext",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#getprovidedcontext",
+          "description": "This returns the root context object. This is a shorthand for vitest.getRootProject().getProvidedContext.",
+          "signatures": [
+            "function getProvidedContext(): ProvidedContext"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getProvidedContext(): ProvidedContext"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "getProjectByName",
+          "id": "getprojectbyname",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#getprojectbyname",
+          "description": "This method returns the project by its name. Similar to calling vitest.projects.find.",
+          "signatures": [
+            "function getProjectByName(name: string): TestProject"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getProjectByName(name: string): TestProject"
+            }
+          ],
+          "notes": [
+            "WARNINGIn case the project doesn't exist, this method will return the root project - make sure to check the names again if the project you are looking for is the one returned.If user didn't customize a name, the Vitest will assign an empty string as a name."
+          ],
+          "children": []
+        },
+        {
+          "name": "globTestSpecifications",
+          "id": "globtestspecifications",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#globtestspecifications",
+          "description": "This method constructs new test specifications by collecting every test in all projects with project.globTestFiles. It accepts string filters to match the test files - these are the same filters that CLI supports.\n\nThis method automatically caches all test specifications. When you call getModuleSpecifications next time, it will return the same specifications unless clearSpecificationsCache was called before that.",
+          "signatures": [
+            "function globTestSpecifications(\n  filters?: string[],\n): Promise<TestSpecification[]>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function globTestSpecifications(\n  filters?: string[],\n): Promise<TestSpecification[]>"
+            },
+            {
+              "language": "ts",
+              "code": "const specifications = await vitest.globTestSpecifications(['my-filter'])\n// [TestSpecification{ moduleId: '/tests/my-filter.test.ts' }]\nconsole.log(specifications)"
+            }
+          ],
+          "notes": [
+            "WARNINGAs of Vitest 3, it's possible to have multiple test specifications with the same module ID (file path) if poolMatchGlob has several pools or if typecheck is enabled. This possibility will be removed in Vitest 4."
+          ],
+          "children": []
+        },
+        {
+          "name": "getRelevantTestSpecifications",
+          "id": "getrelevanttestspecifications",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#getrelevanttestspecifications",
+          "description": "This method resolves every test specification by calling project.globTestFiles. It accepts string filters to match the test files - these are the same filters that CLI supports. If --changed flag was specified, the list will be filtered to include only files that changed. getRelevantTestSpecifications doesn't run any test files.",
+          "signatures": [
+            "function getRelevantTestSpecifications(\n  filters?: string[]\n): Promise<TestSpecification[]>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getRelevantTestSpecifications(\n  filters?: string[]\n): Promise<TestSpecification[]>"
+            }
+          ],
+          "notes": [
+            "WARNINGThis method can be slow because it needs to filter --changed flags. Do not use it if you just need a list of test files.If you need to get the list of specifications for known test files, use getModuleSpecifications instead.If you need to get the list of all possible test files, use globTestSpecifications."
+          ],
+          "children": []
+        },
+        {
+          "name": "mergeReports",
+          "id": "mergereports",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#mergereports",
+          "description": "Merge reports from multiple runs located in the specified directory (value from --merge-reports if not specified). This value can also be set on config.mergeReports (by default, it will read .vitest/blob/ folder).\n\nNote that the directory will always be resolved relative to the working directory.\n\nThis method is called automatically by startVitest if config.mergeReports is set.",
+          "signatures": [
+            "function mergeReports(directory?: string): Promise<TestRunResult>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mergeReports(directory?: string): Promise<TestRunResult>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "collect",
+          "id": "collect",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#collect",
+          "description": "Based on staticParse, this will either statically analyse test files to collect them (the default) or run the code without executing test callbacks. collect returns unhandled errors and an array of test modules. It accepts string filters to match the test files - these are the same filters that CLI supports.\n\nThis method resolves tests specifications based on the config include, exclude, and includeSource values. Read more at project.globTestFiles. If --changed flag was specified, the list will be filtered to include only files that changed.",
+          "signatures": [
+            "function collect(\n  filters?: string[],\n  options?: {\n    staticParse?: boolean\n    staticParseConcurrency?: number\n  }\n): Promise<TestRunResult>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function collect(\n  filters?: string[],\n  options?: {\n    staticParse?: boolean\n    staticParseConcurrency?: number\n  }\n): Promise<TestRunResult>"
+            }
+          ],
+          "notes": [
+            "WARNINGNote that since Vitest 5, the tests are collected by static analysis by default. If disabled via the second option, Vitest will run every test file in isolation, just like it runs regular tests. This would make this method very slow, unless you disable isolation manually before collecting tests."
+          ],
+          "children": []
+        },
+        {
+          "name": "start",
+          "id": "start",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#start",
+          "description": "Initialize reporters, the coverage provider, and run tests. This method accepts string filters to match the test files - these are the same filters that CLI supports.\n\nThis method is called automatically by startVitest if config.mergeReports and config.standalone are not set.",
+          "signatures": [
+            "function start(filters?: string[]): Promise<TestRunResult>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function start(filters?: string[]): Promise<TestRunResult>"
+            }
+          ],
+          "notes": [
+            "WARNINGThis method should not be called if vitest.standalone() is also invoked. Use runTestSpecifications or rerunTestSpecifications instead if you need to run tests after Vitest was initialised."
+          ],
+          "children": []
+        },
+        {
+          "name": "standalone 4.1.1+",
+          "id": "standalone",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#standalone",
+          "description": "Initialize reporters and the coverage provider. This method doesn't run any tests. If the --watch flag is provided, Vitest will still run changed tests even if this method was not called.\n\nInternally, this method is called only if --standalone flag is enabled.\n\nThis method is called automatically by startVitest if config.standalone is set.",
+          "signatures": [
+            "function standalone(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function standalone(): Promise<void>"
+            }
+          ],
+          "notes": [
+            "Alias: init deprecated",
+            "WARNINGThis method should not be called if vitest.start() is also invoked."
+          ],
+          "children": []
+        },
+        {
+          "name": "getModuleSpecifications",
+          "id": "getmodulespecifications",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#getmodulespecifications",
+          "description": "Returns a list of test specifications related to the module ID. The ID should already be resolved to an absolute file path. If ID doesn't match include or includeSource patterns, the returned array will be empty.\n\nThis method can return already cached specifications based on the moduleId and pool. But note that project.createSpecification always returns a new instance and it's not cached automatically. However, specifications are automatically cached when runTestSpecifications is called.",
+          "signatures": [
+            "function getModuleSpecifications(moduleId: string): TestSpecification[]"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getModuleSpecifications(moduleId: string): TestSpecification[]"
+            }
+          ],
+          "notes": [
+            "WARNINGAs of Vitest 3, this method uses a cache to check if the file is a test. To make sure that the cache is not empty, call globTestSpecifications at least once."
+          ],
+          "children": []
+        },
+        {
+          "name": "clearSpecificationsCache",
+          "id": "clearspecificationscache",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#clearspecificationscache",
+          "description": "Vitest automatically caches test specifications for each file when globTestSpecifications or runTestSpecifications is called. This method clears the cache for the given file or the whole cache altogether depending on the first argument.",
+          "signatures": [
+            "function clearSpecificationsCache(moduleId?: string): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function clearSpecificationsCache(moduleId?: string): void"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "runTestSpecifications",
+          "id": "runtestspecifications",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#runtestspecifications",
+          "description": "This method runs every test based on the received specifications. The second argument, allTestsRun, is used by the coverage provider to determine if it needs to include uncovered files in report.",
+          "signatures": [
+            "function runTestSpecifications(\n  specifications: TestSpecification[],\n  allTestsRun = false\n): Promise<TestRunResult>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function runTestSpecifications(\n  specifications: TestSpecification[],\n  allTestsRun = false\n): Promise<TestRunResult>"
+            }
+          ],
+          "notes": [
+            "WARNINGThis method doesn't trigger onWatcherRerun, onWatcherStart and onTestsRerun callbacks. If you are rerunning tests based on the file change, consider using rerunTestSpecifications instead."
+          ],
+          "children": []
+        },
+        {
+          "name": "rerunTestSpecifications",
+          "id": "reruntestspecifications",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#reruntestspecifications",
+          "description": "This method emits reporter.onWatcherRerun and onTestsRerun events, then it runs tests with runTestSpecifications. If there were no errors in the main process, it will emit reporter.onWatcherStart event.",
+          "signatures": [
+            "function rerunTestSpecifications(\n  specifications: TestSpecification[],\n  allTestsRun = false\n): Promise<TestRunResult>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function rerunTestSpecifications(\n  specifications: TestSpecification[],\n  allTestsRun = false\n): Promise<TestRunResult>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "runTestFiles 4.1.0+",
+          "id": "runtestfiles",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#runtestfiles",
+          "description": "This automatically creates specifications to run based on filepaths filters.\n\nThis is different from start because it does not create a coverage provider, trigger onInit and onWatcherStart events, or throw an error if there are no files to run (in this case, the function will return empty arrays without triggering a test run).\n\nThis function accepts the same filters as start and the CLI.",
+          "signatures": [
+            "function runTestFiles(\n  filepaths: string[],\n  allTestsRun = false\n): Promise<TestRunResult>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function runTestFiles(\n  filepaths: string[],\n  allTestsRun = false\n): Promise<TestRunResult>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "updateSnapshot",
+          "id": "updatesnapshot",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#updatesnapshot",
+          "description": "Update snapshots in specified files. If no files are provided, it will update files with failed tests and obsolete snapshots.",
+          "signatures": [
+            "function updateSnapshot(files?: string[]): Promise<TestRunResult>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function updateSnapshot(files?: string[]): Promise<TestRunResult>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "collectTests",
+          "id": "collecttests",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#collecttests",
+          "description": "Execute test files without running test callbacks. collectTests returns unhandled errors and an array of test modules.\n\nThis method works exactly the same as collect, but you need to provide test specifications yourself.",
+          "signatures": [
+            "function collectTests(\n  specifications: TestSpecification[]\n): Promise<TestRunResult>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function collectTests(\n  specifications: TestSpecification[]\n): Promise<TestRunResult>"
+            }
+          ],
+          "notes": [
+            "WARNINGNote that Vitest doesn't use static analysis to collect tests. Vitest will run every test file in isolation, just like it runs regular tests.This makes this method very slow, unless you disable isolation before collecting tests."
+          ],
+          "children": []
+        },
+        {
+          "name": "cancelCurrentRun",
+          "id": "cancelcurrentrun",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#cancelcurrentrun",
+          "description": "This method will gracefully cancel all ongoing tests. It will stop the on-going tests and will not run tests that were scheduled to run but haven't started yet.",
+          "signatures": [
+            "function cancelCurrentRun(reason: CancelReason): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function cancelCurrentRun(reason: CancelReason): Promise<void>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "setGlobalTestNamePattern",
+          "id": "setglobaltestnamepattern",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#setglobaltestnamepattern",
+          "description": "This methods overrides the global test name pattern.",
+          "signatures": [
+            "function setGlobalTestNamePattern(pattern: string | RegExp): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function setGlobalTestNamePattern(pattern: string | RegExp): void"
+            }
+          ],
+          "notes": [
+            "WARNINGThis method doesn't start running any tests. To run tests with updated pattern, call runTestSpecifications."
+          ],
+          "children": []
+        },
+        {
+          "name": "getGlobalTestNamePattern 4.0.0+",
+          "id": "getglobaltestnamepattern",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#getglobaltestnamepattern",
+          "description": "Returns the regexp used for the global test name pattern.",
+          "signatures": [
+            "function getGlobalTestNamePattern(): RegExp | undefined"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getGlobalTestNamePattern(): RegExp | undefined"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "resetGlobalTestNamePattern",
+          "id": "resetglobaltestnamepattern",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#resetglobaltestnamepattern",
+          "description": "This methods resets the test name pattern. It means Vitest won't skip any tests now.",
+          "signatures": [
+            "function resetGlobalTestNamePattern(): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function resetGlobalTestNamePattern(): void"
+            }
+          ],
+          "notes": [
+            "WARNINGThis method doesn't start running any tests. To run tests without a pattern, call runTestSpecifications."
+          ],
+          "children": []
+        },
+        {
+          "name": "enableSnapshotUpdate",
+          "id": "enablesnapshotupdate",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#enablesnapshotupdate",
+          "description": "Enable the mode that allows updating snapshots when running tests. Every test that runs after this method is called will update snapshots. To disable the mode, call resetSnapshotUpdate.",
+          "signatures": [
+            "function enableSnapshotUpdate(): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function enableSnapshotUpdate(): void"
+            }
+          ],
+          "notes": [
+            "WARNINGThis method doesn't start running any tests. To update snapshots, run tests with runTestSpecifications."
+          ],
+          "children": []
+        },
+        {
+          "name": "resetSnapshotUpdate",
+          "id": "resetsnapshotupdate",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#resetsnapshotupdate",
+          "description": "Disable the mode that allows updating snapshots when running tests. This method doesn't start running any tests.",
+          "signatures": [
+            "function resetSnapshotUpdate(): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function resetSnapshotUpdate(): void"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "invalidateFile",
+          "id": "invalidatefile",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#invalidatefile",
+          "description": "This method invalidates the file in the cache of every project. It is mostly useful if you rely on your own watcher because Vite's cache persist in memory.",
+          "signatures": [
+            "function invalidateFile(filepath: string): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function invalidateFile(filepath: string): void"
+            }
+          ],
+          "notes": [
+            "DANGERIf you disable Vitest's watcher but keep Vitest running, it is important to manually clear the cache with this method because there is no way to disable the cache. This method will also invalidate file's importers."
+          ],
+          "children": []
+        },
+        {
+          "name": "import",
+          "id": "import",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#import",
+          "description": "Import a file using Vite module runner. The file will be transformed by Vite with the global config and executed in a separate context. Note that moduleId will be relative to the config.root.",
+          "signatures": [
+            "function import<T>(moduleId: string): Promise<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function import<T>(moduleId: string): Promise<T>"
+            },
+            {
+              "language": "ts",
+              "code": "import * as staticExample from './example.js'\nconst dynamicExample = await vitest.import('./example.js')\n\ndynamicExample !== staticExample // ✅"
+            }
+          ],
+          "notes": [
+            "INFOInternally, Vitest uses this method to import global setups, custom coverage providers, and custom reporters, meaning all of them share the same module graph as long as they belong to the same Vite server."
+          ],
+          "children": []
+        },
+        {
+          "name": "close",
+          "id": "close",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#close",
+          "description": "Closes all projects and their associated resources. This can only be called once; the closing promise is cached until the server restarts.",
+          "signatures": [
+            "function close(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function close(): Promise<void>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "exit",
+          "id": "exit",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#exit",
+          "description": "Closes all projects and exit the process. If force is set to true, the process will exit immediately after closing the projects.\n\nThis method will also forcefully call process.exit() if the process is still active after config.teardownTimeout milliseconds.",
+          "signatures": [
+            "function exit(force = false): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function exit(force = false): Promise<void>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "shouldKeepServer",
+          "id": "shouldkeepserver",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#shouldkeepserver",
+          "description": "This method will return true if the server should be kept running after the tests are done. This usually means that the watch mode was enabled.",
+          "signatures": [
+            "function shouldKeepServer(): boolean"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function shouldKeepServer(): boolean"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "onServerRestart",
+          "id": "onserverrestart",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#onserverrestart",
+          "description": "Register a handler that will be called when the server is restarted due to a config change.",
+          "signatures": [
+            "function onServerRestart(fn: OnServerRestartHandler): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function onServerRestart(fn: OnServerRestartHandler): void"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "onCancel",
+          "id": "oncancel",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#oncancel",
+          "description": "Register a handler that will be called when the test run is cancelled with vitest.cancelCurrentRun.\n\nSince 4.0.10, onCancel experimentally returns a teardown function that will remove the listener. Since 4.1.0 this behaviour is considered stable.",
+          "signatures": [
+            "function onCancel(fn: (reason: CancelReason) => Awaitable<void>): () => void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function onCancel(fn: (reason: CancelReason) => Awaitable<void>): () => void"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "onClose",
+          "id": "onclose",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#onclose",
+          "description": "Register a handler that will be called when the server is closed.",
+          "signatures": [
+            "function onClose(fn: () => Awaitable<void>): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function onClose(fn: () => Awaitable<void>): void"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "onTestsRerun",
+          "id": "ontestsrerun",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#ontestsrerun",
+          "description": "Register a handler that will be called when the tests are rerunning. The tests can rerun when rerunTestSpecifications is called manually or when a file is changed and the built-in watcher schedules a rerun.",
+          "signatures": [
+            "function onTestsRerun(fn: OnTestsRerunHandler): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function onTestsRerun(fn: OnTestsRerunHandler): void"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "onFilterWatchedSpecification",
+          "id": "onfilterwatchedspecification",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#onfilterwatchedspecification",
+          "description": "Register a handler that will be called when a file is changed. This callback should return true or false, indicating whether the test file needs to be rerun.\n\nWith this method, you can hook into the default watcher logic to delay or discard tests that the user doesn't want to keep track of at the moment:\n\nVitest can create different specifications for the same file depending on the pool or locations options, so do not rely on the reference. Vitest can also return cached specification from vitest.getModuleSpecifications - the cache is based on the moduleId and pool. Note that project.createSpecification always returns a new instance.",
+          "signatures": [
+            "function onFilterWatchedSpecification(\n  fn: (specification: TestSpecification) => boolean\n): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function onFilterWatchedSpecification(\n  fn: (specification: TestSpecification) => boolean\n): void"
+            },
+            {
+              "language": "ts",
+              "code": "const continuesTests: string[] = []\n\nmyCustomWrapper.onContinuesRunEnabled(testItem =>\n  continuesTests.push(item.fsPath)\n)\n\nvitest.onFilterWatchedSpecification(specification =>\n  continuesTests.includes(specification.moduleId)\n)"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "matchesProjectFilter 3.1.0+",
+          "id": "matchesprojectfilter",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#matchesprojectfilter",
+          "description": "Check if the name matches the current project filter. If there is no project filter, this will always return true.\n\nIt is not possible to programmatically change the --project CLI option.",
+          "signatures": [
+            "function matchesProjectFilter(name: string): boolean"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function matchesProjectFilter(name: string): boolean"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "waitForTestRunEnd 4.0.0+",
+          "id": "waitfortestrunend",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#waitfortestrunend",
+          "description": "If there is a test run happening, returns a promise that will resolve when the test run is finished.",
+          "signatures": [
+            "function waitForTestRunEnd(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function waitForTestRunEnd(): Promise<void>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "createCoverageProvider 4.0.0+",
+          "id": "createcoverageprovider",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#createcoverageprovider",
+          "description": "Creates a coverage provider if coverage is enabled in the config. This is done automatically if you are running tests with start or standalone methods.",
+          "signatures": [
+            "function createCoverageProvider(): Promise<CoverageProvider | null>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function createCoverageProvider(): Promise<CoverageProvider | null>"
+            }
+          ],
+          "notes": [
+            "WARNINGThis method will also clean all previous reports if coverage.clean is not set to false."
+          ],
+          "children": []
+        },
+        {
+          "name": "enableCoverage 4.0.0+",
+          "id": "enablecoverage",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#enablecoverage",
+          "description": "This method enables coverage for tests that run after this call. enableCoverage doesn't run any tests; it only sets up Vitest to collect coverage.\n\nIt creates a new coverage provider if one doesn't already exist.",
+          "signatures": [
+            "function enableCoverage(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function enableCoverage(): Promise<void>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "disableCoverage 4.0.0+",
+          "id": "disablecoverage",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#disablecoverage",
+          "description": "This method disables coverage collection for tests that run afterwards.",
+          "signatures": [
+            "function disableCoverage(): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function disableCoverage(): void"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "getSeed 4.0.0+",
+          "id": "getseed",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#getseed",
+          "description": "Returns the seed, if tests are running in a random order.",
+          "signatures": [
+            "function getSeed(): number | null"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getSeed(): number | null"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "experimental_parseSpecification 4.0.0+ experimental",
+          "id": "parsespecification",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#parsespecification",
+          "description": "This function will collect all tests inside the file without running it. It uses rollup's parseAst function on top of Vite's ssrTransform to statically analyse the file and collect all tests that it can.",
+          "signatures": [
+            "function experimental_parseSpecification(\n  specification: TestSpecification\n): Promise<TestModule>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function experimental_parseSpecification(\n  specification: TestSpecification\n): Promise<TestModule>"
+            },
+            {
+              "language": "ts",
+              "code": "import { escapeTestName } from 'vitest/node'\n\n// turns into /hello, .+?/\nconst escapedPattern = new RegExp(escapeTestName('hello, %s', true))"
+            }
+          ],
+          "notes": [
+            "WARNINGVitest will only collect tests defined in the file. It will never follow imports to other files.Vitest collects all it, test, suite and describe definitions even if they were not imported from the vitest entry point."
+          ],
+          "children": []
+        },
+        {
+          "name": "parseSpecifications 5.0.0+",
+          "id": "parsespecifications",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#parsespecifications",
+          "description": "This method will collect tests from an array of specifications. By default, Vitest will run only os.availableParallelism() number of specifications at a time to reduce the potential performance degradation. You can specify a different number in a second argument.",
+          "signatures": [
+            "function parseSpecifications(\n  specifications: TestSpecification[],\n  options?: {\n    concurrency?: number\n  }\n): Promise<TestModule[]>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function parseSpecifications(\n  specifications: TestSpecification[],\n  options?: {\n    concurrency?: number\n  }\n): Promise<TestModule[]>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "clearCache 5.0.0+",
+          "id": "clearcache",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#clearcache",
+          "description": "Deletes all Vitest caches, including fsModuleCache.\n\nThis was available since Vitest 4.0.11 as experimental experimental_clearCache method.",
+          "signatures": [
+            "function clearCache(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function clearCache(): Promise<void>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "experimental_getSourceModuleDiagnostic 4.0.15+ experimental",
+          "id": "getsourcemodulediagnostic",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#getsourcemodulediagnostic",
+          "description": "Returns module's diagnostic. If testModule is not provided, selfTime and totalTime will be aggregated across all tests that were running the last time. If the module was not transformed or executed, the diagnostic will be empty.",
+          "signatures": [
+            "export function experimental_getSourceModuleDiagnostic(\n  moduleId: string,\n  testModule?: TestModule,\n): Promise<SourceModuleDiagnostic>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "export function experimental_getSourceModuleDiagnostic(\n  moduleId: string,\n  testModule?: TestModule,\n): Promise<SourceModuleDiagnostic>"
+            }
+          ],
+          "notes": [
+            "WARNINGAt the moment, the browser modules are not supported."
+          ],
+          "children": []
+        },
+        {
+          "name": "createReport 5.0.0+",
+          "id": "createreport",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/vitest#createreport",
+          "description": "Creates a report that is limited to the given scope. Report follows Vitest's rules around Storing artifacts on file system.\n\nReport provides collection of utilities for writing test results, temporary files and other artifacts on the file system. It's especially intended for third party integrations like custom reporters.\n\nAll operations of Report are limited to given scope. A single report cannot interfere with other reports. Internally Vitest creates .vitest directory where each scope creates their own directory. This convention of .vitest directory reduces the amount of entries end-users need to specify in their .gitignore.",
+          "signatures": [
+            "function createReport(scope: string): Report",
+            "import type { Report } from 'vitest/node'\n\nconst scope = 'example-yaml-reporter'\n\n// Automatically creates `<project-root>/.vitest/example-yaml-reporter/`\n// directory if it does not exist already\nconst report: Report = vitest.createReport(scope)"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function createReport(scope: string): Report"
+            },
+            {
+              "language": "ts",
+              "code": "import type { Report } from 'vitest/node'\n\nconst scope = 'example-yaml-reporter'\n\n// Automatically creates `<project-root>/.vitest/example-yaml-reporter/`\n// directory if it does not exist already\nconst report: Report = vitest.createReport(scope)"
+            }
+          ],
+          "notes": [],
+          "children": [
+            {
+              "name": "Report.root",
+              "id": "report-root",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/vitest#report-root",
+              "description": "The root directory for this scope.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "const root: string"
+                },
+                {
+                  "language": "ts",
+                  "code": "const report = vitest.createReport('my-json-reporter')\n\n// Is <project-root>/.vitest/my-json-reporter\nconst root = report.root"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "Report.clean",
+              "id": "report-clean",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/vitest#report-clean",
+              "description": "Clean up the report directory for this scope.",
+              "signatures": [
+                "function clean(): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function clean(): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "const report = vitest.createReport('my-json-reporter')\n\n// Removes everything inside <project-root>/.vitest/my-json-reporter/\nawait report.clean()"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "Report.writeFile",
+              "id": "report-writefile",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/vitest#report-writefile",
+              "description": "Write a file to the report directory for this scope. By default the file will be written with UTF-8 encoding. The filename is relative to the scope directory.",
+              "signatures": [
+                "function writeFile(\n  filename: string,\n  content: string | Uint8Array,\n  encoding?: BufferEncoding\n): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function writeFile(\n  filename: string,\n  content: string | Uint8Array,\n  encoding?: BufferEncoding\n): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "const report = vitest.createReport('my-json-reporter')\n\n// Writes file to .vitest/my-json-reporter/test-report.json\nawait report.writeFile('test-report.json', JSON.stringify(results))"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "Report.readFile",
+              "id": "report-readfile",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/vitest#report-readfile",
+              "description": "Read a file from the report directory for this scope.",
+              "signatures": [
+                "function readFile(filename: string, encoding?: BufferEncoding): Promise<string>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function readFile(filename: string, encoding?: BufferEncoding): Promise<string>"
+                },
+                {
+                  "language": "ts",
+                  "code": "const report = vitest.createReport('my-json-reporter')\n\n// Reads file from .vitest/my-json-reporter/test-report.json\nconst content: string = await report.readFile('test-report.json')"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "Report.readdir",
+              "id": "report-readdir",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/vitest#report-readdir",
+              "description": "Read contents of the report directory for this scope.",
+              "signatures": [
+                "function readdir(): Promise<string[]>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function readdir(): Promise<string[]>"
+                },
+                {
+                  "language": "ts",
+                  "code": "const report = vitest.createReport('my-json-reporter')\n\n// Reads contents from .vitest/my-json-reporter\nconst filenames: string[] = await report.readdir()"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "Report.delete",
+              "id": "report-delete",
+              "level": 3,
+              "url": "https://vitest.dev/api/advanced/vitest#report-delete",
+              "description": "Delete a file from the report directory for this scope.",
+              "signatures": [
+                "function delete(filename: string): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function delete(filename: string): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "const report = vitest.createReport('my-json-reporter')\n\n// Deletes file from .vitest/my-json-reporter/test-report.json\nawait report.delete('test-report.json')"
+                }
+              ],
+              "notes": [],
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

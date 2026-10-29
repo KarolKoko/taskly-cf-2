@@ -1,0 +1,627 @@
+{
+  "title": "Mocks",
+  "url": "https://vitest.dev/api/mock",
+  "description": "You can create a mock function or a class to track its execution with the vi.fn method. If you want to track a property on an already created object, you can use the vi.spyOn method:\n\nYou should use mock assertions (e.g., toHaveBeenCalled) on expect to assert mock results. This API reference describes available properties and methods to manipulate mock behavior.",
+  "entries": [
+    {
+      "name": "Mocks",
+      "id": "mocks",
+      "level": 1,
+      "url": "https://vitest.dev/api/mock#mocks",
+      "description": "You can create a mock function or a class to track its execution with the vi.fn method. If you want to track a property on an already created object, you can use the vi.spyOn method:\n\nYou should use mock assertions (e.g., toHaveBeenCalled) on expect to assert mock results. This API reference describes available properties and methods to manipulate mock behavior.",
+      "signatures": [],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "js",
+          "code": "import { vi } from 'vitest'\n\nconst fn = vi.fn()\nfn('hello world')\nfn.mock.calls[0] === ['hello world']\n\nconst market = {\n  getApples: () => 100\n}\n\nconst getApplesSpy = vi.spyOn(market, 'getApples')\nmarket.getApples()\ngetApplesSpy.mock.calls.length === 1"
+        },
+        {
+          "language": "ts",
+          "code": "const fn = vi.fn((arg1) => {})\nfn.length // == 1\n\nfn.mockImplementation(() => {})\nfn.length // == 1"
+        },
+        {
+          "language": "ts",
+          "code": "const example = {\n  fn(arg1, arg2) {\n    // ...\n  }\n}\n\nconst fn = vi.spyOn(example, 'fn')\nfn.length // == 2\n\nfn.mockImplementation(() => {})\nfn.length // == 2"
+        },
+        {
+          "language": "ts",
+          "code": "const CorrectDogClass = vi.fn(class {\n  constructor(public name: string) {}\n})\n\nconst IncorrectDogClass = vi.fn(class {\n  constructor(public name: string) {\n    return { name }\n  }\n})\n\nconst Marti = new CorrectDogClass('Marti')\nconst Newt = new IncorrectDogClass('Newt')\n\nMarti instanceof CorrectDogClass // ✅ true\nNewt instanceof IncorrectDogClass // ❌ false!"
+        },
+        {
+          "language": "ts",
+          "code": "mock.mockReturnValue({ hello: () => 'world' }) \nmock.mockImplementation(class { hello = () => 'world' })"
+        },
+        {
+          "language": "ts",
+          "code": "mock.mockImplementation(class {\n  constructor(name: string) {\n    return { name }\n  }\n})"
+        }
+      ],
+      "notes": [
+        "TIPThe custom function implementation in the types below is marked with a generic <T>."
+      ],
+      "children": [
+        {
+          "name": "getMockImplementation",
+          "id": "getmockimplementation",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#getmockimplementation",
+          "description": "Returns the current mock implementation if there is one. If an implementation was queued with mockImplementationOnce, it returns the first queued implementation instead.\n\nIf the mock was created with vi.fn, it will use the provided method as the mock implementation.\n\nIf the mock was created with vi.spyOn, it will return undefined unless a custom implementation is provided.",
+          "signatures": [
+            "function getMockImplementation(): T | undefined"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getMockImplementation(): T | undefined"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "getMockName",
+          "id": "getmockname",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#getmockname",
+          "description": "Use it to return the name assigned to the mock with the .mockName(name) method. By default, vi.fn() mocks will return 'vi.fn()', while spies created with vi.spyOn will keep the original name.",
+          "signatures": [
+            "function getMockName(): string"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getMockName(): string"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockClear",
+          "id": "mockclear",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockclear",
+          "description": "Clears all information about every call. After calling it, all properties on .mock will return to their initial state. This method does not reset implementations. It is useful for cleaning up mocks between different assertions.\n\nTo automatically call this method before each test, enable the clearMocks setting in the configuration.",
+          "signatures": [
+            "function mockClear(): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockClear(): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const person = {\n  greet: (name: string) => `Hello ${name}`,\n}\nconst spy = vi.spyOn(person, 'greet').mockImplementation(() => 'mocked')\nexpect(person.greet('Alice')).toBe('mocked')\nexpect(spy.mock.calls).toEqual([['Alice']])\n\n// clear call history but keep mock implementation\nspy.mockClear()\nexpect(spy.mock.calls).toEqual([])\nexpect(person.greet('Bob')).toBe('mocked')\nexpect(spy.mock.calls).toEqual([['Bob']])"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockName",
+          "id": "mockname",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockname",
+          "description": "Sets the internal mock name. This is useful for identifying the mock when an assertion fails.",
+          "signatures": [
+            "function mockName(name: string): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockName(name: string): Mock<T>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockImplementation",
+          "id": "mockimplementation",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockimplementation",
+          "description": "Accepts a function to be used as the mock implementation. TypeScript expects the arguments and return type to match those of the original function.\n\nIf the implementation is a class, the mock's prototype is re-pointed to the implementation's prototype, so constructed instances see its prototype methods and pass instanceof checks against it. See Mocking Classes for details.",
+          "signatures": [
+            "function mockImplementation(fn: T): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockImplementation(fn: T): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const mockFn = vi.fn().mockImplementation((apples: number) => apples + 1)\n// or: vi.fn(apples => apples + 1);\n\nconst NelliesBucket = mockFn(0)\nconst BobsBucket = mockFn(1)\n\nNelliesBucket === 1 // true\nBobsBucket === 2 // true\n\nmockFn.mock.calls[0][0] === 0 // true\nmockFn.mock.calls[1][0] === 1 // true"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockImplementationOnce",
+          "id": "mockimplementationonce",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockimplementationonce",
+          "description": "Accepts a function to be used as the mock implementation. TypeScript expects the arguments and return type to match those of the original function. This method can be chained to produce different results for multiple function calls.\n\nWhen the mocked function runs out of implementations, it will invoke the default implementation set with vi.fn(() => defaultValue) or .mockImplementation(() => defaultValue) if they were called:",
+          "signatures": [
+            "function mockImplementationOnce(fn: T): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockImplementationOnce(fn: T): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const myMockFn = vi\n  .fn()\n  .mockImplementationOnce(() => true) // 1st call\n  .mockImplementationOnce(() => false) // 2nd call\n\nmyMockFn() // 1st call: true\nmyMockFn() // 2nd call: false"
+            },
+            {
+              "language": "ts",
+              "code": "const myMockFn = vi\n  .fn(() => 'default')\n  .mockImplementationOnce(() => 'first call')\n  .mockImplementationOnce(() => 'second call')\n\n// 'first call', 'second call', 'default', 'default'\nconsole.log(myMockFn(), myMockFn(), myMockFn(), myMockFn())"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "withImplementation",
+          "id": "withimplementation",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#withimplementation",
+          "description": "Overrides the original mock implementation temporarily while the callback is being executed.\n\nCan be used with an asynchronous callback. The method has to be awaited to use the original implementation afterward.\n\nNote that this method takes precedence over the mockImplementationOnce.",
+          "signatures": [
+            "function withImplementation(\n  fn: T,\n  cb: () => void\n): Mock<T>\nfunction withImplementation(\n  fn: T,\n  cb: () => Promise<void>\n): Promise<Mock<T>>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function withImplementation(\n  fn: T,\n  cb: () => void\n): Mock<T>\nfunction withImplementation(\n  fn: T,\n  cb: () => Promise<void>\n): Promise<Mock<T>>"
+            },
+            {
+              "language": "js",
+              "code": "const myMockFn = vi.fn(() => 'original')\n\nmyMockFn.withImplementation(() => 'temp', () => {\n  myMockFn() // 'temp'\n})\n\nmyMockFn() // 'original'"
+            },
+            {
+              "language": "ts",
+              "code": "test('async callback', async () => {\n  const myMockFn = vi.fn(() => 'original')\n\n  // We await this call since the callback is async\n  await myMockFn.withImplementation(\n    () => 'temp',\n    async () => {\n      myMockFn() // 'temp'\n    },\n  )\n\n  myMockFn() // 'original'\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockRejectedValue",
+          "id": "mockrejectedvalue",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockrejectedvalue",
+          "description": "Accepts an error that will be rejected when an async function is called.",
+          "signatures": [
+            "function mockRejectedValue(value: unknown): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockRejectedValue(value: unknown): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const asyncMock = vi.fn().mockRejectedValue(new Error('Async error'))\n\nawait asyncMock() // throws Error<'Async error'>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockRejectedValueOnce",
+          "id": "mockrejectedvalueonce",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockrejectedvalueonce",
+          "description": "Accepts a value that will be rejected during the next function call. If chained, each consecutive call will reject the specified value.",
+          "signatures": [
+            "function mockRejectedValueOnce(value: unknown): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockRejectedValueOnce(value: unknown): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const asyncMock = vi\n  .fn()\n  .mockResolvedValueOnce('first call')\n  .mockRejectedValueOnce(new Error('Async error'))\n\nawait asyncMock() // 'first call'\nawait asyncMock() // throws Error<'Async error'>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockReset",
+          "id": "mockreset",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockreset",
+          "description": "Does what mockClear does and resets the mock implementation. This also resets all \"once\" implementations.\n\nNote that resetting a mock from vi.fn() will set the implementation to an empty function that returns undefined. Resetting a mock from vi.fn(impl) will reset the implementation to impl.\n\nThe mock's prototype chain follows along: it reverts to the original class for vi.fn(impl) and vi.spyOn(), and to a plain object for vi.fn(), so instances constructed after the reset no longer pass instanceof checks against a previously set class implementation.\n\nThis is useful when you want to reset a mock to its original state.\n\nTo automatically call this method before each test, enable the mockReset setting in the configuration.",
+          "signatures": [
+            "function mockReset(): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockReset(): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const person = {\n  greet: (name: string) => `Hello ${name}`,\n}\nconst spy = vi.spyOn(person, 'greet').mockImplementation(() => 'mocked')\nexpect(person.greet('Alice')).toBe('mocked')\nexpect(spy.mock.calls).toEqual([['Alice']])\n\n// clear call history and reset implementation, but method is still spied\nspy.mockReset()\nexpect(spy.mock.calls).toEqual([])\nexpect(person.greet).toBe(spy)\nexpect(person.greet('Bob')).toBe('Hello Bob')\nexpect(spy.mock.calls).toEqual([['Bob']])"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockRestore",
+          "id": "mockrestore",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockrestore",
+          "description": "Does what mockReset does and restores the original descriptors of spied-on objects, if the mock was created with vi.spyOn.\n\nmockRestore on a vi.fn() mock is identical to mockReset.\n\nTo automatically call this method before each test, enable the restoreMocks setting in the configuration.",
+          "signatures": [
+            "function mockRestore(): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockRestore(): void"
+            },
+            {
+              "language": "ts",
+              "code": "const person = {\n  greet: (name: string) => `Hello ${name}`,\n}\nconst spy = vi.spyOn(person, 'greet').mockImplementation(() => 'mocked')\nexpect(person.greet('Alice')).toBe('mocked')\nexpect(spy.mock.calls).toEqual([['Alice']])\n\n// clear call history and restore spied object method\nspy.mockRestore()\nexpect(spy.mock.calls).toEqual([])\nexpect(person.greet).not.toBe(spy)\nexpect(person.greet('Bob')).toBe('Hello Bob')\nexpect(spy.mock.calls).toEqual([])"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockResolvedValue",
+          "id": "mockresolvedvalue",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockresolvedvalue",
+          "description": "Accepts a value that will be resolved when the async function is called. TypeScript will only accept values that match the return type of the original function.",
+          "signatures": [
+            "function mockResolvedValue(value: Awaited<ReturnType<T>>): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockResolvedValue(value: Awaited<ReturnType<T>>): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const asyncMock = vi.fn().mockResolvedValue(42)\n\nawait asyncMock() // 42"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockResolvedValueOnce",
+          "id": "mockresolvedvalueonce",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockresolvedvalueonce",
+          "description": "Accepts a value that will be resolved during the next function call. TypeScript will only accept values that match the return type of the original function. If chained, each consecutive call will resolve the specified value.",
+          "signatures": [
+            "function mockResolvedValueOnce(value: Awaited<ReturnType<T>>): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockResolvedValueOnce(value: Awaited<ReturnType<T>>): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const asyncMock = vi\n  .fn()\n  .mockResolvedValue('default')\n  .mockResolvedValueOnce('first call')\n  .mockResolvedValueOnce('second call')\n\nawait asyncMock() // first call\nawait asyncMock() // second call\nawait asyncMock() // default\nawait asyncMock() // default"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockReturnThis",
+          "id": "mockreturnthis",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockreturnthis",
+          "description": "Use this if you need to return the this context from the method without invoking the actual implementation. This is a shorthand for:",
+          "signatures": [
+            "function mockReturnThis(): Mock<T>",
+            "spy.mockImplementation(function () {\n  return this\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockReturnThis(): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "spy.mockImplementation(function () {\n  return this\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockReturnValue",
+          "id": "mockreturnvalue",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockreturnvalue",
+          "description": "Accepts a value that will be returned whenever the mock function is called. TypeScript will only accept values that match the return type of the original function.",
+          "signatures": [
+            "function mockReturnValue(value: ReturnType<T>): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockReturnValue(value: ReturnType<T>): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const mock = vi.fn()\nmock.mockReturnValue(42)\nmock() // 42\nmock.mockReturnValue(43)\nmock() // 43"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockReturnValueOnce",
+          "id": "mockreturnvalueonce",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockreturnvalueonce",
+          "description": "Accepts a value that will be returned during the next function call. TypeScript will only accept values that match the return type of the original function. If chained, each consecutive call will return the specified value.\n\nWhen the mocked function runs out of implementations, it will invoke the default implementation set with vi.fn(() => defaultValue) or .mockImplementation(() => defaultValue) if they were called:",
+          "signatures": [
+            "function mockReturnValueOnce(value: ReturnType<T>): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockReturnValueOnce(value: ReturnType<T>): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const myMockFn = vi\n  .fn()\n  .mockReturnValue('default')\n  .mockReturnValueOnce('first call')\n  .mockReturnValueOnce('second call')\n\n// 'first call', 'second call', 'default', 'default'\nconsole.log(myMockFn(), myMockFn(), myMockFn(), myMockFn())"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockThrow 4.1.0+",
+          "id": "mockthrow",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockthrow",
+          "description": "Accepts a value that will be thrown whenever the mock function is called.",
+          "signatures": [
+            "function mockThrow(value: unknown): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockThrow(value: unknown): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const myMockFn = vi.fn()\nmyMockFn.mockThrow(new Error('error message'))\nmyMockFn() // throws Error<'error message'>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mockThrowOnce 4.1.0+",
+          "id": "mockthrowonce",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mockthrowonce",
+          "description": "Accepts a value that will be thrown during the next function call. If chained, every consecutive call will throw the specified value.",
+          "signatures": [
+            "function mockThrowOnce(value: unknown): Mock<T>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function mockThrowOnce(value: unknown): Mock<T>"
+            },
+            {
+              "language": "ts",
+              "code": "const myMockFn = vi\n  .fn()\n  .mockReturnValue('default')\n  .mockThrowOnce(new Error('first call error'))\n  .mockThrowOnce('second call error')\n\nexpect(() => myMockFn()).toThrow('first call error')\nexpect(() => myMockFn()).toThrow('second call error')\nexpect(myMockFn()).toEqual('default')"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mock.calls",
+          "id": "mock-calls",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mock-calls",
+          "description": "This is an array containing all arguments for each call. One item of the array is the arguments of that call.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "const calls: Parameters<T>[]"
+            },
+            {
+              "language": "js",
+              "code": "const fn = vi.fn()\n\nfn('arg1', 'arg2')\nfn('arg3')\n\nfn.mock.calls === [\n  ['arg1', 'arg2'], // first call\n  ['arg3'], // second call\n]"
+            },
+            {
+              "language": "ts",
+              "code": "const argument = {\n  value: 0,\n}\nconst fn = vi.fn()\nfn(argument) // { value: 0 }\n\nargument.value = 10\n\nexpect(fn).toHaveBeenCalledWith({ value: 0 }) \n\n// The equality check is done against the original argument,\n// but its property was changed between the call and assertion\nexpect(fn).toHaveBeenCalledWith({ value: 10 })"
+            },
+            {
+              "language": "ts",
+              "code": "const calledArguments = []\nconst fn = vi.fn((arg) => {\n  calledArguments.push(structuredClone(arg))\n})\n\nexpect(calledArguments[0]).toEqual({ value: 0 })"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mock.lastCall",
+          "id": "mock-lastcall",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mock-lastcall",
+          "description": "This contains the arguments of the last call. If the mock wasn't called, it will return undefined.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "const lastCall: Parameters<T> | undefined"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mock.results",
+          "id": "mock-results",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mock-results",
+          "description": "This is an array containing all values that were returned from the function. One item of the array is an object with properties type and value. Available types are:\n\nThe value property contains the returned value or thrown error. If the function returned a Promise, then result will always be 'return' even if the promise was rejected.",
+          "signatures": [
+            "interface MockResultReturn<T> {\n  type: 'return'\n  /**\n   * The value that was returned from the function.\n   * If the function returned a Promise, then this will be the Promise, not its resolved value.\n   */\n  value: T\n}\n\ninterface MockResultIncomplete {\n  type: 'incomplete'\n  value: undefined\n}\n\ninterface MockResultThrow {\n  type: 'throw'\n  /**\n   * An error that was thrown during function execution.\n   */\n  value: any\n}\n\ntype MockResult<T>\n  = | MockResultReturn<T>\n    | MockResultThrow\n    | MockResultIncomplete\n\nconst results: MockResult<ReturnType<T>>[]",
+            "const fn = vi.fn()\n  .mockReturnValueOnce('result')\n  .mockImplementationOnce(() => { throw new Error('thrown error') })\n\nconst result = fn() // returned 'result'\n\ntry {\n  fn() // threw Error\n}\ncatch {}\n\nfn.mock.results === [\n  // first result\n  {\n    type: 'return',\n    value: 'result',\n  },\n  // last result\n  {\n    type: 'throw',\n    value: Error,\n  },\n]"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "interface MockResultReturn<T> {\n  type: 'return'\n  /**\n   * The value that was returned from the function.\n   * If the function returned a Promise, then this will be the Promise, not its resolved value.\n   */\n  value: T\n}\n\ninterface MockResultIncomplete {\n  type: 'incomplete'\n  value: undefined\n}\n\ninterface MockResultThrow {\n  type: 'throw'\n  /**\n   * An error that was thrown during function execution.\n   */\n  value: any\n}\n\ntype MockResult<T>\n  = | MockResultReturn<T>\n    | MockResultThrow\n    | MockResultIncomplete\n\nconst results: MockResult<ReturnType<T>>[]"
+            },
+            {
+              "language": "js",
+              "code": "const fn = vi.fn()\n  .mockReturnValueOnce('result')\n  .mockImplementationOnce(() => { throw new Error('thrown error') })\n\nconst result = fn() // returned 'result'\n\ntry {\n  fn() // threw Error\n}\ncatch {}\n\nfn.mock.results === [\n  // first result\n  {\n    type: 'return',\n    value: 'result',\n  },\n  // last result\n  {\n    type: 'throw',\n    value: Error,\n  },\n]"
+            }
+          ],
+          "notes": [
+            "'return' - function returned without throwing.",
+            "'throw' - function threw a value.",
+            "'incomplete' - the function did not finish running yet."
+          ],
+          "children": []
+        },
+        {
+          "name": "mock.settledResults",
+          "id": "mock-settledresults",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mock-settledresults",
+          "description": "An array containing all values that were resolved or rejected by the function.\n\nIf the function returned non-promise values, the value will be kept as is, but the type will still say fulfilled or rejected.\n\nUntil the value is resolved or rejected, the settledResult type will be incomplete.",
+          "signatures": [
+            "interface MockSettledResultIncomplete {\n  type: 'incomplete'\n  value: undefined\n}\n\ninterface MockSettledResultFulfilled<T> {\n  type: 'fulfilled'\n  value: T\n}\n\ninterface MockSettledResultRejected {\n  type: 'rejected'\n  value: any\n}\n\nexport type MockSettledResult<T>\n  = | MockSettledResultFulfilled<T>\n    | MockSettledResultRejected\n    | MockSettledResultIncomplete\n\nconst settledResults: MockSettledResult<Awaited<ReturnType<T>>>[]",
+            "const fn = vi.fn().mockResolvedValueOnce('result')\n\nconst result = fn()\n\nfn.mock.settledResults === [\n  {\n    type: 'incomplete',\n    value: undefined,\n  },\n]\n\nawait result\n\nfn.mock.settledResults === [\n  {\n    type: 'fulfilled',\n    value: 'result',\n  },\n]"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "interface MockSettledResultIncomplete {\n  type: 'incomplete'\n  value: undefined\n}\n\ninterface MockSettledResultFulfilled<T> {\n  type: 'fulfilled'\n  value: T\n}\n\ninterface MockSettledResultRejected {\n  type: 'rejected'\n  value: any\n}\n\nexport type MockSettledResult<T>\n  = | MockSettledResultFulfilled<T>\n    | MockSettledResultRejected\n    | MockSettledResultIncomplete\n\nconst settledResults: MockSettledResult<Awaited<ReturnType<T>>>[]"
+            },
+            {
+              "language": "js",
+              "code": "const fn = vi.fn().mockResolvedValueOnce('result')\n\nconst result = fn()\n\nfn.mock.settledResults === [\n  {\n    type: 'incomplete',\n    value: undefined,\n  },\n]\n\nawait result\n\nfn.mock.settledResults === [\n  {\n    type: 'fulfilled',\n    value: 'result',\n  },\n]"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mock.invocationCallOrder",
+          "id": "mock-invocationcallorder",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mock-invocationcallorder",
+          "description": "This property returns the order of the mock function's execution. It is an array of numbers that are shared between all defined mocks.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "const invocationCallOrder: number[]"
+            },
+            {
+              "language": "js",
+              "code": "const fn1 = vi.fn()\nconst fn2 = vi.fn()\n\nfn1()\nfn2()\nfn1()\n\nfn1.mock.invocationCallOrder === [1, 3]\nfn2.mock.invocationCallOrder === [2]"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mock.contexts",
+          "id": "mock-contexts",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mock-contexts",
+          "description": "This property is an array of this values used during each call to the mock function. If the mock was called with the new keyword, the value is the same as in mock.instances.",
+          "signatures": [
+            "type MockProcedureContext<T> = T extends new (...args: any[]) => any\n  ? InstanceType<T>\n  : ThisParameterType<T>\n\nconst contexts: MockProcedureContext<T>[]"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "type MockProcedureContext<T> = T extends new (...args: any[]) => any\n  ? InstanceType<T>\n  : ThisParameterType<T>\n\nconst contexts: MockProcedureContext<T>[]"
+            },
+            {
+              "language": "js",
+              "code": "const fn = vi.fn()\nconst context = {}\n\nfn.apply(context)\nfn.call(context)\n\nfn.mock.contexts[0] === context\nfn.mock.contexts[1] === context"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "mock.instances",
+          "id": "mock-instances",
+          "level": 2,
+          "url": "https://vitest.dev/api/mock#mock-instances",
+          "description": "This property is an array with one value for each call to the mock function. If the mock was called with the new keyword, the value is the object that new returned, or undefined if the constructor threw an error. Otherwise, the value is the context (this) of the call, the same as in mock.contexts.\n\nIf the implementation returns an object from the constructor, mock.instances stores that object:",
+          "signatures": [
+            "const Spy = vi.fn(function () {\n  return { method: vi.fn() }\n})\nconst a = new Spy()\n\nSpy.mock.instances[0] === a\nSpy.mock.results[0].value === a"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "const instances: MockProcedureContext<T>[]"
+            },
+            {
+              "language": "js",
+              "code": "const MyClass = vi.fn()\nconst context = {}\n\nconst a = new MyClass()\nMyClass.call(context)\n\nMyClass.mock.instances[0] === a\nMyClass.mock.instances[1] === context"
+            },
+            {
+              "language": "js",
+              "code": "const Spy = vi.fn(function () {\n  return { method: vi.fn() }\n})\nconst a = new Spy()\n\nSpy.mock.instances[0] === a\nSpy.mock.results[0].value === a"
+            }
+          ],
+          "notes": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

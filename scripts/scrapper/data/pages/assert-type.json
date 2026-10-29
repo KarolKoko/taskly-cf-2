@@ -1,0 +1,29 @@
+{
+  "title": "assertType",
+  "url": "https://vitest.dev/api/assert-type",
+  "description": "You can use this function as an alternative for expectTypeOf to easily assert that the argument type is equal to the generic provided.",
+  "entries": [
+    {
+      "name": "assertType",
+      "id": "asserttype",
+      "level": 1,
+      "url": "https://vitest.dev/api/assert-type#asserttype",
+      "description": "You can use this function as an alternative for expectTypeOf to easily assert that the argument type is equal to the generic provided.",
+      "signatures": [
+        "import { assertType } from 'vitest'\n\nfunction concat(a: string, b: string): string\nfunction concat(a: number, b: number): number\nfunction concat(a: string | number, b: string | number): string | number\n\nassertType<string>(concat('a', 'b'))\nassertType<number>(concat(1, 2))\n// @ts-expect-error wrong types\nassertType(concat('a', 2))"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "import { assertType } from 'vitest'\n\nfunction concat(a: string, b: string): string\nfunction concat(a: number, b: number): number\nfunction concat(a: string | number, b: string | number): string | number\n\nassertType<string>(concat('a', 'b'))\nassertType<number>(concat(1, 2))\n// @ts-expect-error wrong types\nassertType(concat('a', 2))"
+        }
+      ],
+      "notes": [
+        "WARNINGDuring runtime this function doesn't do anything. To enable typechecking, don't forget to pass down --typecheck flag.",
+        "Type: <T>(value: T): void"
+      ],
+      "children": []
+    }
+  ]
+}

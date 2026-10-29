@@ -1,0 +1,301 @@
+{
+  "title": "vitest-browser-vue",
+  "url": "https://vitest.dev/api/browser/vue",
+  "description": "The community vitest-browser-vue package renders Vue components in Browser Mode.\n\nThe package exposes two entry points: vitest-browser-vue and vitest-browser-vue/pure. They expose identical API, but the pure entry point doesn't add a handler to remove the component before the next test has started.",
+  "entries": [
+    {
+      "name": "vitest-browser-vue",
+      "id": "vitest-browser-vue",
+      "level": 1,
+      "url": "https://vitest.dev/api/browser/vue#vitest-browser-vue",
+      "description": "The community vitest-browser-vue package renders Vue components in Browser Mode.\n\nThe package exposes two entry points: vitest-browser-vue and vitest-browser-vue/pure. They expose identical API, but the pure entry point doesn't add a handler to remove the component before the next test has started.",
+      "signatures": [],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "import { render } from 'vitest-browser-vue'\nimport { expect, test } from 'vitest'\nimport Component from './Component.vue'\n\ntest('counter button increments the count', async () => {\n  const screen = await render(Component, {\n    props: {\n      initialCount: 1,\n    }\n  })\n\n  await screen.getByRole('button', { name: 'Increment' }).click()\n\n  await expect.element(screen.getByText('Count is 2')).toBeVisible()\n})"
+        }
+      ],
+      "notes": [
+        "WARNINGThis library takes inspiration from @testing-library/vue.If you have used @testing-library/vue in your tests before, you can keep using it, however the vitest-browser-vue package provides certain benefits unique to the Browser Mode that @testing-library/vue lacks:vitest-browser-vue returns APIs that interact well with built-in locators, user events and assertions: for example, Vitest will automatically retry the element until the assertion is successful, even if it was rerendered between the assertions."
+      ],
+      "children": [
+        {
+          "name": "render",
+          "id": "render",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/vue#render",
+          "description": "The render function records a vue.render trace mark, visible in the Trace View.",
+          "signatures": [
+            "export function render(\n  component: Component,\n  options?: ComponentRenderOptions,\n): Promise<RenderResult>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "export function render(\n  component: Component,\n  options?: ComponentRenderOptions,\n): Promise<RenderResult>"
+            }
+          ],
+          "notes": [],
+          "children": [
+            {
+              "name": "Options",
+              "id": "options",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/vue#options",
+              "description": "The render function supports all mount options from @vue/test-utils (except attachTo - use container instead). In addition to them, there are also container and baseElement.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [],
+              "children": [
+                {
+                  "name": "container",
+                  "id": "container",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/vue#container",
+                  "description": "By default, Vitest will create a div, append it to document.body, and render your component there. If you provide your own HTMLElement container, it will not be appended automatically — you'll need to call document.body.appendChild(container) before render.\n\nFor example, if you are unit testing a tbody element, it cannot be a child of a div. In this case, you can specify a table as the render container.",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "js",
+                      "code": "const table = document.createElement('table')\n\nconst { container } = await render(TableBody, {\n  props,\n  // ⚠️ appending the element to `body` manually before rendering\n  container: document.body.appendChild(table),\n})"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "baseElement",
+                  "id": "baseelement",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/vue#baseelement",
+                  "description": "If the container is specified, then this defaults to that, otherwise this defaults to document.body. This is used as the base element for the queries as well as what is printed when you use debug().",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [],
+                  "notes": [],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Render Result",
+              "id": "render-result",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/vue#render-result",
+              "description": "In addition to documented return value, the render function also returns all available locators relative to the baseElement, including custom ones.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "const screen = await render(TableBody, { props })\n\nawait screen.getByRole('link', { name: 'Expand' }).click()"
+                }
+              ],
+              "notes": [],
+              "children": [
+                {
+                  "name": "container",
+                  "id": "container-1",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/vue#container-1",
+                  "description": "The containing DOM node where your Vue component is rendered. This is a regular DOM node, so you technically could call container.querySelector etc. to inspect the children.",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [],
+                  "notes": [
+                    "DANGERIf you find yourself using container to query for rendered elements then you should reconsider! The locators are designed to be more resilient to changes that will be made to the component you're testing. Avoid using container to query for elements!"
+                  ],
+                  "children": []
+                },
+                {
+                  "name": "baseElement",
+                  "id": "baseelement-1",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/vue#baseelement-1",
+                  "description": "The containing DOM node where your Vue component is rendered in the container. If you don't specify the baseElement in the options of render, it will default to document.body.\n\nThis is useful when the component you want to test renders something outside the container div, e.g. when you want to snapshot test your portal component which renders its HTML directly in the body.",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [],
+                  "notes": [
+                    "TIPThe queries returned by the render looks into baseElement, so you can use queries to test your portal component without the baseElement."
+                  ],
+                  "children": []
+                },
+                {
+                  "name": "locator",
+                  "id": "locator",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/vue#locator",
+                  "description": "The locator of your container. It is useful to use queries scoped only to your component, or pass it down to other assertions:",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "js",
+                      "code": "import { render } from 'vitest-browser-vue'\n\nconst { locator } = await render(NumberDisplay, {\n  props: { number: 2 }\n})\n\nawait locator.getByRole('button').click()\nawait expect.element(locator).toHaveTextContent('Hello World')"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "debug",
+                  "id": "debug",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/vue#debug",
+                  "description": "This method is a shortcut for console.log(prettyDOM(baseElement)). It will print the DOM content of the container or specified elements to the console.",
+                  "signatures": [
+                    "function debug(\n  el?: HTMLElement | HTMLElement[] | Locator | Locator[],\n  maxLength?: number,\n  options?: PrettyDOMOptions,\n): void"
+                  ],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "ts",
+                      "code": "function debug(\n  el?: HTMLElement | HTMLElement[] | Locator | Locator[],\n  maxLength?: number,\n  options?: PrettyDOMOptions,\n): void"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "rerender",
+                  "id": "rerender",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/vue#rerender",
+                  "description": "Also records a vue.rerender trace mark in the Trace View.\n\nIt is better if you test the component that's doing the prop updating to ensure that the props are being updated correctly to avoid relying on implementation details in your tests. That said, if you'd prefer to update the props of a rendered component in your test, this function can be used to update props of the rendered component.",
+                  "signatures": [
+                    "function rerender(props: Partial<Props>): Promise<void>"
+                  ],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "ts",
+                      "code": "function rerender(props: Partial<Props>): Promise<void>"
+                    },
+                    {
+                      "language": "js",
+                      "code": "import { render } from 'vitest-browser-vue'\n\nconst { rerender } = await render(NumberDisplay, { props: { number: 1 } })\n\n// re-render the same component with different props\nawait rerender({ number: 2 })"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "unmount",
+                  "id": "unmount",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/vue#unmount",
+                  "description": "This will cause the rendered component to be unmounted. Also records a vue.unmount trace mark in the Trace View. This is useful for testing what happens when your component is removed from the page (like testing that you don't leave event handlers hanging around causing memory leaks).",
+                  "signatures": [
+                    "function unmount(): Promise<void>"
+                  ],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "ts",
+                      "code": "function unmount(): Promise<void>"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "emitted",
+                  "id": "emitted",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/vue#emitted",
+                  "description": "Returns the emitted events from the Component.",
+                  "signatures": [
+                    "function emitted<T = unknown>(): Record<string, T[]>\nfunction emitted<T = unknown[]>(eventName: string): undefined | T[]"
+                  ],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "ts",
+                      "code": "function emitted<T = unknown>(): Record<string, T[]>\nfunction emitted<T = unknown[]>(eventName: string): undefined | T[]"
+                    }
+                  ],
+                  "notes": [
+                    "WARNINGEmitted values are an implementation detail not exposed directly to the user, so it is better to test how your emitted values are changing the displayed content by using locators instead."
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "cleanup",
+          "id": "cleanup",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/vue#cleanup",
+          "description": "Remove all components rendered with render.",
+          "signatures": [
+            "export function cleanup(): void"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "export function cleanup(): void"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "Extend Queries",
+          "id": "extend-queries",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/vue#extend-queries",
+          "description": "To extend locator queries, see \"Custom Locators\". For example, to make render return a new custom locator, define it using the locators.extend API:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "js",
+              "code": "import { locators } from 'vitest/browser'\nimport { render } from 'vitest-browser-vue'\n\nlocators.extend({\n  getByArticleTitle(title) {\n    return `[data-title=\"${title}\"]`\n  },\n})\n\nconst screen = await render(Component)\nawait expect.element(\n  screen.getByArticleTitle('Hello World')\n).toBeVisible()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "Configuration",
+          "id": "configuration",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/vue#configuration",
+          "description": "You can configure Vue Test Utils options by assigning properties to the config export (available in both vitest-browser-vue and vitest-browser-vue/pure):",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "js",
+              "code": "import { config } from 'vitest-browser-vue/pure'\n\nconfig.global.stubs.CustomComponent = {\n  template: '<div></div>',\n}"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "See also",
+          "id": "see-also",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/vue#see-also",
+          "description": "",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "Vue Testing Library documentation"
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

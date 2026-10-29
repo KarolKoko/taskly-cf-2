@@ -1,0 +1,184 @@
+{
+  "title": "TestModule",
+  "url": "https://vitest.dev/api/advanced/test-module",
+  "description": "The TestModule class represents a single module in a single project. This class is only available in the main thread. Refer to the \"Runner API\" if you are working with runtime tasks.\n\nThe TestModule instance always has a type property with the value of module. You can use it to distinguish between different task types:",
+  "entries": [
+    {
+      "name": "TestModule",
+      "id": "testmodule",
+      "level": 1,
+      "url": "https://vitest.dev/api/advanced/test-module#testmodule",
+      "description": "The TestModule class represents a single module in a single project. This class is only available in the main thread. Refer to the \"Runner API\" if you are working with runtime tasks.\n\nThe TestModule instance always has a type property with the value of module. You can use it to distinguish between different task types:",
+      "signatures": [
+        "if (task.type === 'module') {\n  task // TestModule\n}"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "if (task.type === 'module') {\n  task // TestModule\n}"
+        }
+      ],
+      "notes": [
+        "Extending Suite MethodsThe TestModule class inherits all methods and properties from the TestSuite. This guide will only list methods and properties unique to the TestModule."
+      ],
+      "children": [
+        {
+          "name": "moduleId",
+          "id": "moduleid",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-module#moduleid",
+          "description": "This is usually an absolute unix file path (even on Windows). It can be a virtual id if the file is not on the disk. This value corresponds to Vite's ModuleGraph id.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "'C:/Users/Documents/project/example.test.ts' // ✅\n'/Users/mac/project/example.test.ts' // ✅\n'C:\\\\Users\\\\Documents\\\\project\\\\example.test.ts' // ❌"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "relativeModuleId",
+          "id": "relativemoduleid",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-module#relativemoduleid",
+          "description": "Module id relative to the project. This is the same as task.name in the deprecated API.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "'project/example.test.ts' // ✅\n'example.test.ts' // ✅\n'project\\\\example.test.ts' // ❌"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "viteEnvironment 4.1.0+",
+          "id": "viteenvironment",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-module#viteenvironment",
+          "description": "This is a Vite's DevEnvironment that transforms all files inside of the test module.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "state",
+          "id": "state",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-module#state",
+          "description": "Works the same way as testSuite.state(), but can also return queued if module wasn't executed yet.",
+          "signatures": [
+            "function state(): TestModuleState"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function state(): TestModuleState"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "meta 3.1.0+",
+          "id": "meta",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-module#meta",
+          "description": "Custom metadata that was attached to the module during its execution or collection. The meta can be attached by assigning a property to the task.meta object during a test run:",
+          "signatures": [
+            "function meta(): TaskMeta"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function meta(): TaskMeta"
+            },
+            {
+              "language": "ts",
+              "code": "import { test } from 'vitest'\n\ndescribe('the validation works correctly', (task) => {\n  // assign \"decorated\" during collection\n  task.file.meta.decorated = false\n\n  test('some test', ({ task }) => {\n    // assign \"decorated\" during test run, it will be available\n    // only in onTestCaseReady hook\n    task.file.meta.decorated = false\n  })\n})"
+            }
+          ],
+          "notes": [
+            "TIPIf metadata was attached during collection (outside of the test function), then it will be available in onTestModuleCollected hook in the custom reporter."
+          ],
+          "children": []
+        },
+        {
+          "name": "diagnostic",
+          "id": "diagnostic",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-module#diagnostic",
+          "description": "Useful information about the module like duration, memory usage, etc. If the module was not executed yet, all diagnostic values will return 0.",
+          "signatures": [
+            "function diagnostic(): ModuleDiagnostic"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function diagnostic(): ModuleDiagnostic"
+            },
+            {
+              "language": "ts",
+              "code": "interface ModuleDiagnostic {\n  /**\n   * The time it takes to import and initiate an environment.\n   */\n  readonly environmentSetupDuration: number\n  /**\n   * The time it takes Vitest to setup test harness (runner, mocks, etc.).\n   */\n  readonly prepareDuration: number\n  /**\n   * The time it takes to import the test module.\n   * This includes importing everything in the module and executing suite callbacks.\n   */\n  readonly collectDuration: number\n  /**\n   * The time it takes to import the setup module.\n   */\n  readonly setupDuration: number\n  /**\n   * Accumulated duration of all tests and hooks in the module.\n   */\n  readonly duration: number\n  /**\n   * The amount of memory used by the module in bytes.\n   * This value is only available if the test was executed with `logHeapUsage` flag.\n   */\n  readonly heap: number | undefined\n  /**\n   * The time spent importing every non-externalized dependency that Vitest has processed.\n   */\n  readonly importDurations: Record<string, ImportDuration>\n  /**\n   * The id of the worker that ran this file. This value cannot be higher than `maxWorkers`.\n   * If file did not run yet, this will be 0.\n   *\n   * **Warning**: Node.js tests and browser tests run in different pools and do not share `concurrencyId`.\n   * It is possible to have multiple modules with the same `concurrencyId` because of that.\n   * Use `project.isBrowserEnabled()` to distinguish the concurrency.\n   */\n  readonly concurrencyId: number\n  /**\n   * Incremental number of the worker that ran this file. This number increases with each worker.\n   * If file did not run yet, this will be 0.\n   *\n   * **Warning**: Node.js tests and browser tests run in different pools and do not share `workerId`.\n   * It is possible to have multiple modules with the same `workerId` because of that.\n   * Use `project.isBrowserEnabled()` to distinguish the concurrency.\n   */\n  readonly workerId: number\n}\n\n/** The time spent importing & executing a non-externalized file. */\ninterface ImportDuration {\n  /** The time spent importing & executing the file itself, not counting all non-externalized imports that the file does. */\n  selfTime: number\n\n  /** The time spent importing & executing the file and all its imports. */\n  totalTime: number\n}"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "logs 5.0.0+",
+          "id": "logs",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-module#logs",
+          "description": "Console logs recorded on top level of the module during test collection. For example:",
+          "signatures": [
+            "function logs(): ReadonlyArray<UserConsoleLog>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function logs(): ReadonlyArray<UserConsoleLog>"
+            },
+            {
+              "language": "ts",
+              "code": "console.log('included') \n\ndescribe('suite', () => {\n  console.log('not included') \n\n  test('test', () => {\n    console.log('not included') \n  })\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toTestSpecification 4.1.0+",
+          "id": "totestspecification",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-module#totestspecification",
+          "description": "Returns a new test specification that can be used to filter or run this specific test module.\n\nIt accepts an optional array of test cases that should be filtered.",
+          "signatures": [
+            "function toTestSpecification(testCases?: TestCase[]): TestSpecification"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toTestSpecification(testCases?: TestCase[]): TestSpecification"
+            }
+          ],
+          "notes": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

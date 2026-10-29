@@ -1,0 +1,41 @@
+{
+  "title": "Task Metadata advanced",
+  "url": "https://vitest.dev/api/advanced/metadata",
+  "description": "If you are developing a custom reporter or using Vitest Node.js API, you might find it useful to pass data from tests that are being executed in various contexts to your reporter or custom Vitest handler.\n\nTo accomplish this, relying on the test context is not feasible since it cannot be serialized. However, with Vitest, you can utilize the meta property available on every task (suite or test) to share data between your tests and the Node.js process. It's important to note that this communication is one-way only, as the meta property can only be modified from within the test context. Any changes made within the Node.js context will not be visible in your tests.\n\nYou can populate meta property on test context or inside beforeAll/afterAll hooks for suite tasks.\n\nOnce a test is completed, Vitest will send a task including the result and meta to the Node.js process using RPC, and then report it in onTestCaseResult and other hooks that have access to tasks. To process this test case, you can utilize the onTestCaseResult method available in your reporter implementation:\n\nYou can also get this information from Vitest state when tests finished running:\n\nIt's also possible to extend type definitions when using TypeScript:",
+  "entries": [
+    {
+      "name": "Task Metadata advanced",
+      "id": "task-metadata-advanced",
+      "level": 1,
+      "url": "https://vitest.dev/api/advanced/metadata#task-metadata-advanced",
+      "description": "If you are developing a custom reporter or using Vitest Node.js API, you might find it useful to pass data from tests that are being executed in various contexts to your reporter or custom Vitest handler.\n\nTo accomplish this, relying on the test context is not feasible since it cannot be serialized. However, with Vitest, you can utilize the meta property available on every task (suite or test) to share data between your tests and the Node.js process. It's important to note that this communication is one-way only, as the meta property can only be modified from within the test context. Any changes made within the Node.js context will not be visible in your tests.\n\nYou can populate meta property on test context or inside beforeAll/afterAll hooks for suite tasks.\n\nOnce a test is completed, Vitest will send a task including the result and meta to the Node.js process using RPC, and then report it in onTestCaseResult and other hooks that have access to tasks. To process this test case, you can utilize the onTestCaseResult method available in your reporter implementation:\n\nYou can also get this information from Vitest state when tests finished running:\n\nIt's also possible to extend type definitions when using TypeScript:",
+      "signatures": [
+        "import type { Reporter, TestCase, TestModule } from 'vitest/node'\n\nexport default {\n  onTestCaseResult(testCase: TestCase) {\n    // custom === 'some-custom-handler' ✅\n    const { custom } = testCase.meta()\n  },\n  onTestRunEnd(testModule: TestModule) {\n    testModule.meta().done === true\n    testModule.children.at(0).meta().custom === 'some-custom-handler'\n  }\n} satisfies Reporter",
+        "declare module 'vitest' {\n  interface TaskMeta {\n    done?: boolean\n    custom?: string\n  }\n}"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "afterAll((suite) => {\n  suite.meta.done = true\n})\n\ntest('custom', ({ task }) => {\n  task.meta.custom = 'some-custom-handler'\n})"
+        },
+        {
+          "language": "ts",
+          "code": "import type { Reporter, TestCase, TestModule } from 'vitest/node'\n\nexport default {\n  onTestCaseResult(testCase: TestCase) {\n    // custom === 'some-custom-handler' ✅\n    const { custom } = testCase.meta()\n  },\n  onTestRunEnd(testModule: TestModule) {\n    testModule.meta().done === true\n    testModule.children.at(0).meta().custom === 'some-custom-handler'\n  }\n} satisfies Reporter"
+        },
+        {
+          "language": "ts",
+          "code": "const vitest = await createVitest('test')\nconst { testModules } = await vitest.start()\n\nconst testModule = testModules[0]\ntestModule.meta().done === true\ntestModule.children.at(0).meta().custom === 'some-custom-handler'"
+        },
+        {
+          "language": "ts",
+          "code": "declare module 'vitest' {\n  interface TaskMeta {\n    done?: boolean\n    custom?: string\n  }\n}"
+        }
+      ],
+      "notes": [
+        "BEWAREVitest uses different methods to communicate with the Node.js process.If Vitest runs tests inside worker threads, it will send data via message portIf Vitest uses child process, the data will be send as a serialized Buffer via process.send APIIf Vitest runs tests in the browser, the data will be stringified using flatted packageThis property is also present on every test in the json reporter, so make sure that data can be serialized into JSON.Also, make sure you serialize Error properties before you set them."
+      ],
+      "children": []
+    }
+  ]
+}

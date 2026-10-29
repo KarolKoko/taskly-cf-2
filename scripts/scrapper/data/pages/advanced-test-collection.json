@@ -1,0 +1,163 @@
+{
+  "title": "TestCollection",
+  "url": "https://vitest.dev/api/advanced/test-collection",
+  "description": "TestCollection represents a collection of top-level suites and tests in a suite or a module. It also provides useful methods to iterate over itself.",
+  "entries": [
+    {
+      "name": "TestCollection",
+      "id": "testcollection",
+      "level": 1,
+      "url": "https://vitest.dev/api/advanced/test-collection#testcollection",
+      "description": "TestCollection represents a collection of top-level suites and tests in a suite or a module. It also provides useful methods to iterate over itself.",
+      "signatures": [
+        "for (const child of module.children) {\n  console.log(child.type, child.name)\n}"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "for (const child of module.children) {\n  console.log(child.type, child.name)\n}"
+        }
+      ],
+      "notes": [],
+      "children": [
+        {
+          "name": "size",
+          "id": "size",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-collection#size",
+          "description": "The number of tests and suites in the collection.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "WARNINGThis number includes only tests and suites at the top-level, it doesn't include nested suites and tests."
+          ],
+          "children": []
+        },
+        {
+          "name": "at",
+          "id": "at",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-collection#at",
+          "description": "Returns the test or suite at a specific index. This method accepts negative indexes.",
+          "signatures": [
+            "function at(index: number): TestCase | TestSuite | undefined"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function at(index: number): TestCase | TestSuite | undefined"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "array",
+          "id": "array",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-collection#array",
+          "description": "The same collection but as an array. This is useful if you want to use Array methods like map and filter that are not supported by the TaskCollection implementation.",
+          "signatures": [
+            "function array(): (TestCase | TestSuite)[]"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function array(): (TestCase | TestSuite)[]"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "allSuites",
+          "id": "allsuites",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-collection#allsuites",
+          "description": "Filters all suites that are part of this collection and its children.",
+          "signatures": [
+            "function allSuites(): Generator<TestSuite, undefined, void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function allSuites(): Generator<TestSuite, undefined, void>"
+            },
+            {
+              "language": "ts",
+              "code": "for (const suite of module.children.allSuites()) {\n  if (suite.errors().length) {\n    console.log('failed to collect', suite.errors())\n  }\n}"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "allTests",
+          "id": "alltests",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-collection#alltests",
+          "description": "Filters all tests that are part of this collection and its children.\n\nYou can pass down a state value to filter tests by the state.",
+          "signatures": [
+            "function allTests(state?: TestState): Generator<TestCase, undefined, void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function allTests(state?: TestState): Generator<TestCase, undefined, void>"
+            },
+            {
+              "language": "ts",
+              "code": "for (const test of module.children.allTests()) {\n  if (test.result().state === 'pending') {\n    console.log('test', test.fullName, 'did not finish')\n  }\n}"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "tests",
+          "id": "tests",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-collection#tests",
+          "description": "Filters only the tests that are part of this collection. You can pass down a state value to filter tests by the state.",
+          "signatures": [
+            "function tests(state?: TestState): Generator<TestCase, undefined, void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function tests(state?: TestState): Generator<TestCase, undefined, void>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "suites",
+          "id": "suites",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-collection#suites",
+          "description": "Filters only the suites that are part of this collection.",
+          "signatures": [
+            "function suites(): Generator<TestSuite, undefined, void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function suites(): Generator<TestSuite, undefined, void>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "title": "TestSpecification",
+  "url": "https://vitest.dev/api/advanced/test-specification",
+  "description": "The TestSpecification class describes what module to run as a test and its parameters.\n\nYou can only create a specification by calling createSpecification method on a test project:\n\ncreateSpecification expects resolved module identifier. It doesn't auto-resolve the file or check that it exists on the file system.",
+  "entries": [
+    {
+      "name": "TestSpecification",
+      "id": "testspecification",
+      "level": 1,
+      "url": "https://vitest.dev/api/advanced/test-specification#testspecification",
+      "description": "The TestSpecification class describes what module to run as a test and its parameters.\n\nYou can only create a specification by calling createSpecification method on a test project:\n\ncreateSpecification expects resolved module identifier. It doesn't auto-resolve the file or check that it exists on the file system.",
+      "signatures": [],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "const specification = project.createSpecification(\n  resolve('./example.test.ts'),\n  {\n    testLines: [20, 40],\n    testNamePattern: /hello world/,\n    testIds: ['1223128da3_0_0_0', '1223128da3_0_0'],\n    testTagsFilter: ['frontend and backend'],\n  } // optional test filters\n)"
+        }
+      ],
+      "notes": [],
+      "children": [
+        {
+          "name": "taskId",
+          "id": "taskid",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-specification#taskid",
+          "description": "Test module's identifier.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "project",
+          "id": "project",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-specification#project",
+          "description": "This references the TestProject that the test module belongs to.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "moduleId",
+          "id": "moduleid",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-specification#moduleid",
+          "description": "The ID of the module in Vite's module graph. Usually, it's an absolute file path using posix separator:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "'C:/Users/Documents/project/example.test.ts' // ✅\n'/Users/mac/project/example.test.ts' // ✅\n'C:\\\\Users\\\\Documents\\\\project\\\\example.test.ts' // ❌"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "testModule",
+          "id": "testmodule",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-specification#testmodule",
+          "description": "Instance of TestModule associated with the specification. If test wasn't queued yet, this will be undefined.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "pool",
+          "id": "pool",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-specification#pool",
+          "description": "The pool in which the test module will run.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "DANGERIt's possible to have multiple pools in a single test project with typecheck.enabled. This means it's possible to have several specifications with the same moduleId but different pool. In later versions, the project will only support a single pool."
+          ],
+          "children": []
+        },
+        {
+          "name": "testLines",
+          "id": "testlines",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-specification#testlines",
+          "description": "This is an array of lines in the source code where the test files are defined. This field is defined only if the createSpecification method received an array.\n\nNote that if there is no test on at least one of the lines, the whole suite will fail. An example of a correct testLines configuration:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "const specification = project.createSpecification(\n  resolve('./example.test.ts'),\n  [3, 8, 9],\n)"
+            },
+            {
+              "language": "ts",
+              "code": "import { test, describe } from 'vitest'\n\ntest('verification works')\n\ndescribe('a group of tests', () => { \n  // ...\n\n  test('nested test')\n  test.skip('skipped test')\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "testNamePattern 4.1.0+",
+          "id": "testnamepattern",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-specification#testnamepattern",
+          "description": "A regexp that matches the name of the test in this module. This value will override the global testNamePattern option if it's set.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "testIds 4.1.0+",
+          "id": "testids",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-specification#testids",
+          "description": "The ids of tasks inside of this specification to run.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "testTagsFilter 4.1.0+",
+          "id": "testtagsfilter",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-specification#testtagsfilter",
+          "description": "The tags filter that a test must pass in order to be included in the run. Multiple filters are treated as AND.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toJSON",
+          "id": "tojson",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-specification#tojson",
+          "description": "toJSON generates a JSON-friendly object that can be consumed by the Browser Mode or Vitest UI.",
+          "signatures": [
+            "function toJSON(): SerializedTestSpecification"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toJSON(): SerializedTestSpecification"
+            }
+          ],
+          "notes": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

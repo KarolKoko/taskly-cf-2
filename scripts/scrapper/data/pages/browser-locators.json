@@ -1,0 +1,1098 @@
+{
+  "title": "Locators",
+  "url": "https://vitest.dev/api/browser/locators",
+  "description": "A locator is a representation of an element or a number of elements. Every locator is defined by a string called a selector. Vitest abstracts this selector by providing convenient methods that generate them behind the scenes.\n\nThe locator API uses a fork of Playwright's locators called Ivya. However, Vitest provides this API to every provider, not just playwright.",
+  "entries": [
+    {
+      "name": "Locators",
+      "id": "locators",
+      "level": 1,
+      "url": "https://vitest.dev/api/browser/locators#locators",
+      "description": "A locator is a representation of an element or a number of elements. Every locator is defined by a string called a selector. Vitest abstracts this selector by providing convenient methods that generate them behind the scenes.\n\nThe locator API uses a fork of Playwright's locators called Ivya. However, Vitest provides this API to every provider, not just playwright.",
+      "signatures": [],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "import { expect } from 'vitest'\nimport { page } from 'vitest/browser'\n\nconst deleteButton = page\n  .getByRole('row')\n  .filter({ hasText: 'Vitest' })\n  .getByRole('button', { name: /delete/i })\n\nawait deleteButton.click()\nawait expect.element(deleteButton).toBeEnabled()"
+        }
+      ],
+      "notes": [
+        "TIPThis page covers API usage. To better understand locators and their usage, read Playwright's \"Locators\" documentation."
+      ],
+      "children": [
+        {
+          "name": "getByRole",
+          "id": "getbyrole",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#getbyrole",
+          "description": "Creates a way to locate an element by its ARIA role, ARIA attributes and accessible name.\n\nConsider the following DOM structure.\n\nYou can locate each element by its implicit role:\n\nOptions\n\nSee also",
+          "signatures": [
+            "function getByRole(\n  role: ARIARole | string,\n  options?: LocatorByRoleOptions,\n): Locator",
+            "<h3>Sign up</h3>\n<label>\n  Login\n  <input type=\"text\" />\n</label>\n<label>\n  Password\n  <input type=\"password\" />\n</label>\n<br/>\n<button>Submit</button>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getByRole(\n  role: ARIARole | string,\n  options?: LocatorByRoleOptions,\n): Locator"
+            },
+            {
+              "language": "html",
+              "code": "<h3>Sign up</h3>\n<label>\n  Login\n  <input type=\"text\" />\n</label>\n<label>\n  Password\n  <input type=\"password\" />\n</label>\n<br/>\n<button>Submit</button>"
+            },
+            {
+              "language": "ts",
+              "code": "await expect.element(\n  page.getByRole('heading', { name: 'Sign up' })\n).toBeVisible()\n\nawait page.getByRole('textbox', { name: 'Login' }).fill('admin')\nawait page.getByRole('textbox', { name: 'Password' }).fill('admin')\n\nawait page.getByRole('button', { name: /submit/i }).click()"
+            }
+          ],
+          "notes": [
+            "TIPIf you only query for a single element with getByText('The name') it's oftentimes better to use getByRole(expectedRole, { name: 'The name' }). The accessible name query does not replace other queries such as *ByAltText or *ByTitle. While the accessible name can be equal to these attributes, it does not replace the functionality of these attributes.",
+            "WARNINGRoles are matched by string equality, without inheriting from the ARIA role hierarchy. As a result, querying a superclass role like checkbox will not include elements with a subclass role like switch.By default, many semantic elements in HTML have a role; for example, <input type=\"radio\"> has the \"radio\" role. Non-semantic elements in HTML do not have a role; <div> and <span> without added semantics return null. The role attribute can provide semantics.Providing roles via role or aria-* attributes to built-in elements that already have an implicit role is highly discouraged by ARIA guidelines.",
+            "exact: booleanWhether the name is matched exactly: case-sensitive and whole-string. Defaults to browser.locators.exact, which is true by default. This option is ignored if name is a regular expression. Note that exact match still trims whitespace.tsx<button>Hello World</button> page.getByRole('button', { name: 'hello world' }) // ✅ page.getByRole('button', { name: 'hello world', exact: true }) // ❌ page.getByRole('button', { name: 'Hello World', exact: true }) // ✅",
+            "checked: booleanShould checked elements (set by aria-checked or <input type=\"checkbox\"/>) be included or not. By default, the filter is not applied.See aria-checked for more informationtsx<> <button role=\"checkbox\" aria-checked=\"true\" /> <input type=\"checkbox\" checked /> </> page.getByRole('checkbox', { checked: true }) // ✅ page.getByRole('checkbox', { checked: false }) // ❌",
+            "disabled: booleanShould disabled elements be included or not. By default, the filter is not applied. Note that unlike other attributes, disable state is inherited.See aria-disabled for more informationtsx<input type=\"text\" disabled /> page.getByRole('textbox', { disabled: true }) // ✅ page.getByRole('textbox', { disabled: false }) // ❌",
+            "expanded: booleanShould expanded elements be included or not. By default, the filter is not applied.See aria-expanded for more informationtsx<a aria-expanded=\"true\" href=\"example.com\">Link</a> page.getByRole('link', { expanded: true }) // ✅ page.getByRole('link', { expanded: false }) // ❌",
+            "includeHidden: booleanShould elements that are normally excluded from the accessibility tree be queried. By default, only non-hidden elements are matched by role selector.Note that roles none and presentation are always included.tsx<button style=\"display: none\" /> page.getByRole('button') // ❌ page.getByRole('button', { includeHidden: false }) // ❌ page.getByRole('button', { includeHidden: true }) // ✅",
+            "level: numberA number attribute that is usually present for heading, listitem, row, treeitem roles with default values for <h1>-<h6> elements. By default, the filter is not applied.See aria-level for more informationtsx<> <h1>Heading Level One</h1> <div role=\"heading\" aria-level=\"1\">Second Heading Level One</div> </> page.getByRole('heading', { level: 1 }) // ✅ page.getByRole('heading', { level: 2 }) // ❌",
+            "name: string | RegExpAn accessible name. By default, matching is case-insensitive and searches for a substring. Use exact option to control this behavior.tsx<button>Click Me!</button> page.getByRole('button', { name: 'Click Me!' }) // ✅ page.getByRole('button', { name: 'click me!' }) // ✅ page.getByRole('button', { name: 'Click Me?' }) // ❌",
+            "pressed: booleanShould pressed elements be included or not. By default, the filter is not applied.See aria-pressed for more informationtsx<button aria-pressed=\"true\">👍</button> page.getByRole('button', { pressed: true }) // ✅ page.getByRole('button', { pressed: false }) // ❌",
+            "selected: booleanShould selected elements be included or not. By default, the filter is not applied.See aria-selected for more informationtsx<button role=\"tab\" aria-selected=\"true\">Vue</button> page.getByRole('button', { selected: true }) // ✅ page.getByRole('button', { selected: false }) // ❌",
+            "List of ARIA roles at MDN",
+            "List of ARIA roles at w3.org",
+            "testing-library's ByRole"
+          ],
+          "children": []
+        },
+        {
+          "name": "getByAltText",
+          "id": "getbyalttext",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#getbyalttext",
+          "description": "Creates a locator capable of finding an element with an alt attribute that matches the text. Unlike testing-library's implementation, Vitest will match any element that has a matching alt attribute.\n\nOptions\n\nSee also",
+          "signatures": [
+            "function getByAltText(\n  text: string | RegExp,\n  options?: LocatorOptions,\n): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getByAltText(\n  text: string | RegExp,\n  options?: LocatorOptions,\n): Locator"
+            },
+            {
+              "language": "tsx",
+              "code": "<img alt=\"Incredibles 2 Poster\" src=\"/incredibles-2.png\" />\n\npage.getByAltText(/incredibles.*? poster/i) // ✅\npage.getByAltText('non existing alt text') // ❌"
+            }
+          ],
+          "notes": [
+            "exact: booleanWhether the text is matched exactly: case-sensitive and whole-string. Defaults to browser.locators.exact, which is true by default. This option is ignored if text is a regular expression. Note that exact match still trims whitespace.",
+            "testing-library's ByAltText"
+          ],
+          "children": []
+        },
+        {
+          "name": "getByLabelText",
+          "id": "getbylabeltext",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#getbylabeltext",
+          "description": "Creates a locator capable of finding an element that has an associated label.\n\nThe page.getByLabelText('Username') locator will find every input in the example below:\n\nOptions\n\nSee also",
+          "signatures": [
+            "function getByLabelText(\n  text: string | RegExp,\n  options?: LocatorOptions,\n): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getByLabelText(\n  text: string | RegExp,\n  options?: LocatorOptions,\n): Locator"
+            },
+            {
+              "language": "html",
+              "code": "// for/htmlFor relationship between label and form element id\n<label for=\"username-input\">Username</label>\n<input id=\"username-input\" />\n\n// The aria-labelledby attribute with form elements\n<label id=\"username-label\">Username</label>\n<input aria-labelledby=\"username-label\" />\n\n// Wrapper labels\n<label>Username <input /></label>\n\n// Wrapper labels where the label text is in another child element\n<label>\n  <span>Username</span>\n  <input />\n</label>\n\n// aria-label attributes\n// Take care because this is not a label that users can see on the page,\n// so the purpose of your input must be obvious to visual users.\n<input aria-label=\"Username\" />"
+            }
+          ],
+          "notes": [
+            "exact: booleanWhether the text is matched exactly: case-sensitive and whole-string. Defaults to browser.locators.exact, which is true by default. This option is ignored if text is a regular expression. Note that exact match still trims whitespace.",
+            "testing-library's ByLabelText"
+          ],
+          "children": []
+        },
+        {
+          "name": "getByPlaceholder",
+          "id": "getbyplaceholder",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#getbyplaceholder",
+          "description": "Creates a locator capable of finding an element that has the specified placeholder attribute. Vitest will match any element that has a matching placeholder attribute, not just input.\n\nOptions\n\nSee also",
+          "signatures": [
+            "function getByPlaceholder(\n  text: string | RegExp,\n  options?: LocatorOptions,\n): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getByPlaceholder(\n  text: string | RegExp,\n  options?: LocatorOptions,\n): Locator"
+            },
+            {
+              "language": "tsx",
+              "code": "<input placeholder=\"Username\" />\n\npage.getByPlaceholder('Username') // ✅\npage.getByPlaceholder('not found') // ❌"
+            }
+          ],
+          "notes": [
+            "WARNINGIt is generally better to rely on a label using getByLabelText than a placeholder.",
+            "exact: booleanWhether the text is matched exactly: case-sensitive and whole-string. Defaults to browser.locators.exact, which is true by default. This option is ignored if text is a regular expression. Note that exact match still trims whitespace.",
+            "testing-library's ByPlaceholderText"
+          ],
+          "children": []
+        },
+        {
+          "name": "getByText",
+          "id": "getbytext",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#getbytext",
+          "description": "Creates a locator capable of finding an element that contains the specified text. The text will be matched against TextNode's nodeValue or input's value if the type is button or reset. Matching by text always normalizes whitespace, even with exact match. For example, it turns multiple spaces into one, turns line breaks into spaces and ignores leading and trailing whitespace.\n\nOptions\n\nSee also",
+          "signatures": [
+            "function getByText(\n  text: string | RegExp,\n  options?: LocatorOptions,\n): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getByText(\n  text: string | RegExp,\n  options?: LocatorOptions,\n): Locator"
+            },
+            {
+              "language": "tsx",
+              "code": "<a href=\"/about\">About ℹ️</a>\n\npage.getByText(/about/i) // ✅\npage.getByText('about', { exact: true }) // ❌"
+            }
+          ],
+          "notes": [
+            "TIPThis locator is useful for locating non-interactive elements. If you need to locate an interactive element, like a button or an input, prefer getByRole.",
+            "exact: booleanWhether the text is matched exactly: case-sensitive and whole-string. Defaults to browser.locators.exact, which is true by default. This option is ignored if text is a regular expression. Note that exact match still trims whitespace.",
+            "testing-library's ByText"
+          ],
+          "children": []
+        },
+        {
+          "name": "getByTitle",
+          "id": "getbytitle",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#getbytitle",
+          "description": "Creates a locator capable of finding an element that has the specified title attribute. Unlike testing-library's getByTitle, Vitest cannot find title elements within an SVG.\n\nOptions\n\nSee also",
+          "signatures": [
+            "function getByTitle(\n  text: string | RegExp,\n  options?: LocatorOptions,\n): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getByTitle(\n  text: string | RegExp,\n  options?: LocatorOptions,\n): Locator"
+            },
+            {
+              "language": "tsx",
+              "code": "<span title=\"Delete\" id=\"2\"></span>\n\npage.getByTitle('Delete') // ✅\npage.getByTitle('Create') // ❌"
+            }
+          ],
+          "notes": [
+            "exact: booleanWhether the text is matched exactly: case-sensitive and whole-string. Defaults to browser.locators.exact, which is true by default. This option is ignored if text is a regular expression. Note that exact match still trims whitespace.",
+            "testing-library's ByTitle"
+          ],
+          "children": []
+        },
+        {
+          "name": "getByTestId",
+          "id": "getbytestid",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#getbytestid",
+          "description": "Creates a locator capable of finding an element that matches the specified test id attribute. You can configure the attribute name with browser.locators.testIdAttribute.\n\nSee also",
+          "signatures": [
+            "function getByTestId(text: string | RegExp): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function getByTestId(text: string | RegExp): Locator"
+            },
+            {
+              "language": "tsx",
+              "code": "<div data-testid=\"custom-element\" />\n\npage.getByTestId('custom-element') // ✅\npage.getByTestId('non-existing-element') // ❌"
+            }
+          ],
+          "notes": [
+            "WARNINGIt is recommended to use this only after the other locators don't work for your use case. Using data-testid attributes does not resemble how your software is used and should be avoided if possible.",
+            "testing-library's ByTestId"
+          ],
+          "children": []
+        },
+        {
+          "name": "nth",
+          "id": "nth",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#nth",
+          "description": "This method returns a new locator that matches only a specific index within a multi-element query result. It's zero based, nth(0) selects the first element. Unlike elements()[n], the nth locator will be retried until the element is present.",
+          "signatures": [
+            "function nth(index: number): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function nth(index: number): Locator"
+            },
+            {
+              "language": "html",
+              "code": "<div aria-label=\"one\"><input/><input/><input/></div>\n<div aria-label=\"two\"><input/></div>"
+            },
+            {
+              "language": "tsx",
+              "code": "page.getByRole('textbox').nth(0) // ✅\npage.getByRole('textbox').nth(4) // ❌"
+            },
+            {
+              "language": "tsx",
+              "code": "page.getByLabel('two').getByRole('input') // ✅ better alternative to page.getByRole('textbox').nth(3)\npage.getByLabel('one').getByRole('input') // ❌ too ambiguous\npage.getByLabel('one').getByRole('input').nth(1) // ✅ pragmatic compromise"
+            }
+          ],
+          "notes": [
+            "TIPBefore resorting to nth, you may find it useful to use chained locators to narrow down your search. Sometimes there is no better way to distinguish than by element position; although this can lead to flake, it's better than nothing."
+          ],
+          "children": []
+        },
+        {
+          "name": "first",
+          "id": "first",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#first",
+          "description": "This method returns a new locator that matches only the first index of a multi-element query result. It is sugar for nth(0).",
+          "signatures": [
+            "function first(): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function first(): Locator"
+            },
+            {
+              "language": "html",
+              "code": "<input/> <input/> <input/>"
+            },
+            {
+              "language": "tsx",
+              "code": "page.getByRole('textbox').first() // ✅"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "last",
+          "id": "last",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#last",
+          "description": "This method returns a new locator that matches only the last index of a multi-element query result. It is sugar for nth(-1).",
+          "signatures": [
+            "function last(): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function last(): Locator"
+            },
+            {
+              "language": "html",
+              "code": "<input/> <input/> <input/>"
+            },
+            {
+              "language": "tsx",
+              "code": "page.getByRole('textbox').last() // ✅"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "and",
+          "id": "and",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#and",
+          "description": "This method creates a new locator that matches both the parent and provided locator. The following example finds a button with a specific title:",
+          "signatures": [
+            "function and(locator: Locator): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function and(locator: Locator): Locator"
+            },
+            {
+              "language": "ts",
+              "code": "page.getByRole('button').and(page.getByTitle('Subscribe'))"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "or",
+          "id": "or",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#or",
+          "description": "This method creates a new locator that matches either one or both locators.",
+          "signatures": [
+            "function or(locator: Locator): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function or(locator: Locator): Locator"
+            },
+            {
+              "language": "tsx",
+              "code": "<>\n  <button>Click me</button>\n  <a href=\"https://vitest.dev\">Error happened!</a>\n</>\n\npage.getByRole('button')\n  .or(page.getByRole('link'))\n  .click() // ❌ matches multiple elements"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "filter",
+          "id": "filter",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#filter",
+          "description": "This methods narrows down the locator according to the options, such as filtering by text. It can be chained to apply multiple filters.",
+          "signatures": [
+            "function filter(options: LocatorFilterOptions): Locator"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function filter(options: LocatorFilterOptions): Locator"
+            }
+          ],
+          "notes": [],
+          "children": [
+            {
+              "name": "has",
+              "id": "has",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#has",
+              "description": "This options narrows down the selector to match elements that contain other elements matching provided locator. For example, with this HTML:\n\nWe can narrow down the locator to only find the article with Vitest text inside:",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "html",
+                  "code": "<article>\n  <div>Vitest</div>\n</article>\n<article>\n  <div>Rolldown</div>\n</article>"
+                },
+                {
+                  "language": "ts",
+                  "code": "page.getByRole('article').filter({ has: page.getByText('Vitest') }) // ✅"
+                },
+                {
+                  "language": "ts",
+                  "code": "page.getByText('Vitest').filter({ has: page.getByRole('article') }) // ❌"
+                },
+                {
+                  "language": "ts",
+                  "code": "page.getByRole('article')\n  .filter({ has: page.getByRole('button', { name: 'delete row' }) })\n  .filter({ has: page.getByText('Vitest') })"
+                }
+              ],
+              "notes": [
+                "Type: Locator"
+              ],
+              "children": []
+            },
+            {
+              "name": "hasNot",
+              "id": "hasnot",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#hasnot",
+              "description": "This option narrows down the selector to match elements that do not contain other elements matching provided locator. For example, with this HTML:\n\nWe can narrow down the locator to only find the article that doesn't have Rolldown inside.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "html",
+                  "code": "<article>\n  <div>Vitest</div>\n</article>\n<article>\n  <div>Rolldown</div>\n</article>"
+                },
+                {
+                  "language": "ts",
+                  "code": "page.getByRole('article')\n  .filter({ hasNot: page.getByText('Rolldown') }) // ✅\npage.getByRole('article')\n  .filter({ hasNot: page.getByText('Vitest') }) // ❌"
+                }
+              ],
+              "notes": [
+                "Type: Locator",
+                "WARNINGNote that provided locator is queried against the parent, not the document root, just like has option."
+              ],
+              "children": []
+            },
+            {
+              "name": "hasText",
+              "id": "hastext",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#hastext",
+              "description": "This options narrows down the selector to only match elements that contain provided text somewhere inside. When the string is passed, matching is case-insensitive and searches for a substring.\n\nBoth locators will find the same element because the search is case-insensitive:",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "html",
+                  "code": "<article>\n  <div>Vitest</div>\n</article>\n<article>\n  <div>Rolldown</div>\n</article>"
+                },
+                {
+                  "language": "ts",
+                  "code": "page.getByRole('article').filter({ hasText: 'Vitest' }) // ✅\npage.getByRole('article').filter({ hasText: 'Vite' }) // ✅"
+                }
+              ],
+              "notes": [
+                "Type: string | RegExp"
+              ],
+              "children": []
+            },
+            {
+              "name": "hasNotText",
+              "id": "hasnottext",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#hasnottext",
+              "description": "This options narrows down the selector to only match elements that do not contain provided text somewhere inside. When the string is passed, matching is case-insensitive and searches for a substring.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [
+                "Type: string | RegExp"
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Methods",
+          "id": "methods",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#methods",
+          "description": "All methods are asynchronous and must be awaited. Since Vitest 3, tests will fail if a method is not awaited.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": [
+            {
+              "name": "click",
+              "id": "click",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#click",
+              "description": "Click on an element. You can use the options to set the cursor position.",
+              "signatures": [
+                "function click(options?: UserEventClickOptions): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function click(options?: UserEventClickOptions): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nawait page.getByRole('img', { name: 'Rose' }).click()"
+                }
+              ],
+              "notes": [
+                "See more at userEvent.click"
+              ],
+              "children": []
+            },
+            {
+              "name": "dblClick",
+              "id": "dblclick",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#dblclick",
+              "description": "Triggers a double click event on an element. You can use the options to set the cursor position.",
+              "signatures": [
+                "function dblClick(options?: UserEventDoubleClickOptions): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function dblClick(options?: UserEventDoubleClickOptions): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nawait page.getByRole('img', { name: 'Rose' }).dblClick()"
+                }
+              ],
+              "notes": [
+                "See more at userEvent.dblClick"
+              ],
+              "children": []
+            },
+            {
+              "name": "tripleClick",
+              "id": "tripleclick",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#tripleclick",
+              "description": "Triggers a triple click event on an element. Since there is no tripleclick in browser api, this method will fire three click events in a row.",
+              "signatures": [
+                "function tripleClick(options?: UserEventTripleClickOptions): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function tripleClick(options?: UserEventTripleClickOptions): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nawait page.getByRole('img', { name: 'Rose' }).tripleClick()"
+                }
+              ],
+              "notes": [
+                "See more at userEvent.tripleClick"
+              ],
+              "children": []
+            },
+            {
+              "name": "wheel 4.1.0+",
+              "id": "wheel",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#wheel",
+              "description": "Triggers a wheel event on an element. You can use the options to choose a general scroll direction or a precise delta value.",
+              "signatures": [
+                "function wheel(options: UserEventWheelOptions): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function wheel(options: UserEventWheelOptions): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\n// Scroll right\nawait page.getByRole('tablist').wheel({ direction: 'right' })"
+                }
+              ],
+              "notes": [
+                "See more at userEvent.wheel"
+              ],
+              "children": []
+            },
+            {
+              "name": "clear",
+              "id": "clear",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#clear",
+              "description": "Clears the input element content.",
+              "signatures": [
+                "function clear(options?: UserEventClearOptions): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function clear(options?: UserEventClearOptions): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nawait page.getByRole('textbox', { name: 'Full Name' }).clear()"
+                }
+              ],
+              "notes": [
+                "See more at userEvent.clear"
+              ],
+              "children": []
+            },
+            {
+              "name": "hover",
+              "id": "hover",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#hover",
+              "description": "Moves the cursor position to the selected element.",
+              "signatures": [
+                "function hover(options?: UserEventHoverOptions): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function hover(options?: UserEventHoverOptions): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nawait page.getByRole('img', { name: 'Rose' }).hover()"
+                }
+              ],
+              "notes": [
+                "See more at userEvent.hover"
+              ],
+              "children": []
+            },
+            {
+              "name": "unhover",
+              "id": "unhover",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#unhover",
+              "description": "This works the same as locator.hover, but moves the cursor to the document.body element instead.",
+              "signatures": [
+                "function unhover(options?: UserEventHoverOptions): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function unhover(options?: UserEventHoverOptions): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nawait page.getByRole('img', { name: 'Rose' }).unhover()"
+                }
+              ],
+              "notes": [
+                "See more at userEvent.unhover"
+              ],
+              "children": []
+            },
+            {
+              "name": "fill",
+              "id": "fill",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#fill",
+              "description": "Sets the value of the current input, textarea or contenteditable element.",
+              "signatures": [
+                "function fill(text: string, options?: UserEventFillOptions): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function fill(text: string, options?: UserEventFillOptions): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nawait page.getByRole('input', { name: 'Full Name' }).fill('Mr. Bean')"
+                }
+              ],
+              "notes": [
+                "See more at userEvent.fill"
+              ],
+              "children": []
+            },
+            {
+              "name": "dropTo",
+              "id": "dropto",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#dropto",
+              "description": "Drags the current element to the target location.",
+              "signatures": [
+                "function dropTo(\n  target: Locator,\n  options?: UserEventDragAndDropOptions,\n): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function dropTo(\n  target: Locator,\n  options?: UserEventDragAndDropOptions,\n): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nconst paris = page.getByText('Paris')\nconst france = page.getByText('France')\n\nawait paris.dropTo(france)"
+                }
+              ],
+              "notes": [
+                "See more at userEvent.dragAndDrop"
+              ],
+              "children": []
+            },
+            {
+              "name": "selectOptions",
+              "id": "selectoptions",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#selectoptions",
+              "description": "Choose one or more values from a <select> element.",
+              "signatures": [
+                "function selectOptions(\n  values:\n    | HTMLElement\n    | HTMLElement[]\n    | Locator\n    | Locator[]\n    | string\n    | string[],\n  options?: UserEventSelectOptions,\n): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function selectOptions(\n  values:\n    | HTMLElement\n    | HTMLElement[]\n    | Locator\n    | Locator[]\n    | string\n    | string[],\n  options?: UserEventSelectOptions,\n): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nconst languages = page.getByRole('select', { name: 'Languages' })\n\nawait languages.selectOptions('EN')\nawait languages.selectOptions(['ES', 'FR'])\nawait languages.selectOptions([\n  languages.getByRole('option', { name: 'Spanish' }),\n  languages.getByRole('option', { name: 'French' }),\n])"
+                }
+              ],
+              "notes": [
+                "See more at userEvent.selectOptions"
+              ],
+              "children": []
+            },
+            {
+              "name": "screenshot",
+              "id": "screenshot",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#screenshot",
+              "description": "Creates a screenshot of the element matching the locator's selector.\n\nYou can specify the save location for the screenshot using the path option, which is relative to the current test file. If the path option is not set, Vitest will default to using browser.screenshotDirectory (__screenshot__ by default), along with the names of the file and the test to determine the screenshot's filepath.\n\nIf you also need the content of the screenshot, you can specify base64: true to return it alongside the filepath where the screenshot is saved.",
+              "signatures": [
+                "function screenshot(options: LocatorScreenshotOptions & { save: false }): Promise<string>\nfunction screenshot(options: LocatorScreenshotOptions & { base64: true }): Promise<{\n  path: string\n  base64: string\n}>\nfunction screenshot(options?: LocatorScreenshotOptions & { base64?: false }): Promise<string>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function screenshot(options: LocatorScreenshotOptions & { save: false }): Promise<string>\nfunction screenshot(options: LocatorScreenshotOptions & { base64: true }): Promise<{\n  path: string\n  base64: string\n}>\nfunction screenshot(options?: LocatorScreenshotOptions & { base64?: false }): Promise<string>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nconst button = page.getByRole('button', { name: 'Click Me!' })\n\nconst path = await button.screenshot()\n\nconst { path, base64 } = await button.screenshot({\n  path: './button-click-me.png',\n  base64: true, // also return base64 string\n})\n// path - fullpath to the screenshot\n// bas64 - base64 encoded string of the screenshot"
+                }
+              ],
+              "notes": [
+                "WARNING 3.2.0+ Note that screenshot will always return a base64 string if save is set to false. The path is also ignored in that case."
+              ],
+              "children": []
+            },
+            {
+              "name": "mark",
+              "id": "mark",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#mark",
+              "description": "Adds a named marker to the trace timeline and uses the current locator as marker context.\n\nPass options.stack to override the callsite location in trace metadata. This is useful for wrapper libraries that need to preserve the end-user source location.\n\nPass options.kind to categorize your marker as specific type, for example as 'action'.",
+              "signatures": [
+                "function mark(name: string, options?: { stack?: string; kind?: BrowserTraceEntryKind }): Promise<void>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function mark(name: string, options?: { stack?: string; kind?: BrowserTraceEntryKind }): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nconst submitButton = page.getByRole('button', { name: 'Submit' })\n\nawait submitButton.mark('before submit')\nawait submitButton.click()\nawait submitButton.mark('after submit')"
+                }
+              ],
+              "notes": [
+                "TIPThis method is useful only when browser.trace is enabled."
+              ],
+              "children": []
+            },
+            {
+              "name": "query",
+              "id": "query",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#query",
+              "description": "This method returns a single element matching the locator's selector or null if no element is found.\n\nIf multiple elements match the selector, this method will throw an error. Use .elements() when you need all matching DOM Elements or .all() if you need an array of locators matching the selector.\n\nConsider the following DOM structure:\n\nThese locators will not throw an error:\n\nThese locators will throw an error:",
+              "signatures": [
+                "function query(): Element | null"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function query(): Element | null"
+                },
+                {
+                  "language": "html",
+                  "code": "<div>Hello <span>World</span></div>\n<div>Hello</div>"
+                },
+                {
+                  "language": "ts",
+                  "code": "page.getByText('Hello World').query() // ✅ HTMLDivElement\npage.getByText('Hello Germany').query() // ✅ null\npage.getByText('World').query() // ✅ HTMLSpanElement\npage.getByText('Hello', { exact: true }).query() // ✅ HTMLSpanElement"
+                },
+                {
+                  "language": "ts",
+                  "code": "// returns multiple elements\npage.getByText('Hello').query() // ❌\npage.getByText(/^Hello/).query() // ❌"
+                }
+              ],
+              "notes": [
+                "DANGERThis is an escape hatch for external APIs that do not support locators. Prefer using locator methods instead."
+              ],
+              "children": []
+            },
+            {
+              "name": "element",
+              "id": "element",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#element",
+              "description": "This method returns a single element matching the locator's selector.\n\nIf no element matches the selector, an error is thrown. Consider using .query() when you just need to check if the element exists.\n\nIf multiple elements match the selector, an error is thrown. Use .elements() when you need all matching DOM Elements or .all() if you need an array of locators matching the selector.\n\nConsider the following DOM structure:\n\nThese locators will not throw an error:\n\nThese locators will throw an error:",
+              "signatures": [
+                "function element(): Element"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function element(): Element"
+                },
+                {
+                  "language": "ts",
+                  "code": "await expect.element(page.getByRole('button')).toBeDisabled()"
+                },
+                {
+                  "language": "html",
+                  "code": "<div>Hello <span>World</span></div>\n<div>Hello Germany</div>\n<div>Hello</div>"
+                },
+                {
+                  "language": "ts",
+                  "code": "page.getByText('Hello World').element() // ✅\npage.getByText('Hello Germany').element() // ✅\npage.getByText('World').element() // ✅\npage.getByText('Hello', { exact: true }).element() // ✅"
+                },
+                {
+                  "language": "ts",
+                  "code": "// returns multiple elements\npage.getByText('Hello').element() // ❌\npage.getByText(/^Hello/).element() // ❌\n\n// returns no elements\npage.getByText('Hello USA').element() // ❌"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "elements",
+              "id": "elements",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#elements",
+              "description": "This method returns an array of elements matching the locator's selector.\n\nThis function never throws an error. If there are no elements matching the selector, this method will return an empty array.\n\nConsider the following DOM structure:\n\nThese locators will always succeed:",
+              "signatures": [
+                "function elements(): Element[]"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function elements(): Element[]"
+                },
+                {
+                  "language": "html",
+                  "code": "<div>Hello <span>World</span></div>\n<div>Hello</div>"
+                },
+                {
+                  "language": "ts",
+                  "code": "page.getByText('Hello World').elements() // ✅ [HTMLElement]\npage.getByText('World').elements() // ✅ [HTMLElement]\npage.getByText('Hello', { exact: true }).elements() // ✅ [HTMLElement]\npage.getByText('Hello').elements() // ✅ [HTMLElement, HTMLElement]\npage.getByText('Hello USA').elements() // ✅ []"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "findElement 4.1.0+",
+              "id": "findelement",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#findelement",
+              "description": "This method returns an element matching the locator. Unlike .element(), this method will wait and retry until a matching element appears in the DOM, using increasing intervals (0, 20, 50, 100, 100, 500ms).\n\nIf no element is found before the timeout, an error is thrown. By default, the timeout matches the test timeout.\n\nIf multiple elements match the selector and strict is true (the default), an error is thrown immediately without retrying. Set strict to false to return the first matching element instead.\n\nIt accepts options:\n\nConsider the following DOM structure:\n\nThese locators will resolve successfully:\n\nThese locators will throw an error:\n\nUsing strict: false to allow multiple matches:",
+              "signatures": [
+                "function findElement(\n  options?: SelectorOptions\n): Promise<HTMLElement | SVGElement>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function findElement(\n  options?: SelectorOptions\n): Promise<HTMLElement | SVGElement>"
+                },
+                {
+                  "language": "html",
+                  "code": "<div>Hello <span>World</span></div>\n<div>Hello Germany</div>\n<div>Hello</div>"
+                },
+                {
+                  "language": "ts",
+                  "code": "await page.getByText('Hello World').findElement() // ✅ HTMLDivElement\nawait page.getByText('World').findElement() // ✅ HTMLSpanElement\nawait page.getByText('Hello Germany').findElement() // ✅ HTMLDivElement"
+                },
+                {
+                  "language": "ts",
+                  "code": "// multiple elements match, strict mode rejects\nawait page.getByText('Hello').findElement() // ❌\nawait page.getByText(/^Hello/).findElement() // ❌\n\n// no matching element before timeout\nawait page.getByText('Hello USA').findElement() // ❌"
+                },
+                {
+                  "language": "ts",
+                  "code": "// returns the first matching element instead of throwing\nawait page.getByText('Hello').findElement({ strict: false }) // ✅ HTMLDivElement"
+                }
+              ],
+              "notes": [
+                "WARNINGThis is an escape hatch for cases where you need the raw DOM element — for example, to pass it to a third-party library like FormKit that doesn't accept Vitest locators. If you are interacting with the element yourself, use other builtin methods instead.",
+                "timeout: number - How long to wait in milliseconds until at least one element is found. By default, this shares timeout with the test.",
+                "strict: boolean - When true (default), throws an error if multiple elements match the locator. When false, returns the first matching element."
+              ],
+              "children": []
+            },
+            {
+              "name": "all",
+              "id": "all",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#all",
+              "description": "This method returns an array of new locators that match the selector.\n\nInternally, this method calls .elements and wraps every element using page.elementLocator.",
+              "signatures": [
+                "function all(): Locator[]"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function all(): Locator[]"
+                }
+              ],
+              "notes": [
+                "See locator.elements()"
+              ],
+              "children": []
+            },
+            {
+              "name": "serialize",
+              "id": "serialize",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#serialize",
+              "description": "Returns a JSON-serializable representation of the locator. The returned object has two fields:\n\nThis is primarily intended for forwarding a locator to a browser command, which runs in Node and cannot receive a live Locator instance:",
+              "signatures": [
+                "function serialize(): SerializedLocator"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function serialize(): SerializedLocator"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { commands, page } from 'vitest/browser'\n\nawait commands.myCommand(page.getByRole('button').serialize())"
+                }
+              ],
+              "notes": [
+                "selector: the provider-specific selector string used to query the element at runtime.",
+                "locator: a human-readable description of the locator (e.g. getByRole('button')), used for error messages and tracing. Equivalent to calling asLocator().",
+                "TIPVitest automatically serializes any Locator argument passed to a command, so calling serialize() explicitly is rarely necessary. You can also use JSON.stringify(locator) (it calls toJSON internally), which produces the same result."
+              ],
+              "children": []
+            },
+            {
+              "name": "toJSON",
+              "id": "tojson",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#tojson",
+              "description": "Alias of serialize. Defined so that JSON.stringify(locator) and structured-clone-based transports return a SerializedLocator object.",
+              "signatures": [
+                "function toJSON(): SerializedLocator"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function toJSON(): SerializedLocator"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "asLocator",
+              "id": "aslocator",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#aslocator",
+              "description": "Returns a human-readable description of the locator using the JavaScript locator syntax (e.g. getByRole('button', { name: 'Submit' })). This is the same string exposed as the locator field of serialize() and is used in error messages and traces.",
+              "signatures": [
+                "function asLocator(): string"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function asLocator(): string"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { page } from 'vitest/browser'\n\nconst button = page.getByRole('button', { name: 'Submit' })\nbutton.asLocator() // \"getByRole('button', { name: 'Submit' })\""
+                }
+              ],
+              "notes": [
+                "TIPUse selector when you need the provider-specific string to forward to a browser command. Use asLocator() only for diagnostic output. The returned string is not meant to be re-used to query elements."
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Properties",
+          "id": "properties",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#properties",
+          "description": "",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": [
+            {
+              "name": "selector",
+              "id": "selector",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#selector",
+              "description": "The selector is a string that will be used to locate the element by the browser provider. Playwright will use a playwright locator syntax, and preview and webdriverio will use CSS.",
+              "signatures": [
+                "import type { BrowserCommand } from 'vitest/node'\nimport type { SerializedLocator } from '@vitest/browser'\n\nconst test: BrowserCommand<SerializedLocator> = function test(context, { selector }) {\n  // playwright\n  await context.iframe.locator(selector).click()\n  // webdriverio\n  await context.browser.$(selector).click()\n}"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import type { BrowserCommand } from 'vitest/node'\nimport type { SerializedLocator } from '@vitest/browser'\n\nconst test: BrowserCommand<SerializedLocator> = function test(context, { selector }) {\n  // playwright\n  await context.iframe.locator(selector).click()\n  // webdriverio\n  await context.browser.$(selector).click()\n}"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { test } from 'vitest'\nimport { commands, page } from 'vitest/browser'\n\ntest('works correctly', async () => {\n  await commands.test(page.getByText('Hello').serialize()) // ✅\n  // vitest will automatically unwrap it to a SerializedLocator\n  await commands.test(page.getByText('Hello')) // ✅\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "length",
+              "id": "length",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/locators#length",
+              "description": "This getter returns a number of elements that this locator is matching. It is equivalent to calling locator.elements().length.\n\nConsider the following DOM structure:\n\nThis property will always succeed:",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "html",
+                  "code": "<button>Click Me!</button>\n<button>Don't click me!</button>"
+                },
+                {
+                  "language": "ts",
+                  "code": "page.getByRole('button').length // ✅ 2\npage.getByRole('button', { title: 'Click Me!' }).length // ✅ 1\npage.getByRole('alert').length // ✅ 0"
+                }
+              ],
+              "notes": [],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Custom Locators 3.2.0+ advanced",
+          "id": "custom-locators",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/locators#custom-locators",
+          "description": "You can extend built-in locators API by defining an object of locator factories. These methods will exist as methods on the page object and any created locator.\n\nThese locators can be useful if built-in locators are not enough. For example, when you use a custom framework for your UI.\n\nThe locator factory needs to return a selector string or a locator itself.\n\nIf the method is called on the global page object, then selector will be applied to the whole page. In the example below, getByArticleTitle will find all elements with an attribute data-title with the value of title. However, if the method is called on the locator, then it will be scoped to that locator.",
+          "signatures": [
+            "import { locators } from 'vitest/browser'\n\nlocators.extend({\n  getByArticleTitle(title) {\n    return `[data-title=\"${title}\"]`\n  },\n  getByArticleCommentsCount(count) {\n    return `.comments :text(\"${count} comments\")`\n  },\n  async previewComments() {\n    // you have access to the current locator via \"this\"\n    // beware that if the method was called on `page`, `this` will be `page`,\n    // not the locator!\n    if (this !== page) {\n      await this.click()\n    }\n    // ...\n  }\n})\n\n// if you are using typescript, you can extend LocatorSelectors interface\n// to have the autocompletion in locators.extend, page.* and locator.* methods\ndeclare module 'vitest/browser' {\n  interface LocatorSelectors {\n    // if the custom method returns a string, it will be converted into a locator\n    // if it returns anything else, then it will be returned as usual\n    getByArticleTitle(title: string): Locator\n    getByArticleCommentsCount(count: number): Locator\n\n    // Vitest will return a promise and won't try to convert it into a locator\n    previewComments(this: Locator): Promise<void>\n  }\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { locators } from 'vitest/browser'\n\nlocators.extend({\n  getByArticleTitle(title) {\n    return `[data-title=\"${title}\"]`\n  },\n  getByArticleCommentsCount(count) {\n    return `.comments :text(\"${count} comments\")`\n  },\n  async previewComments() {\n    // you have access to the current locator via \"this\"\n    // beware that if the method was called on `page`, `this` will be `page`,\n    // not the locator!\n    if (this !== page) {\n      await this.click()\n    }\n    // ...\n  }\n})\n\n// if you are using typescript, you can extend LocatorSelectors interface\n// to have the autocompletion in locators.extend, page.* and locator.* methods\ndeclare module 'vitest/browser' {\n  interface LocatorSelectors {\n    // if the custom method returns a string, it will be converted into a locator\n    // if it returns anything else, then it will be returned as usual\n    getByArticleTitle(title: string): Locator\n    getByArticleCommentsCount(count: number): Locator\n\n    // Vitest will return a promise and won't try to convert it into a locator\n    previewComments(this: Locator): Promise<void>\n  }\n}"
+            },
+            {
+              "language": "html",
+              "code": "<article data-title=\"Hello, World!\">\n  Hello, World!\n  <button id=\"comments\">2 comments</button>\n</article>\n\n<article data-title=\"Hello, Vitest!\">\n  Hello, Vitest!\n  <button id=\"comments\">0 comments</button>\n</article>"
+            },
+            {
+              "language": "ts",
+              "code": "const articles = page.getByRole('article')\nconst worldArticle = page.getByArticleTitle('Hello, World!') // ✅\nconst commentsElement = worldArticle.getByArticleCommentsCount(2) // ✅\nconst wrongCommentsElement = worldArticle.getByArticleCommentsCount(0) // ❌\nconst wrongElement = page.getByArticleTitle('No Article!') // ❌\n\nawait commentsElement.previewComments() // ✅\nawait wrongCommentsElement.previewComments() // ❌"
+            }
+          ],
+          "notes": [
+            "TIPThe selector syntax is identical to Playwright locators. Please, read their guide to better understand how to work with them."
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,437 @@
+{
+  "title": "vitest-browser-react",
+  "url": "https://vitest.dev/api/browser/react",
+  "description": "The community vitest-browser-react package renders React components in Browser Mode.\n\nThe package exposes two entry points: vitest-browser-react and vitest-browser-react/pure. They expose almost identical API (pure also exposes configure), but the pure entry point doesn't add a handler to remove the component before the next test has started.",
+  "entries": [
+    {
+      "name": "vitest-browser-react",
+      "id": "vitest-browser-react",
+      "level": 1,
+      "url": "https://vitest.dev/api/browser/react#vitest-browser-react",
+      "description": "The community vitest-browser-react package renders React components in Browser Mode.\n\nThe package exposes two entry points: vitest-browser-react and vitest-browser-react/pure. They expose almost identical API (pure also exposes configure), but the pure entry point doesn't add a handler to remove the component before the next test has started.",
+      "signatures": [],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "jsx",
+          "code": "import { render } from 'vitest-browser-react'\nimport { expect, test } from 'vitest'\nimport Component from './Component.jsx'\n\ntest('counter button increments the count', async () => {\n  const screen = await render(<Component count={1} />)\n\n  await screen.getByRole('button', { name: 'Increment' }).click()\n\n  await expect.element(screen.getByText('Count is 2')).toBeVisible()\n})"
+        }
+      ],
+      "notes": [
+        "WARNINGThis library takes inspiration from @testing-library/react.If you have used @testing-library/react in your tests before, you can keep using it, however the vitest-browser-react package provides certain benefits unique to the Browser Mode that @testing-library/react lacks:vitest-browser-react returns APIs that interact well with built-in locators, user events and assertions: for example, Vitest will automatically retry the element until the assertion is successful, even if it was rerendered between the assertions."
+      ],
+      "children": [
+        {
+          "name": "render",
+          "id": "render",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/react#render",
+          "description": "The render function records a react.render trace mark, visible in the Trace View.",
+          "signatures": [
+            "export function render(\n  ui: React.ReactNode,\n  options?: ComponentRenderOptions,\n): Promise<RenderResult>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "export function render(\n  ui: React.ReactNode,\n  options?: ComponentRenderOptions,\n): Promise<RenderResult>"
+            },
+            {
+              "language": "tsx",
+              "code": "import { render } from 'vitest-browser-react'\nconst screen = render(<Component />) \nconst screen = await render(<Component />)"
+            }
+          ],
+          "notes": [],
+          "children": [
+            {
+              "name": "Options",
+              "id": "options",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/react#options",
+              "description": "",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [],
+              "children": [
+                {
+                  "name": "container",
+                  "id": "container",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#container",
+                  "description": "By default, Vitest will create a div, append it to document.body, and render your component there. If you provide your own HTMLElement container, it will not be appended automatically — you'll need to call document.body.appendChild(container) before render.\n\nFor example, if you are unit testing a tbody element, it cannot be a child of a div. In this case, you can specify a table as the render container.",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "jsx",
+                      "code": "const table = document.createElement('table')\n\nconst { container } = await render(<TableBody {...props} />, {\n  // ⚠️ appending the element to `body` manually before rendering\n  container: document.body.appendChild(table),\n})"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "baseElement",
+                  "id": "baseelement",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#baseelement",
+                  "description": "If the container is specified, then this defaults to that, otherwise this defaults to document.body. This is used as the base element for the queries as well as what is printed when you use debug().",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "wrapper",
+                  "id": "wrapper",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#wrapper",
+                  "description": "Pass a React Component as the wrapper option to have it rendered around the inner element. This is most useful for creating reusable custom render functions for common data providers. For example:",
+                  "signatures": [
+                    "import React from 'react'\nimport { render } from 'vitest-browser-react'\nimport { ThemeProvider } from 'my-ui-lib'\nimport { TranslationProvider } from 'my-i18n-lib'\n\nfunction AllTheProviders({ children }) {\n  return (\n    <ThemeProvider theme=\"light\">\n      <TranslationProvider>\n        {children}\n      </TranslationProvider>\n    </ThemeProvider>\n  )\n}\n\nexport function customRender(ui, options) {\n  return render(ui, { wrapper: AllTheProviders, ...options })\n}"
+                  ],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "jsx",
+                      "code": "import React from 'react'\nimport { render } from 'vitest-browser-react'\nimport { ThemeProvider } from 'my-ui-lib'\nimport { TranslationProvider } from 'my-i18n-lib'\n\nfunction AllTheProviders({ children }) {\n  return (\n    <ThemeProvider theme=\"light\">\n      <TranslationProvider>\n        {children}\n      </TranslationProvider>\n    </ThemeProvider>\n  )\n}\n\nexport function customRender(ui, options) {\n  return render(ui, { wrapper: AllTheProviders, ...options })\n}"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Render Result",
+              "id": "render-result",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/react#render-result",
+              "description": "In addition to documented return value, the render function also returns all available locators relative to the baseElement, including custom ones.",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "tsx",
+                  "code": "const screen = await render(<TableBody {...props} />)\n\nawait screen.getByRole('link', { name: 'Expand' }).click()"
+                }
+              ],
+              "notes": [],
+              "children": [
+                {
+                  "name": "container",
+                  "id": "container-1",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#container-1",
+                  "description": "The containing div DOM node of your rendered React Element (rendered using ReactDOM.render). This is a regular DOM node, so you technically could call container.querySelector etc. to inspect the children.",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [],
+                  "notes": [
+                    "DANGERIf you find yourself using container to query for rendered elements then you should reconsider! The locators are designed to be more resilient to changes that will be made to the component you're testing. Avoid using container to query for elements!"
+                  ],
+                  "children": []
+                },
+                {
+                  "name": "baseElement",
+                  "id": "baseelement-1",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#baseelement-1",
+                  "description": "The containing DOM node where your React Element is rendered in the container. If you don't specify the baseElement in the options of render, it will default to document.body.\n\nThis is useful when the component you want to test renders something outside the container div, e.g. when you want to snapshot test your portal component which renders its HTML directly in the body.",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [],
+                  "notes": [
+                    "TIPThe queries returned by the render looks into baseElement, so you can use queries to test your portal component without the baseElement."
+                  ],
+                  "children": []
+                },
+                {
+                  "name": "locator",
+                  "id": "locator",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#locator",
+                  "description": "The locator of your container. It is useful to use queries scoped only to your component, or pass it down to other assertions:",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "jsx",
+                      "code": "import { render } from 'vitest-browser-react'\n\nconst { locator } = await render(<NumberDisplay number={1} />)\n\nawait locator.getByRole('button').click()\nawait expect.element(locator).toHaveTextContent('Hello World')"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "debug",
+                  "id": "debug",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#debug",
+                  "description": "This method is a shortcut for console.log(prettyDOM(baseElement)). It will print the DOM content of the container or specified elements to the console.",
+                  "signatures": [
+                    "function debug(\n  el?: HTMLElement | HTMLElement[] | Locator | Locator[],\n  maxLength?: number,\n  options?: PrettyDOMOptions,\n): void"
+                  ],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "ts",
+                      "code": "function debug(\n  el?: HTMLElement | HTMLElement[] | Locator | Locator[],\n  maxLength?: number,\n  options?: PrettyDOMOptions,\n): void"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "rerender",
+                  "id": "rerender",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#rerender",
+                  "description": "Also records a react.rerender trace mark in the Trace View.\n\nIt is better if you test the component that's doing the prop updating to ensure that the props are being updated correctly to avoid relying on implementation details in your tests. That said, if you'd prefer to update the props of a rendered component in your test, this function can be used to update props of the rendered component.",
+                  "signatures": [
+                    "function rerender(ui: React.ReactNode): Promise<void>"
+                  ],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "ts",
+                      "code": "function rerender(ui: React.ReactNode): Promise<void>"
+                    },
+                    {
+                      "language": "jsx",
+                      "code": "import { render } from 'vitest-browser-react'\n\nconst { rerender } = await render(<NumberDisplay number={1} />)\n\n// re-render the same component with different props\nawait rerender(<NumberDisplay number={2} />)"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "unmount",
+                  "id": "unmount",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#unmount",
+                  "description": "Also records a react.unmount trace mark in the Trace View.\n\nThis will cause the rendered component to be unmounted. This is useful for testing what happens when your component is removed from the page (like testing that you don't leave event handlers hanging around causing memory leaks).",
+                  "signatures": [
+                    "function unmount(): Promise<void>"
+                  ],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "ts",
+                      "code": "function unmount(): Promise<void>"
+                    },
+                    {
+                      "language": "jsx",
+                      "code": "import { render } from 'vitest-browser-react'\n\nconst { container, unmount } = await render(<Login />)\nawait unmount()\n// your component has been unmounted and now: container.innerHTML === ''"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "asFragment",
+                  "id": "asfragment",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#asfragment",
+                  "description": "Returns a DocumentFragment of your rendered component. This can be useful if you need to avoid live bindings and see how your component reacts to events.",
+                  "signatures": [
+                    "function asFragment(): DocumentFragment"
+                  ],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "ts",
+                      "code": "function asFragment(): DocumentFragment"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "cleanup",
+          "id": "cleanup",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/react#cleanup",
+          "description": "Remove all components rendered with render.",
+          "signatures": [
+            "export function cleanup(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "export function cleanup(): Promise<void>"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "renderHook",
+          "id": "renderhook",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/react#renderhook",
+          "description": "This is a convenience wrapper around render with a custom test component. The API emerged from a popular testing pattern and is mostly interesting for libraries publishing hooks. You should prefer render since a custom test component results in more readable and robust tests since the thing you want to test is not hidden behind an abstraction.",
+          "signatures": [
+            "export function renderHook<Props, Result>(\n  renderCallback: (initialProps?: Props) => Result,\n  options: RenderHookOptions<Props>,\n): Promise<RenderHookResult<Result, Props>>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "export function renderHook<Props, Result>(\n  renderCallback: (initialProps?: Props) => Result,\n  options: RenderHookOptions<Props>,\n): Promise<RenderHookResult<Result, Props>>"
+            },
+            {
+              "language": "jsx",
+              "code": "import { renderHook } from 'vitest-browser-react'\n\ntest('returns logged in user', async () => {\n  const { result } = await renderHook(() => useLoggedInUser())\n  expect(result.current).toEqual({ name: 'Alice' })\n})"
+            }
+          ],
+          "notes": [],
+          "children": [
+            {
+              "name": "Options",
+              "id": "options-1",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/react#options-1",
+              "description": "renderHook accepts the same options as render with an addition to initialProps:\n\nIt declares the props that are passed to the render-callback when first invoked. These will not be passed if you call rerender without props.\n\nrenderHook returns a few useful methods and properties:",
+              "signatures": [
+                "function createWrapper(Wrapper, props) {\n  return function CreatedWrapper({ children }) {\n    return <Wrapper {...props}>{children}</Wrapper>\n  }\n}\n\n// ...\n\nawait renderHook(() => {}, {\n  wrapper: createWrapper(Wrapper, { value: 'foo' }),\n})"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "jsx",
+                  "code": "import { renderHook } from 'vitest-browser-react'\n\ntest('returns logged in user', async () => {\n  const { result, rerender } = await renderHook((props = {}) => props, {\n    initialProps: { name: 'Alice' },\n  })\n  expect(result.current).toEqual({ name: 'Alice' })\n  await rerender()\n  expect(result.current).toEqual({ name: undefined })\n})"
+                },
+                {
+                  "language": "jsx",
+                  "code": "function createWrapper(Wrapper, props) {\n  return function CreatedWrapper({ children }) {\n    return <Wrapper {...props}>{children}</Wrapper>\n  }\n}\n\n// ...\n\nawait renderHook(() => {}, {\n  wrapper: createWrapper(Wrapper, { value: 'foo' }),\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "Render Hook Result",
+              "id": "render-hook-result",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/react#render-hook-result",
+              "description": "",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [],
+              "children": [
+                {
+                  "name": "result",
+                  "id": "result",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#result",
+                  "description": "Holds the value of the most recently committed return value of the render-callback:\n\nNote that the value is held in result.current. Think of result as a ref for the most recently committed value.",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "jsx",
+                      "code": "import { useState } from 'react'\nimport { renderHook } from 'vitest-browser-react'\nimport { expect } from 'vitest'\n\nconst { result } = await renderHook(() => {\n  const [name, setName] = useState('')\n  React.useEffect(() => {\n    setName('Alice')\n  }, [])\n\n  return name\n})\n\nexpect(result.current).toBe('Alice')"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "rerender",
+                  "id": "renderhooks-rerender",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#renderhooks-rerender",
+                  "description": "Renders the previously rendered render-callback with the new props:",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "jsx",
+                      "code": "import { renderHook } from 'vitest-browser-react'\n\nconst { rerender } = await renderHook(({ name = 'Alice' } = {}) => name)\n\n// re-render the same hook with different props\nawait rerender({ name: 'Bob' })"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                },
+                {
+                  "name": "unmount",
+                  "id": "renderhooks-unmount",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/react#renderhooks-unmount",
+                  "description": "Unmounts the test hook.",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [
+                    {
+                      "language": "jsx",
+                      "code": "import { renderHook } from 'vitest-browser-react'\n\nconst { unmount } = await renderHook(({ name = 'Alice' } = {}) => name)\n\nawait unmount()"
+                    }
+                  ],
+                  "notes": [],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Extend Queries",
+          "id": "extend-queries",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/react#extend-queries",
+          "description": "To extend locator queries, see \"Custom Locators\". For example, to make render return a new custom locator, define it using the locators.extend API:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "jsx",
+              "code": "import { locators } from 'vitest/browser'\nimport { render } from 'vitest-browser-react'\n\nlocators.extend({\n  getByArticleTitle(title) {\n    return `[data-title=\"${title}\"]`\n  },\n})\n\nconst screen = await render(<Component />)\nawait expect.element(\n  screen.getByArticleTitle('Hello World')\n).toBeVisible()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "Configuration",
+          "id": "configuration",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/react#configuration",
+          "description": "You can configure if the component should be rendered in Strict Mode with configure method from vitest-browser-react/pure:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "js",
+              "code": "import { configure } from 'vitest-browser-react/pure'\n\nconfigure({\n  // disabled by default\n  reactStrictMode: true,\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "See also",
+          "id": "see-also",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/react#see-also",
+          "description": "",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "React Testing Library documentation"
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,678 @@
+{
+  "title": "expectTypeOf",
+  "url": "https://vitest.dev/api/expect-typeof",
+  "description": "",
+  "entries": [
+    {
+      "name": "expectTypeOf",
+      "id": "expecttypeof",
+      "level": 1,
+      "url": "https://vitest.dev/api/expect-typeof#expecttypeof",
+      "description": "",
+      "signatures": [],
+      "aliases": [],
+      "examples": [],
+      "notes": [
+        "WARNINGDuring runtime this function doesn't do anything. To enable typechecking, don't forget to pass down --typecheck flag.",
+        "Type: <T>(a: unknown) => ExpectTypeOf"
+      ],
+      "children": [
+        {
+          "name": "not",
+          "id": "not",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#not",
+          "description": "You can negate all assertions, using .not property.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [
+            "Type: ExpectTypeOf"
+          ],
+          "children": []
+        },
+        {
+          "name": "toEqualTypeOf",
+          "id": "toequaltypeof",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#toequaltypeof",
+          "description": "This matcher will check if the types are fully equal to each other. This matcher will not fail if two objects have different values, but the same type. It will fail however if an object is missing a property.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf({ a: 1 }).toEqualTypeOf<{ a: number }>()\nexpectTypeOf({ a: 1 }).toEqualTypeOf({ a: 1 })\nexpectTypeOf({ a: 1 }).toEqualTypeOf({ a: 2 })\nexpectTypeOf({ a: 1, b: 1 }).not.toEqualTypeOf<{ a: number }>()"
+            }
+          ],
+          "notes": [
+            "Type: <T>(expected: T) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toMatchTypeOf",
+          "id": "tomatchtypeof",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tomatchtypeof",
+          "description": "This matcher checks if expect type extends provided type. It is different from toEqual and is more similar to expect's toMatchObject(). With this matcher, you can check if an object “matches” a type.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf({ a: 1, b: 1 }).toMatchTypeOf({ a: 1 })\nexpectTypeOf<number>().toMatchTypeOf<string | number>()\nexpectTypeOf<string | number>().not.toMatchTypeOf<number>()"
+            }
+          ],
+          "notes": [
+            "Type: <T>(expected: T) => void",
+            "DEPRECATEDThis matcher has been deprecated since expect-type v1.2.0. Use toExtend instead."
+          ],
+          "children": []
+        },
+        {
+          "name": "toExtend",
+          "id": "toextend",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#toextend",
+          "description": "This matcher checks if expect type extends provided type. It is different from toEqual and is more similar to expect's toMatchObject(). With this matcher, you can check if an object \"matches\" a type.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf({ a: 1, b: 1 }).toExtend({ a: 1 })\nexpectTypeOf<number>().toExtend<string | number>()\nexpectTypeOf<string | number>().not.toExtend<number>()"
+            }
+          ],
+          "notes": [
+            "Type: <T>(expected: T) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toMatchObjectType",
+          "id": "tomatchobjecttype",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tomatchobjecttype",
+          "description": "This matcher performs a strict check on object types, ensuring that the expected type matches the provided object type. It's stricter than toExtend and is the recommended choice when working with object types as it's more likely to catch issues like readonly properties.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf({ a: 1, b: 2 }).toMatchObjectType<{ a: number }>() // preferred\nexpectTypeOf({ a: 1, b: 2 }).toExtend<{ a: number }>() // works but less strict\n\n// Supports nested object checking\nconst user = {\n  name: 'John',\n  address: { city: 'New York', zip: '10001' }\n}\nexpectTypeOf(user).toMatchObjectType<{ name: string; address: { city: string } }>()"
+            }
+          ],
+          "notes": [
+            "Type: () => void",
+            "WARNINGThis matcher only works with plain object types. It will fail for union types and other complex types. For those cases, use toExtend instead."
+          ],
+          "children": []
+        },
+        {
+          "name": "extract",
+          "id": "extract",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#extract",
+          "description": "You can use .extract to narrow down types for further testing.",
+          "signatures": [
+            "import { expectTypeOf } from 'vitest'\n\ntype ResponsiveProp<T> = T | T[] | { xs?: T; sm?: T; md?: T }\n\ninterface CSSProperties { margin?: string; padding?: string }\n\nfunction getResponsiveProp<T>(_props: T): ResponsiveProp<T> {\n  return {}\n}\n\nconst cssProperties: CSSProperties = { margin: '1px', padding: '2px' }\n\nexpectTypeOf(getResponsiveProp(cssProperties))\n  .extract<{ xs?: any }>() // extracts the last type from a union\n  .toEqualTypeOf<{ xs?: CSSProperties; sm?: CSSProperties; md?: CSSProperties }>()\n\nexpectTypeOf(getResponsiveProp(cssProperties))\n  .extract<unknown[]>() // extracts an array from a union\n  .toEqualTypeOf<CSSProperties[]>()"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\ntype ResponsiveProp<T> = T | T[] | { xs?: T; sm?: T; md?: T }\n\ninterface CSSProperties { margin?: string; padding?: string }\n\nfunction getResponsiveProp<T>(_props: T): ResponsiveProp<T> {\n  return {}\n}\n\nconst cssProperties: CSSProperties = { margin: '1px', padding: '2px' }\n\nexpectTypeOf(getResponsiveProp(cssProperties))\n  .extract<{ xs?: any }>() // extracts the last type from a union\n  .toEqualTypeOf<{ xs?: CSSProperties; sm?: CSSProperties; md?: CSSProperties }>()\n\nexpectTypeOf(getResponsiveProp(cssProperties))\n  .extract<unknown[]>() // extracts an array from a union\n  .toEqualTypeOf<CSSProperties[]>()"
+            }
+          ],
+          "notes": [
+            "Type: ExpectTypeOf<ExtractedUnion>",
+            "WARNINGIf no type is found in the union, .extract will return never."
+          ],
+          "children": []
+        },
+        {
+          "name": "exclude",
+          "id": "exclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#exclude",
+          "description": "You can use .exclude to remove types from a union for further testing.",
+          "signatures": [
+            "import { expectTypeOf } from 'vitest'\n\ntype ResponsiveProp<T> = T | T[] | { xs?: T; sm?: T; md?: T }\n\ninterface CSSProperties { margin?: string; padding?: string }\n\nfunction getResponsiveProp<T>(_props: T): ResponsiveProp<T> {\n  return {}\n}\n\nconst cssProperties: CSSProperties = { margin: '1px', padding: '2px' }\n\nexpectTypeOf(getResponsiveProp(cssProperties))\n  .exclude<unknown[]>()\n  .exclude<{ xs?: unknown }>() // or just .exclude<unknown[] | { xs?: unknown }>()\n  .toEqualTypeOf<CSSProperties>()"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\ntype ResponsiveProp<T> = T | T[] | { xs?: T; sm?: T; md?: T }\n\ninterface CSSProperties { margin?: string; padding?: string }\n\nfunction getResponsiveProp<T>(_props: T): ResponsiveProp<T> {\n  return {}\n}\n\nconst cssProperties: CSSProperties = { margin: '1px', padding: '2px' }\n\nexpectTypeOf(getResponsiveProp(cssProperties))\n  .exclude<unknown[]>()\n  .exclude<{ xs?: unknown }>() // or just .exclude<unknown[] | { xs?: unknown }>()\n  .toEqualTypeOf<CSSProperties>()"
+            }
+          ],
+          "notes": [
+            "Type: ExpectTypeOf<NonExcludedUnion>",
+            "WARNINGIf no type is found in the union, .exclude will return never."
+          ],
+          "children": []
+        },
+        {
+          "name": "returns",
+          "id": "returns",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#returns",
+          "description": "You can use .returns to extract return value of a function type.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(() => {}).returns.toBeVoid()\nexpectTypeOf((a: number) => [a, a]).returns.toEqualTypeOf([1, 2])"
+            }
+          ],
+          "notes": [
+            "Type: ExpectTypeOf<ReturnValue>",
+            "WARNINGIf used on a non-function type, it will return never, so you won't be able to chain it with other matchers."
+          ],
+          "children": []
+        },
+        {
+          "name": "parameters",
+          "id": "parameters",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#parameters",
+          "description": "You can extract function arguments with .parameters to perform assertions on its value. Parameters are returned as an array.",
+          "signatures": [
+            "import { expectTypeOf } from 'vitest'\n\ntype NoParam = () => void\ntype HasParam = (s: string) => void\n\nexpectTypeOf<NoParam>().parameters.toEqualTypeOf<[]>()\nexpectTypeOf<HasParam>().parameters.toEqualTypeOf<[string]>()"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\ntype NoParam = () => void\ntype HasParam = (s: string) => void\n\nexpectTypeOf<NoParam>().parameters.toEqualTypeOf<[]>()\nexpectTypeOf<HasParam>().parameters.toEqualTypeOf<[string]>()"
+            }
+          ],
+          "notes": [
+            "Type: ExpectTypeOf<Parameters>",
+            "WARNINGIf used on a non-function type, it will return never, so you won't be able to chain it with other matchers.",
+            "TIPYou can also use .toBeCallableWith matcher as a more expressive assertion."
+          ],
+          "children": []
+        },
+        {
+          "name": "parameter",
+          "id": "parameter",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#parameter",
+          "description": "You can extract a certain function argument with .parameter(number) call to perform other assertions on it.",
+          "signatures": [
+            "import { expectTypeOf } from 'vitest'\n\nfunction foo(a: number, b: string) {\n  return [a, b]\n}\n\nexpectTypeOf(foo).parameter(0).toBeNumber()\nexpectTypeOf(foo).parameter(1).toBeString()"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nfunction foo(a: number, b: string) {\n  return [a, b]\n}\n\nexpectTypeOf(foo).parameter(0).toBeNumber()\nexpectTypeOf(foo).parameter(1).toBeString()"
+            }
+          ],
+          "notes": [
+            "Type: (nth: number) => ExpectTypeOf",
+            "WARNINGIf used on a non-function type, it will return never, so you won't be able to chain it with other matchers."
+          ],
+          "children": []
+        },
+        {
+          "name": "constructorParameters",
+          "id": "constructorparameters",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#constructorparameters",
+          "description": "You can extract constructor parameters as an array of values and perform assertions on them with this method.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(Date).constructorParameters.toEqualTypeOf<[] | [string | number | Date]>()"
+            }
+          ],
+          "notes": [
+            "Type: ExpectTypeOf<ConstructorParameters>",
+            "WARNINGIf used on a non-function type, it will return never, so you won't be able to chain it with other matchers.",
+            "TIPYou can also use .toBeConstructibleWith matcher as a more expressive assertion."
+          ],
+          "children": []
+        },
+        {
+          "name": "instance",
+          "id": "instance",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#instance",
+          "description": "This property gives access to matchers that can be performed on an instance of the provided class.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(Date).instance.toHaveProperty('toISOString')"
+            }
+          ],
+          "notes": [
+            "Type: ExpectTypeOf<ConstructableInstance>",
+            "WARNINGIf used on a non-function type, it will return never, so you won't be able to chain it with other matchers."
+          ],
+          "children": []
+        },
+        {
+          "name": "items",
+          "id": "items",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#items",
+          "description": "You can get array item type with .items to perform further assertions.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf([1, 2, 3]).items.toEqualTypeOf<number>()\nexpectTypeOf([1, 2, 3]).items.not.toEqualTypeOf<string>()"
+            }
+          ],
+          "notes": [
+            "Type: ExpectTypeOf<T>"
+          ],
+          "children": []
+        },
+        {
+          "name": "resolves",
+          "id": "resolves",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#resolves",
+          "description": "This matcher extracts resolved value of a Promise, so you can perform other assertions on it.",
+          "signatures": [
+            "import { expectTypeOf } from 'vitest'\n\nasync function asyncFunc() {\n  return 123\n}\n\nexpectTypeOf(asyncFunc).returns.resolves.toBeNumber()\nexpectTypeOf(Promise.resolve('string')).resolves.toBeString()"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nasync function asyncFunc() {\n  return 123\n}\n\nexpectTypeOf(asyncFunc).returns.resolves.toBeNumber()\nexpectTypeOf(Promise.resolve('string')).resolves.toBeString()"
+            }
+          ],
+          "notes": [
+            "Type: ExpectTypeOf<ResolvedPromise>",
+            "WARNINGIf used on a non-promise type, it will return never, so you won't be able to chain it with other matchers."
+          ],
+          "children": []
+        },
+        {
+          "name": "guards",
+          "id": "guards",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#guards",
+          "description": "This matcher extracts guard value (e.g., v is number), so you can perform assertions on it.",
+          "signatures": [
+            "import { expectTypeOf } from 'vitest'\n\nfunction isString(v: any): v is string {\n  return typeof v === 'string'\n}\nexpectTypeOf(isString).guards.toBeString()"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nfunction isString(v: any): v is string {\n  return typeof v === 'string'\n}\nexpectTypeOf(isString).guards.toBeString()"
+            }
+          ],
+          "notes": [
+            "Type: ExpectTypeOf<Guard>",
+            "WARNINGReturns never, if the value is not a guard function, so you won't be able to chain it with other matchers."
+          ],
+          "children": []
+        },
+        {
+          "name": "asserts",
+          "id": "asserts",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#asserts",
+          "description": "This matcher extracts assert value (e.g., assert v is number), so you can perform assertions on it.",
+          "signatures": [
+            "import { expectTypeOf } from 'vitest'\n\nfunction assertNumber(v: any): asserts v is number {\n  if (typeof v !== 'number') {\n    throw new TypeError('Nope !')\n  }\n}\n\nexpectTypeOf(assertNumber).asserts.toBeNumber()"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nfunction assertNumber(v: any): asserts v is number {\n  if (typeof v !== 'number') {\n    throw new TypeError('Nope !')\n  }\n}\n\nexpectTypeOf(assertNumber).asserts.toBeNumber()"
+            }
+          ],
+          "notes": [
+            "Type: ExpectTypeOf<Assert>",
+            "WARNINGReturns never, if the value is not an assert function, so you won't be able to chain it with other matchers."
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeAny",
+          "id": "tobeany",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobeany",
+          "description": "With this matcher you can check, if provided type is any type. If the type is too specific, the test will fail.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf<any>().toBeAny()\nexpectTypeOf({} as any).toBeAny()\nexpectTypeOf('string').not.toBeAny()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeUnknown",
+          "id": "tobeunknown",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobeunknown",
+          "description": "This matcher checks, if provided type is unknown type.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf().toBeUnknown()\nexpectTypeOf({} as unknown).toBeUnknown()\nexpectTypeOf('string').not.toBeUnknown()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeNever",
+          "id": "tobenever",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobenever",
+          "description": "This matcher checks, if provided type is a never type.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf<never>().toBeNever()\nexpectTypeOf((): never => {}).returns.toBeNever()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeFunction",
+          "id": "tobefunction",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobefunction",
+          "description": "This matcher checks, if provided type is a function.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(42).not.toBeFunction()\nexpectTypeOf((): never => {}).toBeFunction()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeObject",
+          "id": "tobeobject",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobeobject",
+          "description": "This matcher checks, if provided type is an object.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(42).not.toBeObject()\nexpectTypeOf({}).toBeObject()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeArray",
+          "id": "tobearray",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobearray",
+          "description": "This matcher checks, if provided type is Array<T>.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(42).not.toBeArray()\nexpectTypeOf([]).toBeArray()\nexpectTypeOf([1, 2]).toBeArray()\nexpectTypeOf([{}, 42]).toBeArray()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeString",
+          "id": "tobestring",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobestring",
+          "description": "This matcher checks, if provided type is a string.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(42).not.toBeString()\nexpectTypeOf('').toBeString()\nexpectTypeOf('a').toBeString()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeBoolean",
+          "id": "tobeboolean",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobeboolean",
+          "description": "This matcher checks, if provided type is boolean.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(42).not.toBeBoolean()\nexpectTypeOf(true).toBeBoolean()\nexpectTypeOf<boolean>().toBeBoolean()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeVoid",
+          "id": "tobevoid",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobevoid",
+          "description": "This matcher checks, if provided type is void.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(() => {}).returns.toBeVoid()\nexpectTypeOf<void>().toBeVoid()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeSymbol",
+          "id": "tobesymbol",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobesymbol",
+          "description": "This matcher checks, if provided type is a symbol.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(Symbol(1)).toBeSymbol()\nexpectTypeOf<symbol>().toBeSymbol()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeNull",
+          "id": "tobenull",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobenull",
+          "description": "This matcher checks, if provided type is null.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(null).toBeNull()\nexpectTypeOf<null>().toBeNull()\nexpectTypeOf(undefined).not.toBeNull()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeUndefined",
+          "id": "tobeundefined",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobeundefined",
+          "description": "This matcher checks, if provided type is undefined.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(undefined).toBeUndefined()\nexpectTypeOf<undefined>().toBeUndefined()\nexpectTypeOf(null).not.toBeUndefined()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeNullable",
+          "id": "tobenullable",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobenullable",
+          "description": "This matcher checks, if you can use null or undefined with provided type.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf<undefined | 1>().toBeNullable()\nexpectTypeOf<null | 1>().toBeNullable()\nexpectTypeOf<undefined | null | 1>().toBeNullable()"
+            }
+          ],
+          "notes": [
+            "Type: () => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeCallableWith",
+          "id": "tobecallablewith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobecallablewith",
+          "description": "This matcher ensures you can call provided function with a set of parameters.",
+          "signatures": [
+            "import { expectTypeOf } from 'vitest'\n\ntype NoParam = () => void\ntype HasParam = (s: string) => void\n\nexpectTypeOf<NoParam>().toBeCallableWith()\nexpectTypeOf<HasParam>().toBeCallableWith('some string')"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\ntype NoParam = () => void\ntype HasParam = (s: string) => void\n\nexpectTypeOf<NoParam>().toBeCallableWith()\nexpectTypeOf<HasParam>().toBeCallableWith('some string')"
+            }
+          ],
+          "notes": [
+            "Type: () => void",
+            "WARNINGIf used on a non-function type, it will return never, so you won't be able to chain it with other matchers."
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeConstructibleWith",
+          "id": "tobeconstructiblewith",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tobeconstructiblewith",
+          "description": "This matcher ensures you can create a new instance with a set of constructor parameters.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nexpectTypeOf(Date).toBeConstructibleWith(new Date())\nexpectTypeOf(Date).toBeConstructibleWith('01-01-2000')"
+            }
+          ],
+          "notes": [
+            "Type: () => void",
+            "WARNINGIf used on a non-function type, it will return never, so you won't be able to chain it with other matchers."
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveProperty",
+          "id": "tohaveproperty",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#tohaveproperty",
+          "description": "This matcher checks if a property exists on the provided object. If it exists, it also returns the same set of matchers for the type of this property, so you can chain assertions one after another.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\nconst obj = { a: 1, b: '' }\n\nexpectTypeOf(obj).toHaveProperty('a')\nexpectTypeOf(obj).not.toHaveProperty('c')\n\nexpectTypeOf(obj).toHaveProperty('a').toBeNumber()\nexpectTypeOf(obj).toHaveProperty('b').toBeString()\nexpectTypeOf(obj).toHaveProperty('a').not.toBeString()"
+            }
+          ],
+          "notes": [
+            "Type: <K extends keyof T>(property: K) => ExpectTypeOf<T[K>"
+          ],
+          "children": []
+        },
+        {
+          "name": "branded",
+          "id": "branded",
+          "level": 2,
+          "url": "https://vitest.dev/api/expect-typeof#branded",
+          "description": "You can use .branded to allow type assertions to succeed for types that are semantically equivalent but differ in representation.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { expectTypeOf } from 'vitest'\n\n// Without .branded, this fails even though the types are effectively the same\nexpectTypeOf<{ a: { b: 1 } & { c: 1 } }>().toEqualTypeOf<{ a: { b: 1; c: 1 } }>()\n\n// With .branded, the assertion succeeds\nexpectTypeOf<{ a: { b: 1 } & { c: 1 } }>().branded.toEqualTypeOf<{ a: { b: 1; c: 1 } }>()"
+            }
+          ],
+          "notes": [
+            "Type: ExpectTypeOf<BrandedType>",
+            "WARNINGThis helper comes at a performance cost and can cause the TypeScript compiler to 'give up' if used with excessively deep types. Use it sparingly and only when necessary."
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

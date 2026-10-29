@@ -1,0 +1,316 @@
+{
+  "title": "TestSuite",
+  "url": "https://vitest.dev/api/advanced/test-suite",
+  "description": "The TestSuite class represents a single suite. This class is only available in the main thread. Refer to the \"Runner API\" if you are working with runtime tasks.\n\nThe TestSuite instance always has a type property with the value of suite. You can use it to distinguish between different task types:",
+  "entries": [
+    {
+      "name": "TestSuite",
+      "id": "testsuite",
+      "level": 1,
+      "url": "https://vitest.dev/api/advanced/test-suite#testsuite",
+      "description": "The TestSuite class represents a single suite. This class is only available in the main thread. Refer to the \"Runner API\" if you are working with runtime tasks.\n\nThe TestSuite instance always has a type property with the value of suite. You can use it to distinguish between different task types:",
+      "signatures": [
+        "if (task.type === 'suite') {\n  task // TestSuite\n}"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "if (task.type === 'suite') {\n  task // TestSuite\n}"
+        }
+      ],
+      "notes": [],
+      "children": [
+        {
+          "name": "project",
+          "id": "project",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#project",
+          "description": "This references the TestProject that the test belongs to.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "module",
+          "id": "module",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#module",
+          "description": "This is a direct reference to the TestModule where the test is defined.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "name",
+          "id": "name",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#name",
+          "description": "This is a suite name that was passed to the describe function.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { describe } from 'vitest'\n\ndescribe('the validation logic', () => {\n  // ...\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "fullName",
+          "id": "fullname",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#fullname",
+          "description": "The name of the suite including all parent suites separated with > symbol. This suite has a full name \"the validation logic > validating cities\":",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { describe, test } from 'vitest'\n\ndescribe('the validation logic', () => {\n  describe('validating cities', () => {\n    // ...\n  })\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "id",
+          "id": "id",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#id",
+          "description": "This is suite's unique identifier. This ID is deterministic and will be the same for the same suite across multiple runs. The ID is based on the project name, module ID and suite order.\n\nThe ID looks like this:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": null,
+              "code": "1223128da3_0_0_0\n^^^^^^^^^^ the file hash\n           ^ suite index\n             ^ nested suite index\n               ^ test index"
+            },
+            {
+              "language": "ts",
+              "code": "import { generateFileHash } from 'vitest/node'\n\nconst hash = generateFileHash(\n  '/file/path.js', // relative path\n  undefined, // the project name or `undefined` is not set\n)"
+            }
+          ],
+          "notes": [
+            "DANGERDon't try to parse the ID. It can have a minus at the start: -1223128da3_0_0_0."
+          ],
+          "children": []
+        },
+        {
+          "name": "location",
+          "id": "location",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#location",
+          "description": "The location in the module where the suite was defined. Locations are collected only if includeTaskLocation is enabled in the config. Note that this option is automatically enabled if --reporter=html, --ui or --browser flags are used.\n\nThe location of this suite will be equal to { line: 3, column: 1 }:",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { describe } from 'vitest'\n\ndescribe('the validation works correctly', () => {\n  // ...\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "parent",
+          "id": "parent",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#parent",
+          "description": "Parent suite. If the suite was called directly inside the module, the parent will be the module itself.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "options",
+          "id": "options",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#options",
+          "description": "The options that suite was collected with.",
+          "signatures": [
+            "interface TaskOptions {\n  readonly each: boolean | undefined\n  readonly fails: boolean | undefined\n  readonly concurrent: boolean | undefined\n  readonly shuffle: boolean | undefined\n  readonly retry: number | undefined\n  readonly repeats: number | undefined\n  readonly tags: string[] | undefined\n  readonly mode: 'run' | 'only' | 'skip' | 'todo'\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "interface TaskOptions {\n  readonly each: boolean | undefined\n  readonly fails: boolean | undefined\n  readonly concurrent: boolean | undefined\n  readonly shuffle: boolean | undefined\n  readonly retry: number | undefined\n  readonly repeats: number | undefined\n  readonly tags: string[] | undefined\n  readonly mode: 'run' | 'only' | 'skip' | 'todo'\n}"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "children",
+          "id": "children",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#children",
+          "description": "This is a collection of all suites and tests inside the current suite.",
+          "signatures": [
+            "for (const task of suite.children) {\n  if (task.type === 'test') {\n    console.log('test', task.fullName)\n  }\n  else {\n    // task is TaskSuite\n    console.log('suite', task.name)\n  }\n}",
+            "function visit(collection: TestCollection) {\n  for (const task of collection) {\n    if (task.type === 'suite') {\n      // report a suite\n      visit(task.children)\n    }\n    else {\n      // report a test\n    }\n  }\n}"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "for (const task of suite.children) {\n  if (task.type === 'test') {\n    console.log('test', task.fullName)\n  }\n  else {\n    // task is TaskSuite\n    console.log('suite', task.name)\n  }\n}"
+            },
+            {
+              "language": "ts",
+              "code": "function visit(collection: TestCollection) {\n  for (const task of collection) {\n    if (task.type === 'suite') {\n      // report a suite\n      visit(task.children)\n    }\n    else {\n      // report a test\n    }\n  }\n}"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "ok",
+          "id": "ok",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#ok",
+          "description": "Checks if the suite has any failed tests. This will also return false if suite failed during collection. In that case, check the errors() for thrown errors.",
+          "signatures": [
+            "function ok(): boolean"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function ok(): boolean"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "state",
+          "id": "state",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#state",
+          "description": "Checks the running state of the suite. Possible return values:",
+          "signatures": [
+            "function state(): TestSuiteState"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function state(): TestSuiteState"
+            }
+          ],
+          "notes": [
+            "pending: the tests in this suite did not finish running yet.",
+            "failed: this suite has failed tests or they couldn't be collected. If errors() is not empty, it means the suite failed to collect tests.",
+            "passed: every test inside this suite has passed.",
+            "skipped: this suite was skipped during collection.",
+            "WARNINGNote that test module also has a state method that returns the same values, but it can also return an additional queued state if the module wasn't executed yet."
+          ],
+          "children": []
+        },
+        {
+          "name": "errors",
+          "id": "errors",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#errors",
+          "description": "Errors that happened outside of the test run during collection, like syntax errors.",
+          "signatures": [
+            "function errors(): TestError[]"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function errors(): TestError[]"
+            },
+            {
+              "language": "ts",
+              "code": "import { describe } from 'vitest'\n\ndescribe('collection failed', () => {\n  throw new Error('a custom error')\n})"
+            }
+          ],
+          "notes": [
+            "WARNINGNote that errors are serialized into simple objects: instanceof Error will always return false."
+          ],
+          "children": []
+        },
+        {
+          "name": "meta 3.1.0+",
+          "id": "meta",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#meta",
+          "description": "Custom metadata that was attached to the suite during its execution or collection. Since Vitest 4.1, the meta can be attached by providing a meta object during test collection:\n\nNote that suite metadata will be inherited by tests since Vitest 4.1.",
+          "signatures": [
+            "function meta(): TaskMeta"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function meta(): TaskMeta"
+            },
+            {
+              "language": "ts",
+              "code": "import { describe, test, TestRunner } from 'vitest'\n\ndescribe('the validation works correctly', { meta: { decorated: true } }, () => {\n  test('some test', ({ task }) => {\n    // assign \"decorated\" during test run, it will be available\n    // only in onTestCaseReady hook\n    task.suite.meta.decorated = false\n\n    // tests inherit suite's metadata\n    task.meta.decorated === true\n  })\n})"
+            }
+          ],
+          "notes": [
+            "TIPIf metadata was attached during collection (outside of the test function), then it will be available in onTestModuleCollected hook in the custom reporter."
+          ],
+          "children": []
+        },
+        {
+          "name": "logs 5.0.0+",
+          "id": "logs",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#logs",
+          "description": "Console logs recorded during test collection of this suite. For example:",
+          "signatures": [
+            "function logs(): ReadonlyArray<UserConsoleLog>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function logs(): ReadonlyArray<UserConsoleLog>"
+            },
+            {
+              "language": "ts",
+              "code": "describe('suite', () => {\n  console.log('included') \n\n  beforeAll(() => {\n    console.log('included') \n  })\n\n  test('test', () => {\n    console.log('not included') \n  })\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toTestSpecification 4.1.0+",
+          "id": "totestspecification",
+          "level": 2,
+          "url": "https://vitest.dev/api/advanced/test-suite#totestspecification",
+          "description": "Returns a new test specification that can be used to filter or run this specific test suite.",
+          "signatures": [
+            "function toTestSpecification(): TestSpecification"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toTestSpecification(): TestSpecification"
+            }
+          ],
+          "notes": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

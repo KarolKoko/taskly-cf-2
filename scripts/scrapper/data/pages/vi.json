@@ -1,0 +1,1245 @@
+{
+  "title": "Vi",
+  "url": "https://vitest.dev/api/vi",
+  "description": "Vitest provides utility functions to help you out through its vi helper. You can access it globally (when globals configuration is enabled), or import it from vitest directly:",
+  "entries": [
+    {
+      "name": "Vi",
+      "id": "vi",
+      "level": 1,
+      "url": "https://vitest.dev/api/vi#vi",
+      "description": "Vitest provides utility functions to help you out through its vi helper. You can access it globally (when globals configuration is enabled), or import it from vitest directly:",
+      "signatures": [],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "js",
+          "code": "import { vi } from 'vitest'"
+        }
+      ],
+      "notes": [],
+      "children": [
+        {
+          "name": "Mock Modules",
+          "id": "mock-modules",
+          "level": 2,
+          "url": "https://vitest.dev/api/vi#mock-modules",
+          "description": "This section describes the API that you can use when mocking a module. Beware that Vitest doesn't support mocking modules imported using require().",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": [
+            {
+              "name": "vi.mock",
+              "id": "vi-mock",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-mock",
+              "description": "Substitutes all imported modules from provided path with another module. You can use configured Vite aliases inside a path. The call to vi.mock is hoisted, so it doesn't matter where you call it. It will always be executed before all imports. If you need to reference some variables outside of its scope, you can define them inside vi.hoisted and reference them inside vi.mock.\n\nIt is recommended to use vi.mock or vi.hoisted only inside test files. If Vite's module runner is disabled, they will not be hoisted. This is a performance optimisation to avoid ready unnecessary files.\n\nIf the factory function is defined, all imports will return its result. Vitest calls factory only once and caches results for all subsequent imports until vi.unmock or vi.doUnmock is called.\n\nUnlike in jest, the factory can be asynchronous. You can use vi.importActual or a helper with the factory passed in as the first argument, and get the original module inside.\n\nYou can also provide an object with a spy property instead of a factory function. If spy is true, then Vitest will automock the module as usual, but it won't override the implementation of exports. This is useful if you just want to assert that the exported method was called correctly by another method.\n\nVitest also supports a module promise instead of a string in the vi.mock and vi.doMock methods for better IDE support. When the file is moved, the path will be updated, and importOriginal inherits the type automatically. Using this signature will also enforce factory return type to be compatible with the original module (keeping exports optional).\n\nUnder the hood, Vitest still operates on a string and not a module object.\n\nIf you are using TypeScript with paths aliases configured in tsconfig.json however, the compiler won't be able to correctly resolve import types. In order to make it work, make sure to replace all aliased imports, with their corresponding relative paths. Eg. use import('./path/to/module.js') instead of import('@/module').\n\nIf there is a __mocks__ folder alongside a file that you are mocking, and the factory is not provided, Vitest will try to find a file with the same name in the __mocks__ subfolder and use it as an actual module. If you are mocking a dependency, Vitest will try to find a __mocks__ folder in the root of the project (default is process.cwd()). You can tell Vitest where the dependencies are located through the deps.moduleDirectories config option.\n\nFor example, you have this file structure:\n\nIf you call vi.mock in a test file without a factory or options provided, it will find a file in the __mocks__ folder to use as a module:\n\nIf there is no __mocks__ folder or a factory provided, Vitest will import the original module and auto-mock all its exports. For the rules applied, see algorithm.",
+              "signatures": [
+                "interface MockOptions {\n  spy?: boolean\n}\n\ninterface MockFactory<T> {\n  (importOriginal: () => T): unknown\n}\n\nfunction mock(\n  path: string,\n  factory?: MockOptions | MockFactory<unknown>\n): void\nfunction mock<T>(\n  module: Promise<T>,\n  factory?: MockOptions | MockFactory<T>\n): void",
+                "vi.mock(import('./path/to/module.js'), async (importOriginal) => {\n  const mod = await importOriginal() // type is inferred\n  return {\n    ...mod,\n    // replace some exports\n    total: vi.fn(),\n  }\n})"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "interface MockOptions {\n  spy?: boolean\n}\n\ninterface MockFactory<T> {\n  (importOriginal: () => T): unknown\n}\n\nfunction mock(\n  path: string,\n  factory?: MockOptions | MockFactory<unknown>\n): void\nfunction mock<T>(\n  module: Promise<T>,\n  factory?: MockOptions | MockFactory<T>\n): void"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { calculator } from './src/calculator.ts'\n\nvi.mock('./src/calculator.ts', { spy: true })\n\n// calls the original implementation,\n// but allows asserting the behaviour later\nconst result = calculator(1, 2)\n\nexpect(result).toBe(3)\nexpect(calculator).toHaveBeenCalledWith(1, 2)\nexpect(calculator).toHaveReturnedWith(3)"
+                },
+                {
+                  "language": "ts",
+                  "code": "vi.mock(import('./path/to/module.js'), async (importOriginal) => {\n  const mod = await importOriginal() // type is inferred\n  return {\n    ...mod,\n    // replace some exports\n    total: vi.fn(),\n  }\n})"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { namedExport } from './path/to/module.js'\n\nconst mocks = vi.hoisted(() => {\n  return {\n    namedExport: vi.fn(),\n  }\n})\n\nvi.mock('./path/to/module.js', () => {\n  return {\n    namedExport: mocks.namedExport,\n  }\n})\n\nvi.mocked(namedExport).mockReturnValue(100)\n\nexpect(namedExport()).toBe(100)\nexpect(namedExport).toBe(mocks.namedExport)"
+                },
+                {
+                  "language": "ts",
+                  "code": "vi.mock('./path/to/module.js', () => {\n  return {\n    default: { myDefaultKey: vi.fn() },\n    namedExport: vi.fn(),\n    // etc...\n  }\n})"
+                },
+                {
+                  "language": null,
+                  "code": "- __mocks__\n  - axios.js\n- src\n  __mocks__\n    - increment.js\n  - increment.js\n- tests\n  - increment.test.js"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { vi } from 'vitest'\n\n// axios is a default export from `__mocks__/axios.js`\nimport axios from 'axios'\n\n// increment is a named export from `src/__mocks__/increment.js`\nimport { increment } from '../increment.js'\n\nvi.mock('axios')\nvi.mock('../increment.js')\n\naxios.get(`/apples/${increment(1)}`)"
+                }
+              ],
+              "notes": [
+                "WARNINGvi.mock works only for modules that were imported with the import keyword. It doesn't work with require.In order to hoist vi.mock, Vitest statically analyzes your files. It indicates that vi that was not directly imported from the vitest package (for example, from some utility file) cannot be used. Use vi.mock with vi imported from vitest, or enable globals config option.Vitest will not mock modules that were imported inside a setup file because they are cached by the time a test file is running. You can call vi.resetModules() inside vi.hoisted to clear all module caches before running a test file.",
+                "WARNINGBeware that if you don't call vi.mock, modules are not mocked automatically. To replicate Jest's automocking behaviour, you can call vi.mock for each required module inside setupFiles."
+              ],
+              "children": []
+            },
+            {
+              "name": "vi.doMock",
+              "id": "vi-domock",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-domock",
+              "description": "The same as vi.mock, but it's not hoisted to the top of the file, so you can reference variables in the global file scope. The next dynamic import of the module will be mocked.",
+              "signatures": [
+                "function doMock(\n  path: string,\n  factory?: MockOptions | MockFactory<unknown>\n): Disposable\nfunction doMock<T>(\n  module: Promise<T>,\n  factory?: MockOptions | MockFactory<T>\n): Disposable",
+                "export function increment(number) {\n  return number + 1\n}"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function doMock(\n  path: string,\n  factory?: MockOptions | MockFactory<unknown>\n): Disposable\nfunction doMock<T>(\n  module: Promise<T>,\n  factory?: MockOptions | MockFactory<T>\n): Disposable"
+                },
+                {
+                  "language": "ts",
+                  "code": "vi.doMock('./increment.js') // this will be called _after_ the import statement\n\nimport { increment } from './increment.js'"
+                },
+                {
+                  "language": "ts",
+                  "code": "export function increment(number) {\n  return number + 1\n}"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { beforeEach, test } from 'vitest'\nimport { increment } from './increment.js'\n\n// the module is not mocked, because vi.doMock is not called yet\nincrement(1) === 2\n\nlet mockedIncrement = 100\n\nbeforeEach(() => {\n  // you can access variables inside a factory\n  vi.doMock('./increment.js', () => ({ increment: () => ++mockedIncrement }))\n})\n\ntest('importing the next module imports mocked one', async () => {\n  // original import WAS NOT MOCKED, because vi.doMock is evaluated AFTER imports\n  expect(increment(1)).toBe(2)\n  const { increment: mockedIncrement } = await import('./increment.js')\n  // new dynamic import returns mocked module\n  expect(mockedIncrement(1)).toBe(101)\n  expect(mockedIncrement(1)).toBe(102)\n  expect(mockedIncrement(1)).toBe(103)\n})"
+                },
+                {
+                  "language": "ts",
+                  "code": "it('uses a mocked version of my-module', () => {\n  using _mockDisposable = vi.doMock('my-module')\n\n  const myModule = await import('my-module') // mocked\n\n  // my-module is restored here\n})\n\nit('uses the normal version of my-module again', () => {\n  const myModule = await import('my-module') // not mocked\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.mocked",
+              "id": "vi-mocked",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-mocked",
+              "description": "Type helper for TypeScript. Just returns the object that was passed.\n\nWhen partial is true it will expect a Partial<T> as a return value. By default, this will only make TypeScript believe that the first level values are mocked. You can pass down { deep: true } as a second argument to tell TypeScript that the whole object is mocked, if it actually is. You can pass down { partial: true, deep: true } to make nested objects also partial recursively.",
+              "signatures": [
+                "function mocked<T>(\n  object: T,\n  deep?: boolean\n): MaybeMockedDeep<T>\nfunction mocked<T>(\n  object: T,\n  options?: { partial?: boolean; deep?: boolean }\n): MaybePartiallyMockedDeep<T>",
+                "export function add(x: number, y: number): number {\n  return x + y\n}\n\nexport function fetchSomething(): Promise<Response> {\n  return fetch('https://vitest.dev/')\n}\n\nexport function getUser(): { name: string; address: { city: string; zip: string } } {\n  return { name: 'John', address: { city: 'New York', zip: '10001' } }\n}",
+                "import * as example from './example'\n\nvi.mock('./example')\n\ntest('1 + 1 equals 10', async () => {\n  vi.mocked(example.add).mockReturnValue(10)\n  expect(example.add(1, 1)).toBe(10)\n})\n\ntest('mock return value with only partially correct typing', async () => {\n  vi.mocked(example.fetchSomething).mockResolvedValue(new Response('hello'))\n  vi.mocked(example.fetchSomething, { partial: true }).mockResolvedValue({ ok: false })\n  // vi.mocked(example.someFn).mockResolvedValue({ ok: false }) // this is a type error\n})\n\ntest('mock return value with deep partial typing', async () => {\n  vi.mocked(example.getUser, { partial: true, deep: true }).mockReturnValue({\n    address: { city: 'Los Angeles' },\n  })\n  expect(example.getUser().address.city).toBe('Los Angeles')\n})"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function mocked<T>(\n  object: T,\n  deep?: boolean\n): MaybeMockedDeep<T>\nfunction mocked<T>(\n  object: T,\n  options?: { partial?: boolean; deep?: boolean }\n): MaybePartiallyMockedDeep<T>"
+                },
+                {
+                  "language": "ts",
+                  "code": "export function add(x: number, y: number): number {\n  return x + y\n}\n\nexport function fetchSomething(): Promise<Response> {\n  return fetch('https://vitest.dev/')\n}\n\nexport function getUser(): { name: string; address: { city: string; zip: string } } {\n  return { name: 'John', address: { city: 'New York', zip: '10001' } }\n}"
+                },
+                {
+                  "language": "ts",
+                  "code": "import * as example from './example'\n\nvi.mock('./example')\n\ntest('1 + 1 equals 10', async () => {\n  vi.mocked(example.add).mockReturnValue(10)\n  expect(example.add(1, 1)).toBe(10)\n})\n\ntest('mock return value with only partially correct typing', async () => {\n  vi.mocked(example.fetchSomething).mockResolvedValue(new Response('hello'))\n  vi.mocked(example.fetchSomething, { partial: true }).mockResolvedValue({ ok: false })\n  // vi.mocked(example.someFn).mockResolvedValue({ ok: false }) // this is a type error\n})\n\ntest('mock return value with deep partial typing', async () => {\n  vi.mocked(example.getUser, { partial: true, deep: true }).mockReturnValue({\n    address: { city: 'Los Angeles' },\n  })\n  expect(example.getUser().address.city).toBe('Los Angeles')\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.importActual",
+              "id": "vi-importactual",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-importactual",
+              "description": "Imports module, bypassing all checks if it should be mocked. Can be useful if you want to mock module partially.",
+              "signatures": [
+                "function importActual<T>(path: string): Promise<T>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function importActual<T>(path: string): Promise<T>"
+                },
+                {
+                  "language": "ts",
+                  "code": "vi.mock('./example.js', async () => {\n  const originalModule = await vi.importActual('./example.js')\n\n  return { ...originalModule, get: vi.fn() }\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.importMock",
+              "id": "vi-importmock",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-importmock",
+              "description": "Imports a module with all of its properties (including nested properties) mocked. Follows the same rules that vi.mock does. For the rules applied, see algorithm.",
+              "signatures": [
+                "function importMock<T>(path: string): Promise<MaybeMockedDeep<T>>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function importMock<T>(path: string): Promise<MaybeMockedDeep<T>>"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.unmock",
+              "id": "vi-unmock",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-unmock",
+              "description": "Removes module from the mocked registry. All calls to import will return the original module even if it was mocked before. This call is hoisted to the top of the file, so it will only unmock modules that were defined in setupFiles, for example.",
+              "signatures": [
+                "function unmock(path: string | Promise<Module>): void"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function unmock(path: string | Promise<Module>): void"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.doUnmock",
+              "id": "vi-dounmock",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-dounmock",
+              "description": "The same as vi.unmock, but is not hoisted to the top of the file. The next import of the module will import the original module instead of the mock. This will not unmock previously imported modules.",
+              "signatures": [
+                "function doUnmock(path: string | Promise<Module>): void",
+                "export function increment(number) {\n  return number + 1\n}",
+                "import { increment } from './increment.js'\n\n// increment is already mocked, because vi.mock is hoisted\nincrement(1) === 100\n\n// this is hoisted, and factory is called before the import on line 1\nvi.mock('./increment.js', () => ({ increment: () => 100 }))\n\n// all calls are mocked, and `increment` always returns 100\nincrement(1) === 100\nincrement(30) === 100\n\n// this is not hoisted, so other import will return unmocked module\nvi.doUnmock('./increment.js')\n\n// this STILL returns 100, because `vi.doUnmock` doesn't reevaluate a module\nincrement(1) === 100\nincrement(30) === 100\n\n// the next import is unmocked, now `increment` is the original function that returns count + 1\nconst { increment: unmockedIncrement } = await import('./increment.js')\n\nunmockedIncrement(1) === 2\nunmockedIncrement(30) === 31"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function doUnmock(path: string | Promise<Module>): void"
+                },
+                {
+                  "language": "ts",
+                  "code": "export function increment(number) {\n  return number + 1\n}"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { increment } from './increment.js'\n\n// increment is already mocked, because vi.mock is hoisted\nincrement(1) === 100\n\n// this is hoisted, and factory is called before the import on line 1\nvi.mock('./increment.js', () => ({ increment: () => 100 }))\n\n// all calls are mocked, and `increment` always returns 100\nincrement(1) === 100\nincrement(30) === 100\n\n// this is not hoisted, so other import will return unmocked module\nvi.doUnmock('./increment.js')\n\n// this STILL returns 100, because `vi.doUnmock` doesn't reevaluate a module\nincrement(1) === 100\nincrement(30) === 100\n\n// the next import is unmocked, now `increment` is the original function that returns count + 1\nconst { increment: unmockedIncrement } = await import('./increment.js')\n\nunmockedIncrement(1) === 2\nunmockedIncrement(30) === 31"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.resetModules",
+              "id": "vi-resetmodules",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-resetmodules",
+              "description": "Resets modules registry by clearing the cache of all modules. This allows modules to be reevaluated when reimported. Top-level imports cannot be re-evaluated. Might be useful to isolate modules where local state conflicts between tests.",
+              "signatures": [
+                "function resetModules(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function resetModules(): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { vi } from 'vitest'\n\nimport { data } from './data.js' // Will not get reevaluated beforeEach test\n\nbeforeEach(() => {\n  vi.resetModules()\n})\n\ntest('change state', async () => {\n  const mod = await import('./some/path.js') // Will get reevaluated\n  mod.changeLocalState('new value')\n  expect(mod.getLocalState()).toBe('new value')\n})\n\ntest('module has old state', async () => {\n  const mod = await import('./some/path.js') // Will get reevaluated\n  expect(mod.getLocalState()).toBe('old value')\n})"
+                }
+              ],
+              "notes": [
+                "WARNINGDoes not reset mocks registry. To clear mocks registry, use vi.unmock or vi.doUnmock."
+              ],
+              "children": []
+            },
+            {
+              "name": "vi.dynamicImportSettled",
+              "id": "vi-dynamicimportsettled",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-dynamicimportsettled",
+              "description": "Wait for all imports to load. Useful, if you have a synchronous call that starts importing a module that you cannot wait otherwise.",
+              "signatures": [
+                "function dynamicImportSettled(): Promise<void>",
+                "import { expect, test } from 'vitest'\n\n// cannot track import because Promise is not returned\nfunction renderComponent() {\n  import('./component.js').then(({ render }) => {\n    render()\n  })\n}\n\ntest('operations are resolved', async () => {\n  renderComponent()\n  await vi.dynamicImportSettled()\n  expect(document.querySelector('.component')).not.toBeNull()\n})"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function dynamicImportSettled(): Promise<void>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { expect, test } from 'vitest'\n\n// cannot track import because Promise is not returned\nfunction renderComponent() {\n  import('./component.js').then(({ render }) => {\n    render()\n  })\n}\n\ntest('operations are resolved', async () => {\n  renderComponent()\n  await vi.dynamicImportSettled()\n  expect(document.querySelector('.component')).not.toBeNull()\n})"
+                }
+              ],
+              "notes": [
+                "TIPIf during a dynamic import another dynamic import is initiated, this method will wait until all of them are resolved.This method will also wait for the next setTimeout tick after the import is resolved so all synchronous operations should be completed by the time it's resolved."
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Mocking Functions and Objects",
+          "id": "mocking-functions-and-objects",
+          "level": 2,
+          "url": "https://vitest.dev/api/vi#mocking-functions-and-objects",
+          "description": "This section describes how to work with method mocks and replace environmental and global variables.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": [
+            {
+              "name": "vi.fn",
+              "id": "vi-fn",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-fn",
+              "description": "Creates a spy on a function, but can also be initiated without one. Every time a function is invoked, it stores its call arguments, returns, and instances. Additionally, you can manipulate its behavior with methods. If no function is given, mock will return undefined when invoked.\n\nYou can also pass down a class to vi.fn:\n\nInstances keep the prototype chain of the implementation class, so its prototype methods are available on instances, and instanceof checks against the implementation class pass. See Mocking Classes for details.",
+              "signatures": [
+                "function fn(fn?: Procedure | Constructable): Mock"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function fn(fn?: Procedure | Constructable): Mock"
+                },
+                {
+                  "language": "ts",
+                  "code": "const getApples = vi.fn(() => 0)\n\ngetApples()\n\nexpect(getApples).toHaveBeenCalled()\nexpect(getApples).toHaveReturnedWith(0)\n\ngetApples.mockReturnValueOnce(5)\n\nconst res = getApples()\nexpect(res).toBe(5)\nexpect(getApples).toHaveNthReturnedWith(2, 5)"
+                },
+                {
+                  "language": "ts",
+                  "code": "const Cart = vi.fn(class {\n  get() {\n    return 0\n  }\n})\n\nconst cart = new Cart()\nexpect(Cart).toHaveBeenCalled()\nexpect(cart.get()).toBe(0)"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.mockObject 3.2.0+",
+              "id": "vi-mockobject-3-2-0",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-mockobject-3-2-0",
+              "description": "Deeply mocks properties and methods of a given object in the same way as vi.mock() mocks module exports. See automocking for the detail.\n\nJust like vi.mock(), you can pass { spy: true } as a second argument to keep function implementations:",
+              "signatures": [
+                "function mockObject<T>(value: T, options?: MockOptions): MaybeMockedDeep<T>",
+                "const spied = vi.mockObject(original, { spy: true })\nexpect(spied.simple()).toBe('value')\nexpect(spied.simple).toHaveBeenCalled()\nexpect(spied.simple.mock.results[0]).toEqual({ type: 'return', value: 'value' })"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function mockObject<T>(value: T, options?: MockOptions): MaybeMockedDeep<T>"
+                },
+                {
+                  "language": "ts",
+                  "code": "const original = {\n  simple: () => 'value',\n  nested: {\n    method: () => 'real'\n  },\n  prop: 'foo',\n}\n\nconst mocked = vi.mockObject(original)\nexpect(mocked.simple()).toBe(undefined)\nexpect(mocked.nested.method()).toBe(undefined)\nexpect(mocked.prop).toBe('foo')\n\nmocked.simple.mockReturnValue('mocked')\nmocked.nested.method.mockReturnValue('mocked nested')\n\nexpect(mocked.simple()).toBe('mocked')\nexpect(mocked.nested.method()).toBe('mocked nested')"
+                },
+                {
+                  "language": "ts",
+                  "code": "const spied = vi.mockObject(original, { spy: true })\nexpect(spied.simple()).toBe('value')\nexpect(spied.simple).toHaveBeenCalled()\nexpect(spied.simple.mock.results[0]).toEqual({ type: 'return', value: 'value' })"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.isMockFunction",
+              "id": "vi-ismockfunction",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-ismockfunction",
+              "description": "Checks that a given parameter is a mock function. If you are using TypeScript, it will also narrow down its type.",
+              "signatures": [
+                "function isMockFunction(fn: unknown): asserts fn is Mock"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function isMockFunction(fn: unknown): asserts fn is Mock"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.clearAllMocks",
+              "id": "vi-clearallmocks",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-clearallmocks",
+              "description": "Calls .mockClear() on all spies. This will clear mock history without affecting mock implementations.",
+              "signatures": [
+                "function clearAllMocks(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function clearAllMocks(): Vitest"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.resetAllMocks",
+              "id": "vi-resetallmocks",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-resetallmocks",
+              "description": "Calls .mockReset() on all spies. This will clear mock history and reset each mock's implementation.",
+              "signatures": [
+                "function resetAllMocks(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function resetAllMocks(): Vitest"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.restoreAllMocks",
+              "id": "vi-restoreallmocks",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-restoreallmocks",
+              "description": "This restores all original implementations on spies created with vi.spyOn.\n\nAfter the mock was restored, you can spy on it again.",
+              "signatures": [
+                "function restoreAllMocks(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function restoreAllMocks(): Vitest"
+                }
+              ],
+              "notes": [
+                "WARNINGThis method also does not affect mocks created during automocking.Note that unlike mock.mockRestore, vi.restoreAllMocks will not clear mock history or reset the mock implementation"
+              ],
+              "children": []
+            },
+            {
+              "name": "vi.spyOn",
+              "id": "vi-spyon",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-spyon",
+              "description": "Creates a spy on a method or getter/setter of an object similar to vi.fn(). It returns a mock function.\n\nIf the spying method is a class definition, the mock implementations have to use the function or the class keyword:\n\nIf you provide an arrow function, you will get <anonymous> is not a constructor error when the mock is called.\n\nWith a class implementation, instances keep the prototype chain of that class: prototype methods like getApples are available on instances, and instanceof checks against the implementation class pass. See Mocking Classes for details.",
+              "signatures": [
+                "function spyOn<T, K extends keyof T>(\n  object: T,\n  key: K,\n  accessor?: 'get' | 'set'\n): Mock<T[K]>",
+                "const cart = {\n  Apples: class Apples {\n    getApples() {\n      return 42\n    }\n  }\n}\n\nconst spy = vi.spyOn(cart, 'Apples')\n  .mockImplementation(() => ({ getApples: () => 0 })) \n  // with a function keyword\n  .mockImplementation(function () {\n    this.getApples = () => 0\n  })\n  // with a custom class\n  .mockImplementation(class MockApples {\n    getApples() {\n      return 0\n    }\n  })"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function spyOn<T, K extends keyof T>(\n  object: T,\n  key: K,\n  accessor?: 'get' | 'set'\n): Mock<T[K]>"
+                },
+                {
+                  "language": "ts",
+                  "code": "let apples = 0\nconst cart = {\n  getApples: () => 42,\n}\n\nconst spy = vi.spyOn(cart, 'getApples').mockImplementation(() => apples)\napples = 1\n\nexpect(cart.getApples()).toBe(1)\n\nexpect(spy).toHaveBeenCalled()\nexpect(spy).toHaveReturnedWith(1)"
+                },
+                {
+                  "language": "ts",
+                  "code": "const cart = {\n  Apples: class Apples {\n    getApples() {\n      return 42\n    }\n  }\n}\n\nconst spy = vi.spyOn(cart, 'Apples')\n  .mockImplementation(() => ({ getApples: () => 0 })) \n  // with a function keyword\n  .mockImplementation(function () {\n    this.getApples = () => 0\n  })\n  // with a custom class\n  .mockImplementation(class MockApples {\n    getApples() {\n      return 0\n    }\n  })"
+                },
+                {
+                  "language": "ts",
+                  "code": "it('calls console.log', () => {\n  using spy = vi.spyOn(console, 'log').mockImplementation(() => {})\n  debug('message')\n  expect(spy).toHaveBeenCalled()\n})\n// console.log is restored here"
+                },
+                {
+                  "language": "ts",
+                  "code": "const cart = {\n  getApples: () => 42,\n}\n\nconst spy = vi.spyOn(cart, 'getApples').mockReturnValue(10)\n\nconsole.log(cart.getApples()) // 10\nvi.restoreAllMocks()\nconsole.log(cart.getApples()) // 42\nspy.mockReturnValue(10)\nconsole.log(cart.getApples()) // still 42!"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { calculator } from './src/calculator.ts'\n\nvi.mock('./src/calculator.ts', { spy: true })\n\ncalculator(1, 2)\n\nexpect(calculator).toHaveBeenCalledWith(1, 2)\nexpect(calculator).toHaveReturned(3)"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.stubEnv",
+              "id": "vi-stubenv",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-stubenv",
+              "description": "Changes the value of environmental variable on process.env and import.meta.env. You can restore its value by calling vi.unstubAllEnvs.",
+              "signatures": [
+                "function stubEnv<T extends string>(\n  name: T,\n  value: T extends 'PROD' | 'DEV' | 'SSR' ? boolean : string | undefined\n): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function stubEnv<T extends string>(\n  name: T,\n  value: T extends 'PROD' | 'DEV' | 'SSR' ? boolean : string | undefined\n): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { vi } from 'vitest'\n\n// `process.env.NODE_ENV` and `import.meta.env.NODE_ENV`\n// are \"development\" before calling \"vi.stubEnv\"\n\nvi.stubEnv('NODE_ENV', 'production')\n\nprocess.env.NODE_ENV === 'production'\nimport.meta.env.NODE_ENV === 'production'\n\nvi.stubEnv('NODE_ENV', undefined)\n\nprocess.env.NODE_ENV === undefined\nimport.meta.env.NODE_ENV === undefined\n\n// doesn't change other envs\nimport.meta.env.MODE === 'development'"
+                },
+                {
+                  "language": "ts",
+                  "code": "import.meta.env.MODE = 'test'"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.unstubAllEnvs",
+              "id": "vi-unstuballenvs",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-unstuballenvs",
+              "description": "Restores all import.meta.env and process.env values that were changed with vi.stubEnv. When it's called for the first time, Vitest remembers the original value and will store it, until unstubAllEnvs is called again.",
+              "signatures": [
+                "function unstubAllEnvs(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function unstubAllEnvs(): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { vi } from 'vitest'\n\n// `process.env.NODE_ENV` and `import.meta.env.NODE_ENV`\n// are \"development\" before calling stubEnv\n\nvi.stubEnv('NODE_ENV', 'production')\n\nprocess.env.NODE_ENV === 'production'\nimport.meta.env.NODE_ENV === 'production'\n\nvi.stubEnv('NODE_ENV', 'staging')\n\nprocess.env.NODE_ENV === 'staging'\nimport.meta.env.NODE_ENV === 'staging'\n\nvi.unstubAllEnvs()\n\n// restores to the value that were stored before the first \"stubEnv\" call\nprocess.env.NODE_ENV === 'development'\nimport.meta.env.NODE_ENV === 'development'"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.stubGlobal",
+              "id": "vi-stubglobal",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-stubglobal",
+              "description": "Changes the value of global variable. You can restore its original value by calling vi.unstubAllGlobals.",
+              "signatures": [
+                "function stubGlobal(\n  name: string | number | symbol,\n  value: unknown\n): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function stubGlobal(\n  name: string | number | symbol,\n  value: unknown\n): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { vi } from 'vitest'\n\n// `innerWidth` is \"0\" before calling stubGlobal\n\nvi.stubGlobal('innerWidth', 100)\n\ninnerWidth === 100\nglobalThis.innerWidth === 100\n// if you are using jsdom or happy-dom\nwindow.innerWidth === 100"
+                },
+                {
+                  "language": "ts",
+                  "code": "globalThis.innerWidth = 100\n// if you are using jsdom or happy-dom\nwindow.innerWidth = 100"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.unstubAllGlobals",
+              "id": "vi-unstuballglobals",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-unstuballglobals",
+              "description": "Restores all global values on globalThis/global (and window/top/self/parent, if you are using jsdom or happy-dom environment) that were changed with vi.stubGlobal. When it's called for the first time, Vitest remembers the original value and will store it, until unstubAllGlobals is called again.",
+              "signatures": [
+                "function unstubAllGlobals(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function unstubAllGlobals(): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { vi } from 'vitest'\n\nconst Mock = vi.fn()\n\n// IntersectionObserver is \"undefined\" before calling \"stubGlobal\"\n\nvi.stubGlobal('IntersectionObserver', Mock)\n\nIntersectionObserver === Mock\nglobal.IntersectionObserver === Mock\nglobalThis.IntersectionObserver === Mock\n// if you are using jsdom or happy-dom\nwindow.IntersectionObserver === Mock\n\nvi.unstubAllGlobals()\n\nglobalThis.IntersectionObserver === undefined\n'IntersectionObserver' in globalThis === false\n// throws ReferenceError, because it's not defined\nIntersectionObserver === undefined"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.when 5.0.0+",
+              "id": "vi-when",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-when",
+              "description": "Defines per-argument behaviors on a spy, replacing its implementation for the duration of the when chain.\n\nCall .calledWith(...args) on the returned object to specify which call arguments to match, then chain one or more then* methods to declare what the spy should return, throw, or resolve when invoked with those arguments. Arguments are matched with the same deep equality as toEqual and support asymmetric matchers such as expect.any().\n\nAvailable then* methods:\n\nThe optional times option limits how many times a behavior applies before being exhausted. Behaviors registered for the same arguments are consumed last-in-first-out: the most recently registered behavior is tried first, and once exhausted, earlier ones act as fallbacks.\n\nWhen called with arguments that match no registered behavior, the spy falls through to its original implementation by default. Use the onUnmatched option to change this:\n\nThe When object returned by vi.when supports the toHaveBeenExhausted assertion, which passes once every registered behavior has been consumed.",
+              "signatures": [
+                "interface WhenOptions {\n  onUnmatched?: 'throw' | 'passthrough' | ((...args: unknown[]) => unknown)\n}\n\ninterface BehaviorOptions {\n  times?: number\n}\n\nfunction when(spy: Mock, options?: WhenOptions): When"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "interface WhenOptions {\n  onUnmatched?: 'throw' | 'passthrough' | ((...args: unknown[]) => unknown)\n}\n\ninterface BehaviorOptions {\n  times?: number\n}\n\nfunction when(spy: Mock, options?: WhenOptions): When"
+                },
+                {
+                  "language": "ts",
+                  "code": "const spy = vi.fn()\n\nvi.when(spy)\n  .calledWith(1)\n  .thenReturn('one')\n  .calledWith(2)\n  .thenReturn('two')\n\nexpect(spy(1)).toBe('one')\nexpect(spy(2)).toBe('two')"
+                },
+                {
+                  "language": "ts",
+                  "code": "const spy = vi.fn<(key: string) => string>()\n\nvi.when(spy)\n  .calledWith('theme')\n  .thenReturn('light') // fallback, applies indefinitely\n  .thenReturn('dark', { times: 2 }) // applied first for the next 2 calls\n\nexpect(spy('theme')).toBe('dark')\nexpect(spy('theme')).toBe('dark')\nexpect(spy('theme')).toBe('light') // falls back"
+                },
+                {
+                  "language": "ts",
+                  "code": "const spy = vi.fn<(id: number) => string>()\n\nvi.when(spy, { onUnmatched: 'throw' })\n  .calledWith(1)\n  .thenReturn('Alice')\n\nexpect(spy(1)).toBe('Alice')\nexpect(() => spy(99)).toThrow() // no behavior defined for 99"
+                },
+                {
+                  "language": "ts",
+                  "code": "const spy = vi.fn()\nconst w = vi.when(spy)\n  .calledWith(1)\n  .thenReturnOnce('once')\n  .calledWith(2)\n  .thenReturn('always')\n\nexpect(w).not.toHaveBeenExhausted()\n\nspy(1) // consumes the `thenReturnOnce` behavior\nspy(2) // satisfies `thenReturn` (called at least once)\n\nexpect(w).toHaveBeenExhausted()"
+                },
+                {
+                  "language": "ts",
+                  "code": "const spy = vi.fn(() => 'original')\n\n{\n  using w = vi.when(spy)\n    .calledWith('hello')\n    .thenReturn('mocked')\n\n  expect(spy('hello')).toBe('mocked')\n} // ← spy's original implementation is restored here\n\nexpect(spy('hello')).toBe('original')"
+                }
+              ],
+              "notes": [
+                "'passthrough' (default): delegates to the spy's original implementation",
+                "'throw': throws an error listing the unmatched arguments",
+                "a function: called with the unmatched arguments; its return value is used"
+              ],
+              "children": []
+            },
+            {
+              "name": "vi.isWhenChain 5.0.0+",
+              "id": "vi-iswhenchain",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-iswhenchain",
+              "description": "Returns true if the given value is a When chain created by vi.when. If you are using TypeScript, it will also narrow down its type.",
+              "signatures": [
+                "function isWhenChain(input: object): input is When"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function isWhenChain(input: object): input is When"
+                },
+                {
+                  "language": "ts",
+                  "code": "const spy = vi.fn()\nconst w = vi.when(spy).calledWith(1).thenReturn(0)\n\nexpect(vi.isWhenChain(w)).toBe(true)\nexpect(vi.isWhenChain(spy)).toBe(false)"
+                }
+              ],
+              "notes": [],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Fake Timers",
+          "id": "fake-timers",
+          "level": 2,
+          "url": "https://vitest.dev/api/vi#fake-timers",
+          "description": "This sections describes how to work with fake timers.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": [
+            {
+              "name": "vi.advanceTimersByTime",
+              "id": "vi-advancetimersbytime",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-advancetimersbytime",
+              "description": "This method will invoke every initiated timer until the specified number of milliseconds is passed or the queue is empty - whatever comes first.",
+              "signatures": [
+                "function advanceTimersByTime(ms: number): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function advanceTimersByTime(ms: number): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "let i = 0\nsetInterval(() => console.log(++i), 50)\n\nvi.advanceTimersByTime(150)\n\n// log: 1\n// log: 2\n// log: 3"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.advanceTimersByTimeAsync",
+              "id": "vi-advancetimersbytimeasync",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-advancetimersbytimeasync",
+              "description": "This method will invoke every initiated timer until the specified number of milliseconds is passed or the queue is empty - whatever comes first. This will include asynchronously set timers.",
+              "signatures": [
+                "function advanceTimersByTimeAsync(ms: number): Promise<Vitest>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function advanceTimersByTimeAsync(ms: number): Promise<Vitest>"
+                },
+                {
+                  "language": "ts",
+                  "code": "let i = 0\nsetInterval(() => Promise.resolve().then(() => console.log(++i)), 50)\n\nawait vi.advanceTimersByTimeAsync(150)\n\n// log: 1\n// log: 2\n// log: 3"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.advanceTimersToNextTimer",
+              "id": "vi-advancetimerstonexttimer",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-advancetimerstonexttimer",
+              "description": "Will call next available timer. Useful to make assertions between each timer call. You can chain call it to manage timers by yourself.",
+              "signatures": [
+                "function advanceTimersToNextTimer(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function advanceTimersToNextTimer(): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "let i = 0\nsetInterval(() => console.log(++i), 50)\n\nvi.advanceTimersToNextTimer() // log: 1\n  .advanceTimersToNextTimer() // log: 2\n  .advanceTimersToNextTimer() // log: 3"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.advanceTimersToNextTimerAsync",
+              "id": "vi-advancetimerstonexttimerasync",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-advancetimerstonexttimerasync",
+              "description": "Will call next available timer and wait until it's resolved if it was set asynchronously. Useful to make assertions between each timer call.",
+              "signatures": [
+                "function advanceTimersToNextTimerAsync(): Promise<Vitest>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function advanceTimersToNextTimerAsync(): Promise<Vitest>"
+                },
+                {
+                  "language": "ts",
+                  "code": "let i = 0\nsetInterval(() => Promise.resolve().then(() => console.log(++i)), 50)\n\nawait vi.advanceTimersToNextTimerAsync() // log: 1\nexpect(console.log).toHaveBeenCalledWith(1)\n\nawait vi.advanceTimersToNextTimerAsync() // log: 2\nawait vi.advanceTimersToNextTimerAsync() // log: 3"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.advanceTimersToNextFrame",
+              "id": "vi-advancetimerstonextframe",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-advancetimerstonextframe",
+              "description": "Similar to vi.advanceTimersByTime, but will advance timers by the milliseconds needed to execute callbacks currently scheduled with requestAnimationFrame.",
+              "signatures": [
+                "function advanceTimersToNextFrame(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function advanceTimersToNextFrame(): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "let frameRendered = false\n\nrequestAnimationFrame(() => {\n  frameRendered = true\n})\n\nvi.advanceTimersToNextFrame()\n\nexpect(frameRendered).toBe(true)"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.getTimerCount",
+              "id": "vi-gettimercount",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-gettimercount",
+              "description": "Get the number of waiting timers.",
+              "signatures": [
+                "function getTimerCount(): number"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function getTimerCount(): number"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.clearAllTimers",
+              "id": "vi-clearalltimers",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-clearalltimers",
+              "description": "Removes all timers that are scheduled to run. These timers will never run in the future.",
+              "signatures": [
+                "function clearAllTimers(): void"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function clearAllTimers(): void"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.getMockedSystemTime",
+              "id": "vi-getmockedsystemtime",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-getmockedsystemtime",
+              "description": "Returns mocked current date. If date is not mocked the method will return null.",
+              "signatures": [
+                "function getMockedSystemTime(): Date | null"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function getMockedSystemTime(): Date | null"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.getRealSystemTime",
+              "id": "vi-getrealsystemtime",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-getrealsystemtime",
+              "description": "When using vi.useFakeTimers, Date.now calls are mocked. If you need to get real time in milliseconds, you can call this function.",
+              "signatures": [
+                "function getRealSystemTime(): number"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function getRealSystemTime(): number"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.runAllTicks",
+              "id": "vi-runallticks",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-runallticks",
+              "description": "Calls every microtask that was queued by process.nextTick. This will also run all microtasks scheduled by themselves.",
+              "signatures": [
+                "function runAllTicks(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function runAllTicks(): Vitest"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.runAllTimers",
+              "id": "vi-runalltimers",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-runalltimers",
+              "description": "This method will invoke every initiated timer until the timer queue is empty. It means that every timer called during runAllTimers will be fired. If you have an infinite interval, it will throw after 10 000 tries (can be configured with fakeTimers.loopLimit).",
+              "signatures": [
+                "function runAllTimers(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function runAllTimers(): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "let i = 0\nsetTimeout(() => console.log(++i))\nconst interval = setInterval(() => {\n  console.log(++i)\n  if (i === 3) {\n    clearInterval(interval)\n  }\n}, 50)\n\nvi.runAllTimers()\n\n// log: 1\n// log: 2\n// log: 3"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.runAllTimersAsync",
+              "id": "vi-runalltimersasync",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-runalltimersasync",
+              "description": "This method will asynchronously invoke every initiated timer until the timer queue is empty. It means that every timer called during runAllTimersAsync will be fired even asynchronous timers. If you have an infinite interval, it will throw after 10 000 tries (can be configured with fakeTimers.loopLimit).",
+              "signatures": [
+                "function runAllTimersAsync(): Promise<Vitest>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function runAllTimersAsync(): Promise<Vitest>"
+                },
+                {
+                  "language": "ts",
+                  "code": "setTimeout(async () => {\n  console.log(await Promise.resolve('result'))\n}, 100)\n\nawait vi.runAllTimersAsync()\n\n// log: result"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.runOnlyPendingTimers",
+              "id": "vi-runonlypendingtimers",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-runonlypendingtimers",
+              "description": "This method will call every timer that was initiated after vi.useFakeTimers call. It will not fire any timer that was initiated during its call.",
+              "signatures": [
+                "function runOnlyPendingTimers(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function runOnlyPendingTimers(): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "let i = 0\nsetInterval(() => console.log(++i), 50)\n\nvi.runOnlyPendingTimers()\n\n// log: 1"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.runOnlyPendingTimersAsync",
+              "id": "vi-runonlypendingtimersasync",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-runonlypendingtimersasync",
+              "description": "This method will asynchronously call every timer that was initiated after vi.useFakeTimers call, even asynchronous ones. It will not fire any timer that was initiated during its call.",
+              "signatures": [
+                "function runOnlyPendingTimersAsync(): Promise<Vitest>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function runOnlyPendingTimersAsync(): Promise<Vitest>"
+                },
+                {
+                  "language": "ts",
+                  "code": "setTimeout(() => {\n  console.log(1)\n}, 100)\nsetTimeout(() => {\n  Promise.resolve().then(() => {\n    console.log(2)\n    setInterval(() => {\n      console.log(3)\n    }, 40)\n  })\n}, 10)\n\nawait vi.runOnlyPendingTimersAsync()\n\n// log: 2\n// log: 3\n// log: 3\n// log: 1"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.setSystemTime",
+              "id": "vi-setsystemtime",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-setsystemtime",
+              "description": "If fake timers are enabled, this method simulates a user changing the system clock (will affect date related API like hrtime, performance.now or new Date()) - however, it will not fire any timers. If fake timers are not enabled, this method will only mock Date.* and Temporal.Now.* calls.\n\nUseful if you need to test anything that depends on the current date - for example Luxon calls inside your code.\n\nAccepts the same string and number arguments as the Date.",
+              "signatures": [
+                "function setSystemTime(date: string | number | Date): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function setSystemTime(date: string | number | Date): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "const date = new Date(1998, 11, 19)\n\nvi.useFakeTimers()\nvi.setSystemTime(date)\n\nexpect(Date.now()).toBe(date.valueOf())\n\nvi.useRealTimers()"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.useFakeTimers",
+              "id": "vi-usefaketimers",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-usefaketimers",
+              "description": "To enable mocking timers, you need to call this method. It will wrap all further calls to timers (such as setTimeout, setInterval, clearTimeout, clearInterval, setImmediate, clearImmediate, and Date) until vi.useRealTimers() is called.\n\nMocking nextTick is not supported when running Vitest inside node:child_process by using --pool=forks. NodeJS uses process.nextTick internally in node:child_process and hangs when it is mocked. Mocking nextTick is supported when running Vitest with --pool=threads.\n\nThe implementation is based internally on @sinonjs/fake-timers.\n\nYou can use toFake to specify which timers to mock, or toNotFake to specify which timers to keep native. Note that toFake and toNotFake cannot be specified together.",
+              "signatures": [
+                "function useFakeTimers(config?: FakeTimersConfig): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function useFakeTimers(config?: FakeTimersConfig): Vitest"
+                },
+                {
+                  "language": "ts",
+                  "code": "// only mock setTimeout and clearTimeout\nvi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })\n\n// mock all timers except setInterval\nvi.useFakeTimers({ toNotFake: ['setInterval'] })"
+                }
+              ],
+              "notes": [
+                "TIPvi.useFakeTimers() does not automatically mock process.nextTick and queueMicrotask. But you can enable it by specifying the option in toFake argument: vi.useFakeTimers({ toFake: ['nextTick', 'queueMicrotask'] })."
+              ],
+              "children": []
+            },
+            {
+              "name": "vi.setTimerTickMode 4.1.0+",
+              "id": "vi-settimertickmode",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-settimertickmode",
+              "description": "Controls how fake timers are advanced.\n\nWhen mode is 'interval', you can also provide an interval in milliseconds.\n\nExample:",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "import { vi } from 'vitest'\n\nvi.useFakeTimers()\n\n// Manual mode (default)\nvi.setTimerTickMode('manual')\n\nlet i = 0\nsetInterval(() => console.log(++i), 50)\n\nvi.advanceTimersByTime(150) // logs 1, 2, 3\n\n// nextTimerAsync mode\nvi.setTimerTickMode('nextTimerAsync')\n\n// Timers will advance automatically after each macrotask\nawait new Promise(resolve => setTimeout(resolve, 150)) // logs 4, 5, 6\n\n// interval mode (default when 'fakeTimers.shouldAdvanceTime' is `true`)\nvi.setTimerTickMode('interval', 50)\n\n// Timers will advance automatically every 50ms\nawait new Promise(resolve => setTimeout(resolve, 150)) // logs 7, 8, 9"
+                }
+              ],
+              "notes": [
+                "Type: (mode: 'manual' | 'nextTimerAsync') => Vitest | (mode: 'interval', interval?: number) => Vitest",
+                "manual: The default behavior. Timers will only advance when you call one of vi.advanceTimers...() methods.",
+                "nextTimerAsync: Timers will be advanced automatically to the next available timer after each macrotask.",
+                "interval: Timers are advanced automatically by a specified interval."
+              ],
+              "children": []
+            },
+            {
+              "name": "vi.isFakeTimers",
+              "id": "vi-isfaketimers",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-isfaketimers",
+              "description": "Returns true if fake timers are enabled.",
+              "signatures": [
+                "function isFakeTimers(): boolean"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function isFakeTimers(): boolean"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.useRealTimers",
+              "id": "vi-userealtimers",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-userealtimers",
+              "description": "When timers have run out, you may call this method to return mocked timers to its original implementations. All timers that were scheduled before will be discarded.",
+              "signatures": [
+                "function useRealTimers(): Vitest"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function useRealTimers(): Vitest"
+                }
+              ],
+              "notes": [],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Miscellaneous",
+          "id": "miscellaneous",
+          "level": 2,
+          "url": "https://vitest.dev/api/vi#miscellaneous",
+          "description": "A set of useful helper functions that Vitest provides.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [],
+          "notes": [],
+          "children": [
+            {
+              "name": "vi.waitFor",
+              "id": "vi-waitfor",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-waitfor",
+              "description": "Wait for the callback to execute successfully. If the callback throws an error or returns a rejected promise it will continue to wait until it succeeds or times out.\n\nIf options is set to a number, the effect is equivalent to setting { timeout: options }.\n\nThis is very useful when you need to wait for some asynchronous action to complete, for example, when you start a server and need to wait for it to start.\n\nIt also works for asynchronous callbacks\n\nIf vi.useFakeTimers is used, vi.waitFor automatically calls vi.advanceTimersByTime(interval) in every check callback.",
+              "signatures": [
+                "function waitFor<T>(\n  callback: WaitForCallback<T>,\n  options?: number | WaitForOptions\n): Promise<T>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function waitFor<T>(\n  callback: WaitForCallback<T>,\n  options?: number | WaitForOptions\n): Promise<T>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { expect, test, vi } from 'vitest'\nimport { createServer } from './server.js'\n\ntest('Server started successfully', async () => {\n  const server = createServer()\n\n  await vi.waitFor(\n    () => {\n      if (!server.isReady) {\n        throw new Error('Server not started')\n      }\n\n      console.log('Server started')\n    },\n    {\n      timeout: 500, // default is 1000\n      interval: 20, // default is 50\n    }\n  )\n  expect(server.isReady).toBe(true)\n})"
+                },
+                {
+                  "language": "ts",
+                  "code": "// @vitest-environment jsdom\n\nimport { expect, test, vi } from 'vitest'\nimport { getDOMElementAsync, populateDOMAsync } from './dom.js'\n\ntest('Element exists in a DOM', async () => {\n  // start populating DOM\n  populateDOMAsync()\n\n  const element = await vi.waitFor(async () => {\n    // try to get the element until it exists\n    const element = await getDOMElementAsync() as HTMLElement | null\n    expect(element).toBeTruthy()\n    expect(element.dataset.initialized).toBeTruthy()\n    return element\n  }, {\n    timeout: 500, // default is 1000\n    interval: 20, // default is 50\n  })\n  expect(element).toBeInstanceOf(HTMLElement)\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.waitUntil",
+              "id": "vi-waituntil",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-waituntil",
+              "description": "This is similar to vi.waitFor, but if the callback throws any errors, execution is immediately interrupted and an error message is received. If the callback returns falsy value, the next check will continue until truthy value is returned. This is useful when you need to wait for something to exist before taking the next step.\n\nLook at the example below. We can use vi.waitUntil to wait for the element to appear on the page, and then we can do something with the element.",
+              "signatures": [
+                "function waitUntil<T>(\n  callback: WaitUntilCallback<T>,\n  options?: number | WaitUntilOptions\n): Promise<T>"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function waitUntil<T>(\n  callback: WaitUntilCallback<T>,\n  options?: number | WaitUntilOptions\n): Promise<T>"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { expect, test, vi } from 'vitest'\n\ntest('Element render correctly', async () => {\n  const element = await vi.waitUntil(\n    () => document.querySelector('.element'),\n    {\n      timeout: 500, // default is 1000\n      interval: 20, // default is 50\n    }\n  )\n\n  // do something with the element\n  expect(element.querySelector('.element-child')).toBeTruthy()\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.hoisted",
+              "id": "vi-hoisted",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-hoisted",
+              "description": "All static import statements in ES modules are hoisted to the top of the file, so any code that is defined before the imports will actually be executed after imports are evaluated.\n\nHowever, it can be useful to invoke some side effects like mocking dates before importing a module.\n\nTo bypass this limitation, you can rewrite static imports into dynamic ones like this:\n\nWhen running vitest, you can do this automatically by using vi.hoisted method. Under the hood, Vitest will convert static imports into dynamic ones with preserved live-bindings.\n\nThis method returns the value that was returned from the factory. You can use that value in your vi.mock factories if you need easy access to locally defined variables:\n\nNote that this method can also be called asynchronously even if your environment doesn't support top-level await:",
+              "signatures": [
+                "function hoisted<T>(factory: () => T): T"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function hoisted<T>(factory: () => T): T"
+                },
+                {
+                  "language": "diff",
+                  "code": "callFunctionWithSideEffect()\n- import { value } from './some/module.js'\n+ const { value } = await import('./some/module.js')"
+                },
+                {
+                  "language": "diff",
+                  "code": "- callFunctionWithSideEffect()\nimport { value } from './some/module.js'\n+ vi.hoisted(() => callFunctionWithSideEffect())"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { value } from './some/module.js'\n\nvi.hoisted(() => { value }) // throws an error"
+                },
+                {
+                  "language": null,
+                  "code": "Cannot access '__vi_import_0__' before initialization"
+                },
+                {
+                  "language": "ts",
+                  "code": "await vi.hoisted(async () => {\n  const { value } = await import('./some/module.js')\n})"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { expect, vi } from 'vitest'\nimport { originalMethod } from './path/to/module.js'\n\nconst { mockedMethod } = vi.hoisted(() => {\n  return { mockedMethod: vi.fn() }\n})\n\nvi.mock('./path/to/module.js', () => {\n  return { originalMethod: mockedMethod }\n})\n\nmockedMethod.mockReturnValue(100)\nexpect(originalMethod()).toBe(100)"
+                },
+                {
+                  "language": "ts",
+                  "code": "const json = await vi.hoisted(async () => {\n  const response = await fetch('https://jsonplaceholder.typicode.com/posts')\n  return response.json()\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.setConfig",
+              "id": "vi-setconfig",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-setconfig",
+              "description": "Updates config for the current test file. This method supports only config options that will affect the current test file:",
+              "signatures": [
+                "function setConfig(config: RuntimeOptions): void"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function setConfig(config: RuntimeOptions): void"
+                },
+                {
+                  "language": "ts",
+                  "code": "vi.setConfig({\n  allowOnly: true,\n  testTimeout: 10_000,\n  hookTimeout: 10_000,\n  clearMocks: true,\n  restoreMocks: true,\n  fakeTimers: {\n    now: new Date(2021, 11, 19),\n    // supports the whole object\n  },\n  maxConcurrency: 10,\n  sequence: {\n    hooks: 'stack'\n    // supports only \"sequence.hooks\"\n  }\n})"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.resetConfig",
+              "id": "vi-resetconfig",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-resetconfig",
+              "description": "If vi.setConfig was called before, this will reset config to the original state.",
+              "signatures": [
+                "function resetConfig(): void"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function resetConfig(): void"
+                }
+              ],
+              "notes": [],
+              "children": []
+            },
+            {
+              "name": "vi.defineHelper 4.1.0+",
+              "id": "vi-definehelper",
+              "level": 3,
+              "url": "https://vitest.dev/api/vi#vi-definehelper",
+              "description": "Wraps a function to create an assertion helper. When an assertion fails inside the helper, the error stack trace will point to where the helper was called, not inside the helper itself. This makes it easier to identify the source of test failures when using custom assertion functions.\n\nWorks with both synchronous and asynchronous functions, and supports expect.soft().\n\nExample output:",
+              "signatures": [
+                "function defineHelper<F extends (...args: any) => any>(fn: F): F"
+              ],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "function defineHelper<F extends (...args: any) => any>(fn: F): F"
+                },
+                {
+                  "language": "ts",
+                  "code": "import { expect, vi } from 'vitest'\n\nconst assertPair = vi.defineHelper((a, b) => {\n  expect(a).toEqual(b)\n})\n\ntest('example', () => {\n  assertPair('left', 'right') // Error points to this line\n})"
+                },
+                {
+                  "language": "js",
+                  "code": "FAIL  example.test.ts > example\nAssertionError: expected 'left' to deeply equal 'right'\n\nExpected: \"right\"\nReceived: \"left\"\n\n ❯ example.test.ts:8:3\n      7| test('example', () => {\n      8|   assertPair('left', 'right')\n       |   ^\n      9| })"
+                }
+              ],
+              "notes": [],
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

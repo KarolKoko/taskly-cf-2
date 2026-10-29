@@ -1,0 +1,539 @@
+{
+  "title": "Interactivity API",
+  "url": "https://vitest.dev/api/browser/interactivity",
+  "description": "Vitest implements a subset of @testing-library/user-event APIs using Chrome DevTools Protocol or webdriver instead of faking events which makes the browser behaviour more reliable and consistent with how users interact with a page.\n\nAlmost every userEvent method inherits its provider options.",
+  "entries": [
+    {
+      "name": "Interactivity API",
+      "id": "interactivity-api",
+      "level": 1,
+      "url": "https://vitest.dev/api/browser/interactivity#interactivity-api",
+      "description": "Vitest implements a subset of @testing-library/user-event APIs using Chrome DevTools Protocol or webdriver instead of faking events which makes the browser behaviour more reliable and consistent with how users interact with a page.\n\nAlmost every userEvent method inherits its provider options.",
+      "signatures": [],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "import { userEvent } from 'vitest/browser'\n\nawait userEvent.click(document.querySelector('.button'))"
+        }
+      ],
+      "notes": [],
+      "children": [
+        {
+          "name": "userEvent.setup",
+          "id": "userevent-setup",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-setup",
+          "description": "Creates a new user event instance. This is useful if you need to keep the state of keyboard to press and release buttons correctly.",
+          "signatures": [
+            "function setup(): UserEvent"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function setup(): UserEvent"
+            },
+            {
+              "language": "ts",
+              "code": "import { userEvent as vitestUserEvent } from 'vitest/browser'\nimport { userEvent as originalUserEvent } from '@testing-library/user-event'\n\nawait vitestUserEvent.keyboard('{Shift}') // press shift without releasing\nawait vitestUserEvent.keyboard('{/Shift}') // releases shift\n\nawait originalUserEvent.keyboard('{Shift}') // press shift without releasing\nawait originalUserEvent.keyboard('{/Shift}') // DID NOT release shift because the state is different"
+            },
+            {
+              "language": "ts",
+              "code": "import { beforeEach } from 'vitest'\nimport { userEvent } from 'vitest/browser'\n\nbeforeEach(async () => {\n  await userEvent.unhover(document.body)\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "userEvent.click",
+          "id": "userevent-click",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-click",
+          "description": "Click on an element. Inherits provider's options. Please refer to your provider's documentation for detailed explanation about how this method works.",
+          "signatures": [
+            "function click(\n  element: Element | Locator,\n  options?: UserEventClickOptions,\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function click(\n  element: Element | Locator,\n  options?: UserEventClickOptions,\n): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('clicks on an element', async () => {\n  const logo = page.getByRole('img', { name: /logo/ })\n\n  await userEvent.click(logo)\n  // or you can access it directly on the locator\n  await logo.click()\n\n  // With WebdriverIO, this uses either ElementClick (with no arguments) or\n  // actions (with arguments). Use an empty object to force the use of actions.\n  await logo.click({})\n})"
+            }
+          ],
+          "notes": [],
+          "children": [
+            {
+              "name": "Clicking with a modifier",
+              "id": "clicking-with-a-modifier",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/interactivity#clicking-with-a-modifier",
+              "description": "With either WebdriverIO or Playwright:\n\nWith Playwright:\n\nReferences:",
+              "signatures": [],
+              "aliases": [],
+              "examples": [
+                {
+                  "language": "ts",
+                  "code": "await userEvent.keyboard('{Shift>}')\n// By using an empty object as the option, this opts in to using a chain of actions\n// instead of an ElementClick in webdriver.\n// Firefox has a bug that makes this necessary.\n// Follow https://bugzilla.mozilla.org/show_bug.cgi?id=1456642 to know when this\n// will be fixed.\nawait userEvent.click(element, {})\nawait userEvent.keyboard('{/Shift}')"
+                },
+                {
+                  "language": "ts",
+                  "code": "await userEvent.click(element, { modifiers: ['Shift'] })"
+                }
+              ],
+              "notes": [
+                "Playwright locator.click API",
+                "WebdriverIO element.click API",
+                "testing-library click API"
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "userEvent.dblClick",
+          "id": "userevent-dblclick",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-dblclick",
+          "description": "Triggers a double click event on an element.\n\nPlease refer to your provider's documentation for detailed explanation about how this method works.\n\nReferences:",
+          "signatures": [
+            "function dblClick(\n  element: Element | Locator,\n  options?: UserEventDoubleClickOptions,\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function dblClick(\n  element: Element | Locator,\n  options?: UserEventDoubleClickOptions,\n): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('triggers a double click on an element', async () => {\n  const logo = page.getByRole('img', { name: /logo/ })\n\n  await userEvent.dblClick(logo)\n  // or you can access it directly on the locator\n  await logo.dblClick()\n})"
+            }
+          ],
+          "notes": [
+            "Playwright locator.dblclick API",
+            "WebdriverIO element.doubleClick API",
+            "testing-library dblClick API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.tripleClick",
+          "id": "userevent-tripleclick",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-tripleclick",
+          "description": "Triggers a triple click event on an element. Since there is no tripleclick in browser api, this method will fire three click events in a row, and so you must check click event detail to filter the event: evt.detail === 3.\n\nPlease refer to your provider's documentation for detailed explanation about how this method works.\n\nReferences:",
+          "signatures": [
+            "function tripleClick(\n  element: Element | Locator,\n  options?: UserEventTripleClickOptions,\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function tripleClick(\n  element: Element | Locator,\n  options?: UserEventTripleClickOptions,\n): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('triggers a triple click on an element', async () => {\n  const logo = page.getByRole('img', { name: /logo/ })\n  let tripleClickFired = false\n  logo.addEventListener('click', (evt) => {\n    if (evt.detail === 3) {\n      tripleClickFired = true\n    }\n  })\n\n  await userEvent.tripleClick(logo)\n  // or you can access it directly on the locator\n  await logo.tripleClick()\n\n  expect(tripleClickFired).toBe(true)\n})"
+            }
+          ],
+          "notes": [
+            "Playwright locator.click API: implemented via click with clickCount: 3 .",
+            "WebdriverIO browser.action API: implemented via actions api with move plus three down + up + pause events in a row",
+            "testing-library tripleClick API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.wheel 4.1.0+",
+          "id": "userevent-wheel",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-wheel",
+          "description": "Triggers a wheel event on an element.\n\nYou can specify the scroll amount using either delta for precise pixel-based control, or direction for simpler directional scrolling (up, down, left, right). When you need to trigger multiple wheel events, use the times option rather than calling the method multiple times for better performance.\n\nWheel events can also be triggered directly from locators:",
+          "signatures": [
+            "function wheel(\n  element: Element | Locator,\n  options: UserEventWheelOptions,\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function wheel(\n  element: Element | Locator,\n  options: UserEventWheelOptions,\n): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('scroll using delta values', async () => {\n  const tablist = page.getByRole('tablist')\n\n  // Scroll right by 100 pixels\n  await userEvent.wheel(tablist, { delta: { x: 100 } })\n\n  // Scroll down by 50 pixels\n  await userEvent.wheel(tablist, { delta: { y: 50 } })\n\n  // Scroll diagonally 2 times\n  await userEvent.wheel(tablist, { delta: { x: 50, y: 100 }, times: 2 })\n})\n\ntest('scroll using direction', async () => {\n  const tablist = page.getByRole('tablist')\n\n  // Scroll right 5 times\n  await userEvent.wheel(tablist, { direction: 'right', times: 5 })\n\n  // Scroll left once\n  await userEvent.wheel(tablist, { direction: 'left' })\n})"
+            },
+            {
+              "language": "ts",
+              "code": "import { page } from 'vitest/browser'\n\nawait page.getByRole('tablist').wheel({ direction: 'right' })"
+            }
+          ],
+          "notes": [
+            "WARNINGThis method is intended for testing UI that explicitly listens to wheel events (e.g., custom zoom controls, horizontal tab scrolling, canvas interactions). If you need to scroll the page to bring an element into view, rely on the built-in automatic scrolling functionality provided by other userEvent methods or locator actions instead."
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.fill",
+          "id": "userevent-fill",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-fill",
+          "description": "Set a value to the input/textarea/contenteditable field. This will remove any existing text in the input before setting the new value.\n\nThis methods focuses the element, fills it and triggers an input event after filling. You can use an empty string to clear the field.\n\nReferences:",
+          "signatures": [
+            "function fill(\n  element: Element | Locator,\n  text: string,\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function fill(\n  element: Element | Locator,\n  text: string,\n): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('update input', async () => {\n  const input = page.getByRole('input')\n\n  await userEvent.fill(input, 'foo') // input.value == foo\n  await userEvent.fill(input, '{{a[[') // input.value == {{a[[\n  await userEvent.fill(input, '{Shift}') // input.value == {Shift}\n\n  // or you can access it directly on the locator\n  await input.fill('foo') // input.value == foo\n})"
+            }
+          ],
+          "notes": [
+            "TIPThis API is faster than using userEvent.type or userEvent.keyboard, but it doesn't support user-event keyboard syntax (e.g., {Shift}{selectall}).We recommend using this API over userEvent.type in situations when you don't need to enter special characters or have granular control over keypress events.",
+            "Playwright locator.fill API",
+            "WebdriverIO element.setValue API",
+            "testing-library type API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.keyboard",
+          "id": "userevent-keyboard",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-keyboard",
+          "description": "The userEvent.keyboard allows you to trigger keyboard strokes. If any input has a focus, it will type characters into that input. Otherwise, it will trigger keyboard events on the currently focused element (document.body if there are no focused elements).\n\nThis API supports user-event keyboard syntax. Common special keys that can be referenced inside the braces include:\n\nNote: The exact set of supported keys may vary depending on the underlying browser provider (Playwright vs WebdriverIO). If a key press doesn't trigger the expected behavior, consult your provider's documentation or file an issue.\n\nReferences:",
+          "signatures": [
+            "function keyboard(text: string): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function keyboard(text: string): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { userEvent } from 'vitest/browser'\n\ntest('trigger keystrokes', async () => {\n  await userEvent.keyboard('foo') // translates to: f, o, o\n  await userEvent.keyboard('{{a[[') // translates to: {, a, [\n  await userEvent.keyboard('{Shift}{f}{o}{o}') // translates to: Shift, f, o, o\n  await userEvent.keyboard('{a>5}') // press a without releasing it and trigger 5 keydown\n  await userEvent.keyboard('{a>5/}') // press a for 5 keydown and then release it\n})"
+            }
+          ],
+          "notes": [
+            "Modifiers: {Shift}, {Control}, {Alt}, {Meta}",
+            "Navigation: {ArrowUp}, {ArrowDown}, {ArrowLeft}, {ArrowRight}, {Home}, {End}, {PageUp}, {PageDown}",
+            "Editing: {Backspace}, {Delete}, {Insert}, {Tab}, {Enter}, {Escape}",
+            "Function keys: {F1} through {F12}",
+            "Playwright Keyboard API",
+            "WebdriverIO action('key') API",
+            "testing-library type API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.tab",
+          "id": "userevent-tab",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-tab",
+          "description": "Sends a Tab key event. This is a shorthand for userEvent.keyboard('{tab}').\n\nReferences:",
+          "signatures": [
+            "function tab(options?: UserEventTabOptions): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function tab(options?: UserEventTabOptions): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('tab works', async () => {\n  const [input1, input2] = page.getByRole('input').elements()\n\n  expect(input1).toHaveFocus()\n\n  await userEvent.tab()\n\n  expect(input2).toHaveFocus()\n\n  await userEvent.tab({ shift: true })\n\n  expect(input1).toHaveFocus()\n})"
+            }
+          ],
+          "notes": [
+            "Playwright Keyboard API",
+            "WebdriverIO action('key') API",
+            "testing-library tab API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.type",
+          "id": "userevent-type",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-type",
+          "description": "The type method implements @testing-library/user-event's type utility built on top of keyboard API.\n\nThis function allows you to type characters into an input/textarea/contenteditable element. It supports user-event keyboard syntax.\n\nIf you just need to press characters without an input, use userEvent.keyboard API.\n\nReferences:",
+          "signatures": [
+            "function type(\n  element: Element | Locator,\n  text: string,\n  options?: UserEventTypeOptions,\n): Promise<void>",
+            "import { page, userEvent } from 'vitest/browser'\n\ntest('update input', async () => {\n  const input = page.getByRole('input')\n\n  await userEvent.type(input, 'foo') // input.value == foo\n  await userEvent.type(input, '{{a[[') // input.value == foo{a[\n  await userEvent.type(input, '{Shift}') // input.value == foo{a[\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function type(\n  element: Element | Locator,\n  text: string,\n  options?: UserEventTypeOptions,\n): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('update input', async () => {\n  const input = page.getByRole('input')\n\n  await userEvent.type(input, 'foo') // input.value == foo\n  await userEvent.type(input, '{{a[[') // input.value == foo{a[\n  await userEvent.type(input, '{Shift}') // input.value == foo{a[\n})"
+            }
+          ],
+          "notes": [
+            "WARNINGIf you don't rely on special characters (e.g., {shift} or {selectall}), it is recommended to use userEvent.fill instead for better performance.",
+            "INFOVitest doesn't expose .type method on the locator like input.type because it exists only for compatibility with the userEvent library. Consider using .fill instead as it is faster.",
+            "Playwright locator.press API",
+            "WebdriverIO action('key') API",
+            "testing-library type API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.clear",
+          "id": "userevent-clear",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-clear",
+          "description": "This method clears the input element content.\n\nReferences:",
+          "signatures": [
+            "function clear(element: Element | Locator, options?: UserEventClearOptions): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function clear(element: Element | Locator, options?: UserEventClearOptions): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('clears input', async () => {\n  const input = page.getByRole('input')\n\n  await userEvent.fill(input, 'foo')\n  expect(input).toHaveValue('foo')\n\n  await userEvent.clear(input)\n  // or you can access it directly on the locator\n  await input.clear()\n\n  expect(input).toHaveValue('')\n})"
+            }
+          ],
+          "notes": [
+            "Playwright locator.clear API",
+            "WebdriverIO element.clearValue API",
+            "testing-library clear API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.selectOptions",
+          "id": "userevent-selectoptions",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-selectoptions",
+          "description": "The userEvent.selectOptions allows selecting a value in a <select> element.\n\nReferences:",
+          "signatures": [
+            "function selectOptions(\n  element: Element | Locator,\n  values:\n    | HTMLElement\n    | HTMLElement[]\n    | Locator\n    | Locator[]\n    | string\n    | string[],\n  options?: UserEventSelectOptions,\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function selectOptions(\n  element: Element | Locator,\n  values:\n    | HTMLElement\n    | HTMLElement[]\n    | Locator\n    | Locator[]\n    | string\n    | string[],\n  options?: UserEventSelectOptions,\n): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('clears input', async () => {\n  const select = page.getByRole('select')\n\n  await userEvent.selectOptions(select, 'Option 1')\n  // or you can access it directly on the locator\n  await select.selectOptions('Option 1')\n\n  expect(select).toHaveValue('option-1')\n\n  await userEvent.selectOptions(select, 'option-1')\n  expect(select).toHaveValue('option-1')\n\n  await userEvent.selectOptions(select, [\n    page.getByRole('option', { name: 'Option 1' }),\n    page.getByRole('option', { name: 'Option 2' }),\n  ])\n  expect(select).toHaveValue(['option-1', 'option-2'])\n})"
+            }
+          ],
+          "notes": [
+            "WARNINGIf select element doesn't have multiple attribute, Vitest will select only the first element in the array.Unlike @testing-library, Vitest doesn't support listbox at the moment, but we plan to add support for it in the future.",
+            "WARNINGwebdriverio provider doesn't support selecting multiple elements because it doesn't provide API to do so.",
+            "Playwright locator.selectOption API",
+            "WebdriverIO element.selectByIndex API",
+            "testing-library selectOptions API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.hover",
+          "id": "userevent-hover",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-hover",
+          "description": "This method moves the cursor position to the selected element. Please refer to your provider's documentation for detailed explanation about how this method works.\n\nReferences:",
+          "signatures": [
+            "function hover(\n  element: Element | Locator,\n  options?: UserEventHoverOptions,\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function hover(\n  element: Element | Locator,\n  options?: UserEventHoverOptions,\n): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('hovers logo element', async () => {\n  const logo = page.getByRole('img', { name: /logo/ })\n\n  await userEvent.hover(logo)\n  // or you can access it directly on the locator\n  await logo.hover()\n})"
+            }
+          ],
+          "notes": [
+            "WARNINGIf you are using webdriverio provider, the cursor will move to the center of the element by default.If you are using playwright provider, the cursor moves to \"some\" visible point of the element.",
+            "Playwright locator.hover API",
+            "WebdriverIO element.moveTo API",
+            "testing-library hover API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.unhover",
+          "id": "userevent-unhover",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-unhover",
+          "description": "This works the same as userEvent.hover, but moves the cursor to the document.body element instead.\n\nReferences:",
+          "signatures": [
+            "function unhover(\n  element: Element | Locator,\n  options?: UserEventHoverOptions,\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function unhover(\n  element: Element | Locator,\n  options?: UserEventHoverOptions,\n): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('unhover logo element', async () => {\n  const logo = page.getByRole('img', { name: /logo/ })\n\n  await userEvent.unhover(logo)\n  // or you can access it directly on the locator\n  await logo.unhover()\n})"
+            }
+          ],
+          "notes": [
+            "WARNINGBy default, the cursor position is in \"some\" visible place (in playwright provider) or in the center (in webdriverio provider) of the body element, so if the currently hovered element is already in the same position, this method will have no effect.",
+            "Playwright locator.hover API",
+            "WebdriverIO element.moveTo API",
+            "testing-library hover API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.upload",
+          "id": "userevent-upload",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-upload",
+          "description": "Change a file input element to have the specified files.\n\nReferences:",
+          "signatures": [
+            "function upload(\n  element: Element | Locator,\n  files: string[] | string | File[] | File,\n  options?: UserEventUploadOptions,\n): Promise<void>",
+            "import { page, userEvent } from 'vitest/browser'\n\ntest('can upload a file', async () => {\n  const input = page.getByRole('button', { name: /Upload files/ })\n\n  const file = new File(['file'], 'file.png', { type: 'image/png' })\n\n  await userEvent.upload(input, file)\n  // or you can access it directly on the locator\n  await input.upload(file)\n\n  // you can also use file paths relative to the root of the project\n  await userEvent.upload(input, './fixtures/file.png')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function upload(\n  element: Element | Locator,\n  files: string[] | string | File[] | File,\n  options?: UserEventUploadOptions,\n): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('can upload a file', async () => {\n  const input = page.getByRole('button', { name: /Upload files/ })\n\n  const file = new File(['file'], 'file.png', { type: 'image/png' })\n\n  await userEvent.upload(input, file)\n  // or you can access it directly on the locator\n  await input.upload(file)\n\n  // you can also use file paths relative to the root of the project\n  await userEvent.upload(input, './fixtures/file.png')\n})"
+            }
+          ],
+          "notes": [
+            "WARNINGwebdriverio provider supports this command only in chrome and edge browsers. It also only supports string types at the moment.",
+            "Playwright locator.setInputFiles API",
+            "WebdriverIO browser.uploadFile API",
+            "testing-library upload API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.dragAndDrop",
+          "id": "userevent-draganddrop",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-draganddrop",
+          "description": "Drags the source element on top of the target element. Don't forget that the source element has to have the draggable attribute set to true.\n\nReferences:",
+          "signatures": [
+            "function dragAndDrop(\n  source: Element | Locator,\n  target: Element | Locator,\n  options?: UserEventDragAndDropOptions,\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function dragAndDrop(\n  source: Element | Locator,\n  target: Element | Locator,\n  options?: UserEventDragAndDropOptions,\n): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('drag and drop works', async () => {\n  const source = page.getByRole('img', { name: /logo/ })\n  const target = page.getByTestId('logo-target')\n\n  await userEvent.dragAndDrop(source, target)\n  // or you can access it directly on the locator\n  await source.dropTo(target)\n\n  await expect.element(target).toHaveTextContent('Logo is processed')\n})"
+            }
+          ],
+          "notes": [
+            "WARNINGThis API is not supported by the default preview provider.",
+            "Playwright frame.dragAndDrop API",
+            "WebdriverIO element.dragAndDrop API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.copy",
+          "id": "userevent-copy",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-copy",
+          "description": "Copy the selected text to the clipboard.\n\nReferences:",
+          "signatures": [
+            "function copy(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function copy(): Promise<void>"
+            },
+            {
+              "language": "js",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('copy and paste', async () => {\n  // write to 'source'\n  await userEvent.click(page.getByPlaceholder('source'))\n  await userEvent.keyboard('hello')\n\n  // select and copy 'source'\n  await userEvent.dblClick(page.getByPlaceholder('source'))\n  await userEvent.copy()\n\n  // paste to 'target'\n  await userEvent.click(page.getByPlaceholder('target'))\n  await userEvent.paste()\n\n  await expect.element(page.getByPlaceholder('source')).toHaveTextContent('hello')\n  await expect.element(page.getByPlaceholder('target')).toHaveTextContent('hello')\n})"
+            }
+          ],
+          "notes": [
+            "testing-library copy API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.cut",
+          "id": "userevent-cut",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-cut",
+          "description": "Cut the selected text to the clipboard.\n\nReferences:",
+          "signatures": [
+            "function cut(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function cut(): Promise<void>"
+            },
+            {
+              "language": "js",
+              "code": "import { page, userEvent } from 'vitest/browser'\n\ntest('copy and paste', async () => {\n  // write to 'source'\n  await userEvent.click(page.getByPlaceholder('source'))\n  await userEvent.keyboard('hello')\n\n  // select and cut 'source'\n  await userEvent.dblClick(page.getByPlaceholder('source'))\n  await userEvent.cut()\n\n  // paste to 'target'\n  await userEvent.click(page.getByPlaceholder('target'))\n  await userEvent.paste()\n\n  await expect.element(page.getByPlaceholder('source')).toHaveTextContent('')\n  await expect.element(page.getByPlaceholder('target')).toHaveTextContent('hello')\n})"
+            }
+          ],
+          "notes": [
+            "testing-library cut API"
+          ],
+          "children": []
+        },
+        {
+          "name": "userEvent.paste",
+          "id": "userevent-paste",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/interactivity#userevent-paste",
+          "description": "Paste the text from the clipboard. See userEvent.copy and userEvent.cut for usage examples.\n\nReferences:",
+          "signatures": [
+            "function paste(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function paste(): Promise<void>"
+            }
+          ],
+          "notes": [
+            "testing-library paste API"
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

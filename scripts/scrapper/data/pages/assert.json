@@ -1,0 +1,2399 @@
+{
+  "title": "assert",
+  "url": "https://vitest.dev/api/assert",
+  "description": "Vitest reexports the assert method from chai for verifying invariants.",
+  "entries": [
+    {
+      "name": "assert",
+      "id": "assert",
+      "level": 1,
+      "url": "https://vitest.dev/api/assert#assert",
+      "description": "Vitest reexports the assert method from chai for verifying invariants.",
+      "signatures": [],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "if (import.meta.vitest) {\n  const { test, assert } = import.meta.vitest \n  const { test } = import.meta.vitest \n  const assert: Chai.Assert = import.meta.vitest.assert \n\n  test('assert', () => {\n    assert('foo' !== 'bar', 'foo should not be equal to bar')\n  })\n}"
+        },
+        {
+          "language": "ts",
+          "code": "if (import.meta.vitest) {\n  const { test, assert } = import.meta.vitest \n  const { test } = import.meta.vitest \n\n  test('assert', () => {\n    assert('foo' !== 'bar', 'foo should not be equal to bar') \n    import.meta.vitest!.assert('foo' !== 'bar', 'foo should not be equal to bar') \n  })\n}"
+        }
+      ],
+      "notes": [],
+      "children": [
+        {
+          "name": "assert",
+          "id": "assert-1",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#assert-1",
+          "description": "Assert that the given expression is truthy, otherwise the assertion fails.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert', () => {\n  assert('foo' !== 'bar', 'foo should not be equal to bar')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (expression: any, message?: string) => asserts expression"
+          ],
+          "children": []
+        },
+        {
+          "name": "fail",
+          "id": "fail",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#fail",
+          "description": "Force an assertion failure.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.fail', () => {\n  assert.fail('error message on failure')\n  assert.fail('foo', 'bar', 'foo is not bar', '===')\n})"
+            }
+          ],
+          "notes": [
+            "Type:(message?: string) => never<T>(actual: T, expected: T, message?: string, operator?: string) => never"
+          ],
+          "children": []
+        },
+        {
+          "name": "isOk",
+          "id": "isok",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isok",
+          "description": "Assert that the given value is truthy.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isOk', () => {\n  assert.isOk('foo', 'every truthy is ok')\n  assert.isOk(false, 'this will fail since false is not truthy')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => asserts value",
+            "Alias: ok"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotOk",
+          "id": "isnotok",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotok",
+          "description": "Assert that the given value is falsy.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isNotOk', () => {\n  assert.isNotOk('foo', 'this will fail, every truthy is not ok')\n  assert.isNotOk(false, 'this will pass since false is falsy')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void",
+            "Alias: notOk"
+          ],
+          "children": []
+        },
+        {
+          "name": "equal",
+          "id": "equal",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#equal",
+          "description": "Asserts non-strict equality (==) of actual and expected.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.equal', () => {\n  assert.equal(Math.sqrt(4), '2')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(actual: T, expected: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notEqual",
+          "id": "notequal",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notequal",
+          "description": "Asserts non-strict inequality (!=) of actual and expected.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.equal', () => {\n  assert.notEqual(Math.sqrt(4), 3)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(actual: T, expected: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "strictEqual",
+          "id": "strictequal",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#strictequal",
+          "description": "Asserts strict equality (===) of actual and expected.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.strictEqual', () => {\n  assert.strictEqual(Math.sqrt(4), 2)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(actual: T, expected: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "deepEqual",
+          "id": "deepequal",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#deepequal",
+          "description": "Asserts that actual is deeply equal to expected.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.deepEqual', () => {\n  assert.deepEqual({ color: 'green' }, { color: 'green' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(actual: T, expected: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notDeepEqual",
+          "id": "notdeepequal",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notdeepequal",
+          "description": "Assert that actual is not deeply equal to expected.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notDeepEqual', () => {\n  assert.notDeepEqual({ color: 'green' }, { color: 'red' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(actual: T, expected: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isAbove",
+          "id": "isabove",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isabove",
+          "description": "Assert that valueToCheck is strictly greater than (>) valueToBeAbove.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isAbove', () => {\n  assert.isAbove(5, 2, '5 is strictly greater than 2')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (valueToCheck: number, valueToBeAbove: number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isAtLeast",
+          "id": "isatleast",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isatleast",
+          "description": "Assert that valueToCheck is greater than or equal to (>=) valueToBeAtLeast.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isAtLeast', () => {\n  assert.isAtLeast(5, 2, '5 is greater or equal to 2')\n  assert.isAtLeast(3, 3, '3 is greater or equal to 3')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (valueToCheck: number, valueToBeAtLeast: number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isBelow",
+          "id": "isbelow",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isbelow",
+          "description": "Asserts valueToCheck is strictly less than (<) valueToBeBelow.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isBelow', () => {\n  assert.isBelow(3, 6, '3 is strictly less than 6')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (valueToCheck: number, valueToBeBelow: number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isAtMost",
+          "id": "isatmost",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isatmost",
+          "description": "Asserts valueToCheck is less than or equal to (<=) valueToBeAtMost.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isAtMost', () => {\n  assert.isAtMost(3, 6, '3 is less than or equal to 6')\n  assert.isAtMost(4, 4, '4 is less than or equal to 4')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (valueToCheck: number, valueToBeAtMost: number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isTrue",
+          "id": "istrue",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#istrue",
+          "description": "Asserts that value is true.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst testPassed = true\n\ntest('assert.isTrue', () => {\n  assert.isTrue(testPassed)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => asserts value is true"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotTrue",
+          "id": "isnottrue",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnottrue",
+          "description": "Asserts that value is not true.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst testPassed = 'ok'\n\ntest('assert.isNotTrue', () => {\n  assert.isNotTrue(testPassed)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => asserts value is Exclude<T, true>"
+          ],
+          "children": []
+        },
+        {
+          "name": "isFalse",
+          "id": "isfalse",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isfalse",
+          "description": "Asserts that value is false.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst testPassed = false\n\ntest('assert.isFalse', () => {\n  assert.isFalse(testPassed)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => asserts value is false"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotFalse",
+          "id": "isnotfalse",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotfalse",
+          "description": "Asserts that value is not false.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst testPassed = 'no'\n\ntest('assert.isNotFalse', () => {\n  assert.isNotFalse(testPassed)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => asserts value is Exclude<T, false>"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNull",
+          "id": "isnull",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnull",
+          "description": "Asserts that value is null.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst error = null\n\ntest('assert.isNull', () => {\n  assert.isNull(error, 'error is null')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => asserts value is null"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotNull",
+          "id": "isnotnull",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotnull",
+          "description": "Asserts that value is not null.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst error = { message: 'error was occurred' }\n\ntest('assert.isNotNull', () => {\n  assert.isNotNull(error, 'error is not null but object')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => asserts value is Exclude<T, null>"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNaN",
+          "id": "isnan",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnan",
+          "description": "Asserts that value is NaN.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst calculation = 1 * 'vitest'\n\ntest('assert.isNaN', () => {\n  assert.isNaN(calculation, '1 * \"vitest\" is NaN')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotNaN",
+          "id": "isnotnan",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotnan",
+          "description": "Asserts that value is not NaN.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst calculation = 1 * 2\n\ntest('assert.isNotNaN', () => {\n  assert.isNotNaN(calculation, '1 * 2 is Not NaN but 2')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "exists",
+          "id": "exists",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#exists",
+          "description": "Asserts that value is neither null nor undefined.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst name = 'foo'\n\ntest('assert.exists', () => {\n  assert.exists(name, 'foo is neither null nor undefined')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => asserts value is NonNullable<T>"
+          ],
+          "children": []
+        },
+        {
+          "name": "notExists",
+          "id": "notexists",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notexists",
+          "description": "Asserts that value is either null nor undefined.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst foo = null\nconst bar = undefined\n\ntest('assert.notExists', () => {\n  assert.notExists(foo, 'foo is null so not exist')\n  assert.notExists(bar, 'bar is undefined so not exist')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => asserts value is null | undefined"
+          ],
+          "children": []
+        },
+        {
+          "name": "isUndefined",
+          "id": "isundefined",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isundefined",
+          "description": "Asserts that value is undefined.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst name = undefined\n\ntest('assert.isUndefined', () => {\n  assert.isUndefined(name, 'name is undefined')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => asserts value is undefined"
+          ],
+          "children": []
+        },
+        {
+          "name": "isDefined",
+          "id": "isdefined",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isdefined",
+          "description": "Asserts that value is not undefined.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst name = 'foo'\n\ntest('assert.isDefined', () => {\n  assert.isDefined(name, 'name is not undefined')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => asserts value is Exclude<T, undefined>"
+          ],
+          "children": []
+        },
+        {
+          "name": "isFunction",
+          "id": "isfunction",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isfunction",
+          "description": "",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\nfunction name() { return 'foo' };\n\ntest('assert.isFunction', () => {\n  assert.isFunction(name, 'name is function')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nfunction name() { return 'foo' };\n\ntest('assert.isFunction', () => {\n  assert.isFunction(name, 'name is function')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void",
+            "Alias: isCallable Asserts that value is a function."
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotFunction",
+          "id": "isnotfunction",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotfunction",
+          "description": "Asserts that value is not a function.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\nconst name = 'foo'\n\ntest('assert.isNotFunction', () => {\n  assert.isNotFunction(name, 'name is not function but string')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst name = 'foo'\n\ntest('assert.isNotFunction', () => {\n  assert.isNotFunction(name, 'name is not function but string')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void",
+            "Alias: isNotCallable"
+          ],
+          "children": []
+        },
+        {
+          "name": "isObject",
+          "id": "isobject",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isobject",
+          "description": "Asserts that value is an object of type Object (as revealed by Object.prototype.toString). The assertion does not match subclassed objects.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst someThing = { color: 'red', shape: 'circle' }\n\ntest('assert.isObject', () => {\n  assert.isObject(someThing, 'someThing is object')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotObject",
+          "id": "isnotobject",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotobject",
+          "description": "Asserts that value is not an object of type Object (as revealed by Object.prototype.toString). The assertion does not match subclassed objects.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst someThing = 'redCircle'\n\ntest('assert.isNotObject', () => {\n  assert.isNotObject(someThing, 'someThing is not object but string')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isArray",
+          "id": "isarray",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isarray",
+          "description": "Asserts that value is an array.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst color = ['red', 'green', 'yellow']\n\ntest('assert.isArray', () => {\n  assert.isArray(color, 'color is array')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotArray",
+          "id": "isnotarray",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotarray",
+          "description": "Asserts that value is not an array.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst color = 'red'\n\ntest('assert.isNotArray', () => {\n  assert.isNotArray(color, 'color is not array but string')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isString",
+          "id": "isstring",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isstring",
+          "description": "Asserts that value is a string.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst color = 'red'\n\ntest('assert.isString', () => {\n  assert.isString(color, 'color is string')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotString",
+          "id": "isnotstring",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotstring",
+          "description": "Asserts that value is not a string.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst color = ['red', 'green', 'yellow']\n\ntest('assert.isNotString', () => {\n  assert.isNotString(color, 'color is not string but array')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNumber",
+          "id": "isnumber",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnumber",
+          "description": "Asserts that value is a number.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst colors = 3\n\ntest('assert.isNumber', () => {\n  assert.isNumber(colors, 'colors is number')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotNumber",
+          "id": "isnotnumber",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotnumber",
+          "description": "Asserts that value is not a number.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst colors = '3 colors'\n\ntest('assert.isNotNumber', () => {\n  assert.isNotNumber(colors, 'colors is not number but strings')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isFinite",
+          "id": "isfinite",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isfinite",
+          "description": "Asserts that value is a finite number (not NaN, Infinity).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst colors = 3\n\ntest('assert.isFinite', () => {\n  assert.isFinite(colors, 'colors is number not NaN or Infinity')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isBoolean",
+          "id": "isboolean",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isboolean",
+          "description": "Asserts that value is a boolean.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst isReady = true\n\ntest('assert.isBoolean', () => {\n  assert.isBoolean(isReady, 'isReady is a boolean')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotBoolean",
+          "id": "isnotboolean",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotboolean",
+          "description": "Asserts that value is not a boolean.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst isReady = 'sure'\n\ntest('assert.isBoolean', () => {\n  assert.isBoolean(isReady, 'isReady is not a boolean but string')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "typeOf",
+          "id": "typeof",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#typeof",
+          "description": "Asserts that value’s type is name, as determined by Object.prototype.toString.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.typeOf', () => {\n  assert.typeOf({ color: 'red' }, 'object', 'we have an object')\n  assert.typeOf(['red', 'green'], 'array', 'we have an array')\n  assert.typeOf('red', 'string', 'we have a string')\n  assert.typeOf(/red/, 'regexp', 'we have a regular expression')\n  assert.typeOf(null, 'null', 'we have a null')\n  assert.typeOf(undefined, 'undefined', 'we have an undefined')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, name: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notTypeOf",
+          "id": "nottypeof",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#nottypeof",
+          "description": "Asserts that value’s type is not name, as determined by Object.prototype.toString.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notTypeOf', () => {\n  assert.notTypeOf('red', 'number', '\"red\" is not a number')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, name: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "instanceOf",
+          "id": "instanceof",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#instanceof",
+          "description": "Asserts that value is an instance of constructor.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\nfunction Person(name) { this.name = name }\nconst foo = new Person('foo')\n\nclass Tea {\n  constructor(name) {\n    this.name = name\n  }\n}\nconst coffee = new Tea('coffee')\n\ntest('assert.instanceOf', () => {\n  assert.instanceOf(foo, Person, 'foo is an instance of Person')\n  assert.instanceOf(coffee, Tea, 'coffee is an instance of Tea')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nfunction Person(name) { this.name = name }\nconst foo = new Person('foo')\n\nclass Tea {\n  constructor(name) {\n    this.name = name\n  }\n}\nconst coffee = new Tea('coffee')\n\ntest('assert.instanceOf', () => {\n  assert.instanceOf(foo, Person, 'foo is an instance of Person')\n  assert.instanceOf(coffee, Tea, 'coffee is an instance of Tea')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, constructor: Function, message?: string) => asserts value is T"
+          ],
+          "children": []
+        },
+        {
+          "name": "notInstanceOf",
+          "id": "notinstanceof",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notinstanceof",
+          "description": "Asserts that value is not an instance of constructor.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\nfunction Person(name) { this.name = name }\nconst foo = new Person('foo')\n\nclass Tea {\n  constructor(name) {\n    this.name = name\n  }\n}\nconst coffee = new Tea('coffee')\n\ntest('assert.instanceOf', () => {\n  assert.instanceOf(foo, Tea, 'foo is not an instance of Tea')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nfunction Person(name) { this.name = name }\nconst foo = new Person('foo')\n\nclass Tea {\n  constructor(name) {\n    this.name = name\n  }\n}\nconst coffee = new Tea('coffee')\n\ntest('assert.instanceOf', () => {\n  assert.instanceOf(foo, Tea, 'foo is not an instance of Tea')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(value: T, constructor: Function, message?: string) => asserts value is Exclude<T, U>"
+          ],
+          "children": []
+        },
+        {
+          "name": "include",
+          "id": "include",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#include",
+          "description": "Asserts that haystack includes needle. Can be used to assert the inclusion of a value in an array, a substring in a string, or a subset of properties in an object.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.include', () => {\n  assert.include([1, 2, 3], 2, 'array contains value')\n  assert.include('foobar', 'foo', 'string contains substring')\n  assert.include({ foo: 'bar', hello: 'universe' }, { foo: 'bar' }, 'object contains property')\n})"
+            }
+          ],
+          "notes": [
+            "Type:(haystack: string, needle: string, message?: string) => void<T>(haystack: readonly T[] | ReadonlySet<T> | ReadonlyMap<any, T>, needle: T, message?: string) => void<T extends object>(haystack: WeakSet<T>, needle: T, message?: string) => void<T>(haystack: T, needle: Partial<T>, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notInclude",
+          "id": "notinclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notinclude",
+          "description": "Asserts that haystack does not include needle. It can be used to assert the absence of a value in an array, a substring in a string, or a subset of properties in an object.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notInclude', () => {\n  assert.notInclude([1, 2, 3], 4, 'array doesn\\'t contain 4')\n  assert.notInclude('foobar', 'baz', 'foobar doesn\\'t contain baz')\n  assert.notInclude({ foo: 'bar', hello: 'universe' }, { foo: 'baz' }, 'object doesn\\'t contain property')\n})"
+            }
+          ],
+          "notes": [
+            "Type:(haystack: string, needle: string, message?: string) => void<T>(haystack: readonly T[] | ReadonlySet<T> | ReadonlyMap<any, T>, needle: T, message?: string) => void<T extends object>(haystack: WeakSet<T>, needle: T, message?: string) => void<T>(haystack: T, needle: Partial<T>, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "deepInclude",
+          "id": "deepinclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#deepinclude",
+          "description": "Asserts that haystack includes needle. Can be used to assert the inclusion of a value in an array or a subset of properties in an object. Deep equality is used.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst obj1 = { a: 1 }\nconst obj2 = { b: 2 }\n\ntest('assert.deepInclude', () => {\n  assert.deepInclude([obj1, obj2], { a: 1 })\n  assert.deepInclude({ foo: obj1, bar: obj2 }, { foo: { a: 1 } })\n})"
+            }
+          ],
+          "notes": [
+            "Type:",
+            "(haystack: string, needle: string, message?: string) => void",
+            "<T>(haystack: readonly T[] | ReadonlySet<T> | ReadonlyMap<any, T>, needle: T, message?: string) => void",
+            "<T>(haystack: T, needle: T extends WeakSet<any> ? never : Partial<T>, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notDeepInclude",
+          "id": "notdeepinclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notdeepinclude",
+          "description": "Asserts that haystack does not include needle. It can be used to assert the absence of a value in an array or a subset of properties in an object. Deep equality is used.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst obj1 = { a: 1 }\nconst obj2 = { b: 2 }\n\ntest('assert.notDeepInclude', () => {\n  assert.notDeepInclude([obj1, obj2], { a: 10 })\n  assert.notDeepInclude({ foo: obj1, bar: obj2 }, { foo: { a: 10 } })\n})"
+            }
+          ],
+          "notes": [
+            "Type:(haystack: string, needle: string, message?: string) => void<T>(haystack: readonly T[] | ReadonlySet<T> | ReadonlyMap<any, T>, needle: T, message?: string) => void<T>(haystack: T, needle: T extends WeakSet<any> ? never : Partial<T>, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "nestedInclude",
+          "id": "nestedinclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#nestedinclude",
+          "description": "Asserts that haystack includes needle. Can be used to assert the inclusion of a subset of properties in an object. Enables the use of dot- and bracket-notation for referencing nested properties. ‘[]’ and ‘.’ in property names can be escaped using double backslashes.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.nestedInclude', () => {\n  assert.nestedInclude({ '.a': { b: 'x' } }, { '\\\\.a.[b]': 'x' })\n  assert.nestedInclude({ a: { '[b]': 'x' } }, { 'a.\\\\[b\\\\]': 'x' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (haystack: any, needle: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notNestedInclude",
+          "id": "notnestedinclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notnestedinclude",
+          "description": "Asserts that haystack does not include needle. Can be used to assert the inclusion of a subset of properties in an object. Enables the use of dot- and bracket-notation for referencing nested properties. ‘[]’ and ‘.’ in property names can be escaped using double backslashes.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.nestedInclude', () => {\n  assert.notNestedInclude({ '.a': { b: 'x' } }, { '\\\\.a.b': 'y' })\n  assert.notNestedInclude({ a: { '[b]': 'x' } }, { 'a.\\\\[b\\\\]': 'y' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (haystack: any, needle: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "deepNestedInclude",
+          "id": "deepnestedinclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#deepnestedinclude",
+          "description": "Asserts that haystack includes needle. Can be used to assert the inclusion of a subset of properties in an object while checking for deep equality. Enables the use of dot- and bracket-notation for referencing nested properties. ‘[]’ and ‘.’ in property names can be escaped using double backslashes.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.deepNestedInclude', () => {\n  assert.deepNestedInclude({ a: { b: [{ x: 1 }] } }, { 'a.b[0]': { x: 1 } })\n  assert.deepNestedInclude({ '.a': { '[b]': { x: 1 } } }, { '\\\\.a.\\\\[b\\\\]': { x: 1 } })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (haystack: any, needle: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notDeepNestedInclude",
+          "id": "notdeepnestedinclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notdeepnestedinclude",
+          "description": "Asserts that haystack not includes needle. Can be used to assert the absence of a subset of properties in an object while checking for deep equality. Enables the use of dot- and bracket-notation for referencing nested properties. ‘[]’ and ‘.’ in property names can be escaped using double backslashes.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notDeepNestedInclude', () => {\n  assert.notDeepNestedInclude({ a: { b: [{ x: 1 }] } }, { 'a.b[0]': { y: 1 } })\n  assert.notDeepNestedInclude({ '.a': { '[b]': { x: 1 } } }, { '\\\\.a.\\\\[b\\\\]': { y: 2 } })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (haystack: any, needle: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "ownInclude",
+          "id": "owninclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#owninclude",
+          "description": "Asserts that haystack includes needle. Can be used to assert the inclusion of a subset of properties in an object while ignoring inherited properties.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.ownInclude', () => {\n  assert.ownInclude({ a: 1 }, { a: 1 })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (haystack: any, needle: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notOwnInclude",
+          "id": "notowninclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notowninclude",
+          "description": "Asserts that haystack includes needle. Can be used to assert the absence of a subset of properties in an object while ignoring inherited properties.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\nconst obj1 = {\n  b: 2\n}\n\nconst obj2 = object.create(obj1)\nobj2.a = 1\n\ntest('assert.notOwnInclude', () => {\n  assert.notOwnInclude(obj2, { b: 2 })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (haystack: any, needle: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "deepOwnInclude",
+          "id": "deepowninclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#deepowninclude",
+          "description": "Asserts that haystack includes needle. Can be used to assert the inclusion of a subset of properties in an object while ignoring inherited properties and checking for deep equality.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.deepOwnInclude', () => {\n  assert.deepOwnInclude({ a: { b: 2 } }, { a: { b: 2 } })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (haystack: any, needle: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notDeepOwnInclude",
+          "id": "notdeepowninclude",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notdeepowninclude",
+          "description": "Asserts that haystack not includes needle. Can be used to assert the absence of a subset of properties in an object while ignoring inherited properties and checking for deep equality.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notDeepOwnInclude', () => {\n  assert.notDeepOwnInclude({ a: { b: 2 } }, { a: { c: 3 } })\n})"
+            }
+          ],
+          "notes": [
+            "Type: (haystack: any, needle: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "match",
+          "id": "match",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#match",
+          "description": "Asserts that value matches the regular expression regexp.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.match', () => {\n  assert.match('foobar', /^foo/, 'regexp matches')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (value: string, regexp: RegExp, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notMatch",
+          "id": "notmatch",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notmatch",
+          "description": "Asserts that value does not matches the regular expression regexp.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notMatch', () => {\n  assert.notMatch('foobar', /^foo/, 'regexp does not match')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (value: string, regexp: RegExp, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "property",
+          "id": "property",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#property",
+          "description": "Asserts that object has a direct or inherited property named by property",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.property', () => {\n  assert.property({ tea: { green: 'matcha' } }, 'tea')\n  assert.property({ tea: { green: 'matcha' } }, 'toString')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, property: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notProperty",
+          "id": "notproperty",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notproperty",
+          "description": "Asserts that object does not have a direct or inherited property named by property",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notProperty', () => {\n  assert.notProperty({ tea: { green: 'matcha' } }, 'coffee')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, property: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "propertyVal",
+          "id": "propertyval",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#propertyval",
+          "description": "Asserts that object has a direct or inherited property named by property with a value given by value. Uses a strict equality check (===).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notPropertyVal', () => {\n  assert.propertyVal({ tea: 'is good' }, 'tea', 'is good')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T, V>(object: T, property: string, value: V, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notPropertyVal",
+          "id": "notpropertyval",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notpropertyval",
+          "description": "Asserts that object does not have a direct or inherited property named by property with a value given by value. Uses a strict equality check (===).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notPropertyVal', () => {\n  assert.notPropertyVal({ tea: 'is good' }, 'tea', 'is bad')\n  assert.notPropertyVal({ tea: 'is good' }, 'coffee', 'is good')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T, V>(object: T, property: string, value: V, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "deepPropertyVal",
+          "id": "deeppropertyval",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#deeppropertyval",
+          "description": "Asserts that object has a direct or inherited property named by property with a value given by value. Uses a deep equality check.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.deepPropertyVal', () => {\n  assert.deepPropertyVal({ tea: { green: 'matcha' } }, 'tea', { green: 'matcha' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T, V>(object: T, property: string, value: V, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notDeepPropertyVal",
+          "id": "notdeeppropertyval",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notdeeppropertyval",
+          "description": "Asserts that object does not have a direct or inherited property named by property with a value given by value. Uses a deep equality check.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.deepPropertyVal', () => {\n  assert.notDeepPropertyVal({ tea: { green: 'matcha' } }, 'tea', { black: 'matcha' })\n  assert.notDeepPropertyVal({ tea: { green: 'matcha' } }, 'tea', { green: 'oolong' })\n  assert.notDeepPropertyVal({ tea: { green: 'matcha' } }, 'coffee', { green: 'matcha' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T, V>(object: T, property: string, value: V, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "nestedProperty",
+          "id": "nestedproperty",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#nestedproperty",
+          "description": "Asserts that object has a direct or inherited property named by property, which can be a string using dot- and bracket-notation for nested reference.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.deepPropertyVal', () => {\n  assert.nestedProperty({ tea: { green: 'matcha' } }, 'tea.green')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, property: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notNestedProperty",
+          "id": "notnestedproperty",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notnestedproperty",
+          "description": "Asserts that object does not have a direct or inherited property named by property, which can be a string using dot- and bracket-notation for nested reference.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.deepPropertyVal', () => {\n  assert.notNestedProperty({ tea: { green: 'matcha' } }, 'tea.oolong')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, property: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "nestedPropertyVal",
+          "id": "nestedpropertyval",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#nestedpropertyval",
+          "description": "Asserts that object has a property named by property with value given by value. property can use dot- and bracket-notation for nested reference. Uses a strict equality check (===).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.nestedPropertyVal', () => {\n  assert.nestedPropertyVal({ tea: { green: 'matcha' } }, 'tea.green', 'matcha')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, property: string, value: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notNestedPropertyVal",
+          "id": "notnestedpropertyval",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notnestedpropertyval",
+          "description": "Asserts that object does not have a property named by property with value given by value. property can use dot- and bracket-notation for nested reference. Uses a strict equality check (===).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notNestedPropertyVal', () => {\n  assert.notNestedPropertyVal({ tea: { green: 'matcha' } }, 'tea.green', 'konacha')\n  assert.notNestedPropertyVal({ tea: { green: 'matcha' } }, 'coffee.green', 'matcha')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, property: string, value: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "deepNestedPropertyVal",
+          "id": "deepnestedpropertyval",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#deepnestedpropertyval",
+          "description": "Asserts that object has a property named by property with a value given by value. property can use dot- and bracket-notation for nested reference. Uses a deep equality check (===).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notNestedPropertyVal', () => {\n  assert.notNestedPropertyVal({ tea: { green: 'matcha' } }, 'tea.green', 'konacha')\n  assert.notNestedPropertyVal({ tea: { green: 'matcha' } }, 'coffee.green', 'matcha')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, property: string, value: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notDeepNestedPropertyVal",
+          "id": "notdeepnestedpropertyval",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notdeepnestedpropertyval",
+          "description": "Asserts that object does not have a property named by property with value given by value. property can use dot- and bracket-notation for nested reference. Uses a deep equality check.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notDeepNestedPropertyVal', () => {\n  assert.notDeepNestedPropertyVal({ tea: { green: { matcha: 'yum' } } }, 'tea.green', { oolong: 'yum' })\n  assert.notDeepNestedPropertyVal({ tea: { green: { matcha: 'yum' } } }, 'tea.green', { matcha: 'yuck' })\n  assert.notDeepNestedPropertyVal({ tea: { green: { matcha: 'yum' } } }, 'tea.black', { matcha: 'yum' })\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, property: string, value: any, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "lengthOf",
+          "id": "lengthof",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#lengthof",
+          "description": "Asserts that object has a length or size with the expected value.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.lengthOf', () => {\n  assert.lengthOf([1, 2, 3], 3, 'array has length of 3')\n  assert.lengthOf('foobar', 6, 'string has length of 6')\n  assert.lengthOf(new Set([1, 2, 3]), 3, 'set has size of 3')\n  assert.lengthOf(new Map([['a', 1], ['b', 2], ['c', 3]]), 3, 'map has size of 3')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T extends { readonly length?: number | undefined } | { readonly size?: number | undefined }>(object: T, length: number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "hasAnyKeys",
+          "id": "hasanykeys",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#hasanykeys",
+          "description": "Asserts that object has at least one of the keys provided. You can also provide a single object instead of a keys array and its keys will be used as the expected set of keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.hasAnyKeys', () => {\n  assert.hasAnyKeys({ foo: 1, bar: 2, baz: 3 }, ['foo', 'iDontExist', 'baz'])\n  assert.hasAnyKeys({ foo: 1, bar: 2, baz: 3 }, { foo: 30, iDontExist: 99, baz: 1337 })\n  assert.hasAnyKeys(new Map([[{ foo: 1 }, 'bar'], ['key', 'value']]), [{ foo: 1 }, 'key'])\n  assert.hasAnyKeys(new Set([{ foo: 'bar' }, 'anotherKey']), [{ foo: 'bar' }, 'anotherKey'])\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, keys: Array<Object | string> | { [key: string]: any }, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "hasAllKeys",
+          "id": "hasallkeys",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#hasallkeys",
+          "description": "Asserts that object has all and only all of the keys provided. You can also provide a single object instead of a keys array and its keys will be used as the expected set of keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.hasAllKeys', () => {\n  assert.hasAllKeys({ foo: 1, bar: 2, baz: 3 }, ['foo', 'bar', 'baz'])\n  assert.hasAllKeys({ foo: 1, bar: 2, baz: 3 }, { foo: 30, bar: 99, baz: 1337 })\n  assert.hasAllKeys(new Map([[{ foo: 1 }, 'bar'], ['key', 'value']]), [{ foo: 1 }, 'key'])\n  assert.hasAllKeys(new Set([{ foo: 'bar' }, 'anotherKey'], [{ foo: 'bar' }, 'anotherKey']))\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, keys: Array<Object | string> | { [key: string]: any }, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "containsAllKeys",
+          "id": "containsallkeys",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#containsallkeys",
+          "description": "Asserts that object has all of the keys provided but may have more keys not listed. You can also provide a single object instead of a keys array and its keys will be used as the expected set of keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.containsAllKeys', () => {\n  assert.containsAllKeys({ foo: 1, bar: 2, baz: 3 }, ['foo', 'baz'])\n  assert.containsAllKeys({ foo: 1, bar: 2, baz: 3 }, ['foo', 'bar', 'baz'])\n  assert.containsAllKeys({ foo: 1, bar: 2, baz: 3 }, { foo: 30, baz: 1337 })\n  assert.containsAllKeys({ foo: 1, bar: 2, baz: 3 }, { foo: 30, bar: 99, baz: 1337 })\n  assert.containsAllKeys(new Map([[{ foo: 1 }, 'bar'], ['key', 'value']]), [{ foo: 1 }])\n  assert.containsAllKeys(new Map([[{ foo: 1 }, 'bar'], ['key', 'value']]), [{ foo: 1 }, 'key'])\n  assert.containsAllKeys(new Set([{ foo: 'bar' }, 'anotherKey'], [{ foo: 'bar' }]))\n  assert.containsAllKeys(new Set([{ foo: 'bar' }, 'anotherKey'], [{ foo: 'bar' }, 'anotherKey']))\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, keys: Array<Object | string> | { [key: string]: any }, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "doesNotHaveAnyKeys",
+          "id": "doesnothaveanykeys",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#doesnothaveanykeys",
+          "description": "Asserts that object has none of the keys provided. You can also provide a single object instead of a keys array and its keys will be used as the expected set of keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.doesNotHaveAnyKeys', () => {\n  assert.doesNotHaveAnyKeys({ foo: 1, bar: 2, baz: 3 }, ['one', 'two', 'example'])\n  assert.doesNotHaveAnyKeys({ foo: 1, bar: 2, baz: 3 }, { one: 1, two: 2, example: 'foo' })\n  assert.doesNotHaveAnyKeys(new Map([[{ foo: 1 }, 'bar'], ['key', 'value']]), [{ one: 'two' }, 'example'])\n  assert.doesNotHaveAnyKeys(new Set([{ foo: 'bar' }, 'anotherKey'], [{ one: 'two' }, 'example']))\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, keys: Array<Object | string> | { [key: string]: any }, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "doesNotHaveAllKeys",
+          "id": "doesnothaveallkeys",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#doesnothaveallkeys",
+          "description": "Asserts that object does not have at least one of the keys provided. You can also provide a single object instead of a keys array and its keys will be used as the expected set of keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.hasAnyKeys', () => {\n  assert.doesNotHaveAnyKeys({ foo: 1, bar: 2, baz: 3 }, ['one', 'two', 'example'])\n  assert.doesNotHaveAnyKeys({ foo: 1, bar: 2, baz: 3 }, { one: 1, two: 2, example: 'foo' })\n  assert.doesNotHaveAnyKeys(new Map([[{ foo: 1 }, 'bar'], ['key', 'value']]), [{ one: 'two' }, 'example'])\n  assert.doesNotHaveAnyKeys(new Set([{ foo: 'bar' }, 'anotherKey']), [{ one: 'two' }, 'example'])\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, keys: Array<Object | string> | { [key: string]: any }, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "hasAnyDeepKeys",
+          "id": "hasanydeepkeys",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#hasanydeepkeys",
+          "description": "Asserts that object has at least one of the keys provided. Since Sets and Maps can have objects as keys you can use this assertion to perform a deep comparison. You can also provide a single object instead of a keys array and its keys will be used as the expected set of keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.hasAnyDeepKeys', () => {\n  assert.hasAnyDeepKeys(new Map([[{ one: 'one' }, 'valueOne'], [1, 2]]), { one: 'one' })\n  assert.hasAnyDeepKeys(new Map([[{ one: 'one' }, 'valueOne'], [1, 2]]), [{ one: 'one' }, { two: 'two' }])\n  assert.hasAnyDeepKeys(new Map([[{ one: 'one' }, 'valueOne'], [{ two: 'two' }, 'valueTwo']]), [{ one: 'one' }, { two: 'two' }])\n  assert.hasAnyDeepKeys(new Set([{ one: 'one' }, { two: 'two' }]), { one: 'one' })\n  assert.hasAnyDeepKeys(new Set([{ one: 'one' }, { two: 'two' }]), [{ one: 'one' }, { three: 'three' }])\n  assert.hasAnyDeepKeys(new Set([{ one: 'one' }, { two: 'two' }]), [{ one: 'one' }, { two: 'two' }])\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, keys: Array<Object | string> | { [key: string]: any }, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "hasAllDeepKeys",
+          "id": "hasalldeepkeys",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#hasalldeepkeys",
+          "description": "Asserts that object has all and only all of the keys provided. Since Sets and Maps can have objects as keys you can use this assertion to perform a deep comparison. You can also provide a single object instead of a keys array and its keys will be used as the expected set of keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.hasAnyDeepKeys', () => {\n  assert.hasAllDeepKeys(new Map([[{ one: 'one' }, 'valueOne']]), { one: 'one' })\n  assert.hasAllDeepKeys(new Map([[{ one: 'one' }, 'valueOne'], [{ two: 'two' }, 'valueTwo']]), [{ one: 'one' }, { two: 'two' }])\n  assert.hasAllDeepKeys(new Set([{ one: 'one' }]), { one: 'one' })\n  assert.hasAllDeepKeys(new Set([{ one: 'one' }, { two: 'two' }]), [{ one: 'one' }, { two: 'two' }])\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, keys: Array<Object | string> | { [key: string]: any }, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "containsAllDeepKeys",
+          "id": "containsalldeepkeys",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#containsalldeepkeys",
+          "description": "Asserts that object contains all of the keys provided. Since Sets and Maps can have objects as keys you can use this assertion to perform a deep comparison. You can also provide a single object instead of a keys array and its keys will be used as the expected set of keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.containsAllDeepKeys', () => {\n  assert.containsAllDeepKeys(new Map([[{ one: 'one' }, 'valueOne'], [1, 2]]), { one: 'one' })\n  assert.containsAllDeepKeys(new Map([[{ one: 'one' }, 'valueOne'], [{ two: 'two' }, 'valueTwo']]), [{ one: 'one' }, { two: 'two' }])\n  assert.containsAllDeepKeys(new Set([{ one: 'one' }, { two: 'two' }]), { one: 'one' })\n  assert.containsAllDeepKeys(new Set([{ one: 'one' }, { two: 'two' }]), [{ one: 'one' }, { two: 'two' }])\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, keys: Array<Object | string> | { [key: string]: any }, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "doesNotHaveAnyDeepKeys",
+          "id": "doesnothaveanydeepkeys",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#doesnothaveanydeepkeys",
+          "description": "Asserts that object has none of the keys provided. Since Sets and Maps can have objects as keys you can use this assertion to perform a deep comparison. You can also provide a single object instead of a keys array and its keys will be used as the expected set of keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.doesNotHaveAnyDeepKeys', () => {\n  assert.doesNotHaveAnyDeepKeys(new Map([[{ one: 'one' }, 'valueOne'], [1, 2]]), { thisDoesNot: 'exist' })\n  assert.doesNotHaveAnyDeepKeys(new Map([[{ one: 'one' }, 'valueOne'], [{ two: 'two' }, 'valueTwo']]), [{ twenty: 'twenty' }, { fifty: 'fifty' }])\n  assert.doesNotHaveAnyDeepKeys(new Set([{ one: 'one' }, { two: 'two' }]), { twenty: 'twenty' })\n  assert.doesNotHaveAnyDeepKeys(new Set([{ one: 'one' }, { two: 'two' }]), [{ twenty: 'twenty' }, { fifty: 'fifty' }])\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, keys: Array<Object | string> | { [key: string]: any }, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "doesNotHaveAllDeepKeys",
+          "id": "doesnothavealldeepkeys",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#doesnothavealldeepkeys",
+          "description": "Asserts that object does not have at least one of the keys provided. Since Sets and Maps can have objects as keys you can use this assertion to perform a deep comparison. You can also provide a single object instead of a keys array and its keys will be used as the expected set of keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.doesNotHaveAllDeepKeys', () => {\n  assert.doesNotHaveAllDeepKeys(new Map([[{ one: 'one' }, 'valueOne'], [1, 2]]), { thisDoesNot: 'exist' })\n  assert.doesNotHaveAllDeepKeys(new Map([[{ one: 'one' }, 'valueOne'], [{ two: 'two' }, 'valueTwo']]), [{ twenty: 'twenty' }, { one: 'one' }])\n  assert.doesNotHaveAllDeepKeys(new Set([{ one: 'one' }, { two: 'two' }]), { twenty: 'twenty' })\n  assert.doesNotHaveAllDeepKeys(new Set([{ one: 'one' }, { two: 'two' }]), [{ one: 'one' }, { fifty: 'fifty' }])\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, keys: Array<Object | string> | { [key: string]: any }, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "throws",
+          "id": "throws",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#throws",
+          "description": "If errorLike is an Error constructor, asserts that fn will throw an error that is an instance of errorLike. If errorLike is an Error instance, asserts that the error thrown is the same instance as errorLike. If errMsgMatcher is provided, it also asserts that the error thrown will have a message matching errMsgMatcher.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.throws', () => {\n  assert.throws(fn, 'Error thrown must have this msg')\n  assert.throws(fn, /Error thrown must have a msg that matches this/)\n  assert.throws(fn, ReferenceError)\n  assert.throws(fn, errorInstance)\n  assert.throws(fn, ReferenceError, 'Error thrown must be a ReferenceError and have this msg')\n  assert.throws(fn, errorInstance, 'Error thrown must be the same errorInstance and have this msg')\n  assert.throws(fn, ReferenceError, /Error thrown must be a ReferenceError and match this/)\n  assert.throws(fn, errorInstance, /Error thrown must be the same errorInstance and match this/)\n})"
+            }
+          ],
+          "notes": [
+            "Type:(fn: () => void, errMsgMatcher?: RegExp | string, ignored?: any, message?: string) => void(fn: () => void, errorLike?: ErrorConstructor | Error | null, errMsgMatcher?: RegExp | string | null, message?: string) => void",
+            "Alias:throwThrow"
+          ],
+          "children": []
+        },
+        {
+          "name": "doesNotThrow",
+          "id": "doesnotthrow",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#doesnotthrow",
+          "description": "If errorLike is an Error constructor, asserts that fn will not throw an error that is an instance of errorLike. If errorLike is an Error instance, asserts that the error thrown is not the same instance as errorLike. If errMsgMatcher is provided, it also asserts that the error thrown will not have a message matching errMsgMatcher.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.doesNotThrow', () => {\n  assert.doesNotThrow(fn, 'Any Error thrown must not have this message')\n  assert.doesNotThrow(fn, /Any Error thrown must not match this/)\n  assert.doesNotThrow(fn, Error)\n  assert.doesNotThrow(fn, errorInstance)\n  assert.doesNotThrow(fn, Error, 'Error must not have this message')\n  assert.doesNotThrow(fn, errorInstance, 'Error must not have this message')\n  assert.doesNotThrow(fn, Error, /Error must not match this/)\n  assert.doesNotThrow(fn, errorInstance, /Error must not match this/)\n})"
+            }
+          ],
+          "notes": [
+            "Type: (fn: () => void, errMsgMatcher?: RegExp | string, ignored?: any, message?: string) => void",
+            "Type: (fn: () => void, errorLike?: ErrorConstructor | Error | null, errMsgMatcher?: RegExp | string | null, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "operator",
+          "id": "operator",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#operator",
+          "description": "Compare val1 and val2 using operator.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.operator', () => {\n  assert.operator(1, '<', 2, 'everything is ok')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (val1: OperatorComparable, operator: Operator, val2: OperatorComparable, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "closeTo",
+          "id": "closeto",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#closeto",
+          "description": "Asserts that the actual is equal expected, to within a +/- delta range.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.closeTo', () => {\n  assert.closeTo(1.5, 1, 0.5, 'numbers are close')\n})"
+            }
+          ],
+          "notes": [
+            "Type: (actual: number, expected: number, delta: number, message?: string) => void",
+            "Alias: approximately"
+          ],
+          "children": []
+        },
+        {
+          "name": "sameMembers",
+          "id": "samemembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#samemembers",
+          "description": "Asserts that set1 and set2 have the same members in any order. Uses a strict equality check (===).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.sameMembers', () => {\n  assert.sameMembers([1, 2, 3], [2, 1, 3], 'same members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(set1: T[], set2: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notSameMembers",
+          "id": "notsamemembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notsamemembers",
+          "description": "Asserts that set1 and set2 don't have the same members in any order. Uses a strict equality check (===).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.sameMembers', () => {\n  assert.notSameMembers([1, 2, 3], [5, 1, 3], 'not same members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(set1: T[], set2: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "sameDeepMembers",
+          "id": "samedeepmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#samedeepmembers",
+          "description": "Asserts that set1 and set2 have the same members in any order. Uses a deep equality check.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.sameDeepMembers', () => {\n  assert.sameDeepMembers([{ a: 1 }, { b: 2 }, { c: 3 }], [{ b: 2 }, { a: 1 }, { c: 3 }], 'same deep members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(set1: T[], set2: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notSameDeepMembers",
+          "id": "notsamedeepmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notsamedeepmembers",
+          "description": "Asserts that set1 and set2 don’t have the same members in any order. Uses a deep equality check.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.sameDeepMembers', () => {\n  assert.sameDeepMembers([{ a: 1 }, { b: 2 }, { c: 3 }], [{ b: 2 }, { a: 1 }, { c: 3 }], 'same deep members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(set1: T[], set2: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "sameOrderedMembers",
+          "id": "sameorderedmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#sameorderedmembers",
+          "description": "Asserts that set1 and set2 have the same members in the same order. Uses a strict equality check (===).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.sameOrderedMembers', () => {\n  assert.sameOrderedMembers([1, 2, 3], [1, 2, 3], 'same ordered members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(set1: T[], set2: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notSameOrderedMembers",
+          "id": "notsameorderedmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notsameorderedmembers",
+          "description": "Asserts that set1 and set2 have the same members in the same order. Uses a strict equality check (===).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notSameOrderedMembers', () => {\n  assert.notSameOrderedMembers([1, 2, 3], [2, 1, 3], 'not same ordered members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(set1: T[], set2: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "sameDeepOrderedMembers",
+          "id": "samedeeporderedmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#samedeeporderedmembers",
+          "description": "Asserts that set1 and set2 have the same members in the same order. Uses a deep equality check.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.sameDeepOrderedMembers', () => {\n  assert.sameDeepOrderedMembers([{ a: 1 }, { b: 2 }, { c: 3 }], [{ a: 1 }, { b: 2 }, { c: 3 }], 'same deep ordered members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(set1: T[], set2: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notSameDeepOrderedMembers",
+          "id": "notsamedeeporderedmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notsamedeeporderedmembers",
+          "description": "Asserts that set1 and set2 don’t have the same members in the same order. Uses a deep equality check.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notSameDeepOrderedMembers', () => {\n  assert.notSameDeepOrderedMembers([{ a: 1 }, { b: 2 }, { c: 3 }], [{ a: 1 }, { b: 2 }, { z: 5 }], 'not same deep ordered members')\n  assert.notSameDeepOrderedMembers([{ a: 1 }, { b: 2 }, { c: 3 }], [{ b: 2 }, { a: 1 }, { c: 3 }], 'not same deep ordered members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(set1: T[], set2: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "includeMembers",
+          "id": "includemembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#includemembers",
+          "description": "Asserts that subset is included in superset in any order. Uses a strict equality check (===). Duplicates are ignored.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.includeMembers', () => {\n  assert.includeMembers([1, 2, 3], [2, 1, 2], 'include members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(superset: T[], subset: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notIncludeMembers",
+          "id": "notincludemembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notincludemembers",
+          "description": "Asserts that subset isn't included in superset in any order. Uses a strict equality check (===). Duplicates are ignored.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notIncludeMembers', () => {\n  assert.notIncludeMembers([1, 2, 3], [5, 1], 'not include members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(superset: T[], subset: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "includeDeepMembers",
+          "id": "includedeepmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#includedeepmembers",
+          "description": "Asserts that subset is included in superset in any order. Uses a deep equality check. Duplicates are ignored.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.includeDeepMembers', () => {\n  assert.includeDeepMembers([{ a: 1 }, { b: 2 }, { c: 3 }], [{ b: 2 }, { a: 1 }, { b: 2 }], 'include deep members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(superset: T[], subset: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notIncludeDeepMembers",
+          "id": "notincludedeepmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notincludedeepmembers",
+          "description": "Asserts that subset isn’t included in superset in any order. Uses a deep equality check. Duplicates are ignored.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notIncludeDeepMembers', () => {\n  assert.notIncludeDeepMembers([{ a: 1 }, { b: 2 }, { c: 3 }], [{ b: 2 }, { f: 5 }], 'not include deep members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(superset: T[], subset: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "includeOrderedMembers",
+          "id": "includeorderedmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#includeorderedmembers",
+          "description": "Asserts that subset is included in superset in the same order beginning with the first element in superset. Uses a strict equality check (===).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.includeOrderedMembers', () => {\n  assert.includeOrderedMembers([1, 2, 3], [1, 2], 'include ordered members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(superset: T[], subset: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notIncludeOrderedMembers",
+          "id": "notincludeorderedmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notincludeorderedmembers",
+          "description": "Asserts that subset isn't included in superset in the same order beginning with the first element in superset. Uses a strict equality check (===).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.notIncludeOrderedMembers', () => {\n  assert.notIncludeOrderedMembers([1, 2, 3], [2, 1], 'not include ordered members')\n  assert.notIncludeOrderedMembers([1, 2, 3], [2, 3], 'not include ordered members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(superset: T[], subset: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "includeDeepOrderedMembers",
+          "id": "includedeeporderedmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#includedeeporderedmembers",
+          "description": "Asserts that subset is included in superset in the same order beginning with the first element in superset. Uses a deep equality check.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.includeDeepOrderedMembers', () => {\n  assert.includeDeepOrderedMembers([{ a: 1 }, { b: 2 }, { c: 3 }], [{ a: 1 }, { b: 2 }], 'include deep ordered members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(superset: T[], subset: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "notIncludeDeepOrderedMembers",
+          "id": "notincludedeeporderedmembers",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#notincludedeeporderedmembers",
+          "description": "Asserts that subset isn’t included in superset in the same order beginning with the first element in superset. Uses a deep equality check.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.includeDeepOrderedMembers', () => {\n  assert.notIncludeDeepOrderedMembers([{ a: 1 }, { b: 2 }, { c: 3 }], [{ a: 1 }, { f: 5 }], 'not include deep ordered members')\n  assert.notIncludeDeepOrderedMembers([{ a: 1 }, { b: 2 }, { c: 3 }], [{ b: 2 }, { a: 1 }], 'not include deep ordered members')\n  assert.notIncludeDeepOrderedMembers([{ a: 1 }, { b: 2 }, { c: 3 }], [{ b: 2 }, { c: 3 }], 'not include deep ordered members')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(superset: T[], subset: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "oneOf",
+          "id": "oneof",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#oneof",
+          "description": "Asserts that non-object, non-array value inList appears in the flat array list.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.oneOf', () => {\n  assert.oneOf(1, [2, 1], 'Not found in list')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(inList: T, list: T[], message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "changes",
+          "id": "changes",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#changes",
+          "description": "Asserts that a modifier changes the object of a property.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.changes', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 22 };\n  assert.changes(fn, obj, 'val')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.changes', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 22 };\n  assert.changes(fn, obj, 'val')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "changesBy",
+          "id": "changesby",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#changesby",
+          "description": "Asserts that a modifier changes the object of a property by a change.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.changesBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val += 2 };\n  assert.changesBy(fn, obj, 'val', 2)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.changesBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val += 2 };\n  assert.changesBy(fn, obj, 'val', 2)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, change: number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "doesNotChange",
+          "id": "doesnotchange",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#doesnotchange",
+          "description": "Asserts that a modifier does not changes the object of a property.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.doesNotChange', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val += 2 };\n  assert.doesNotChange(fn, obj, 'val', 2)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.doesNotChange', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val += 2 };\n  assert.doesNotChange(fn, obj, 'val', 2)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "changesButNotBy",
+          "id": "changesbutnotby",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#changesbutnotby",
+          "description": "Asserts that a modifier does not change the object of a property or of a modifier return value by a change.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.changesButNotBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val += 10 };\n  assert.changesButNotBy(fn, obj, 'val', 5)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.changesButNotBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val += 10 };\n  assert.changesButNotBy(fn, obj, 'val', 5)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, change:number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "increases",
+          "id": "increases",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#increases",
+          "description": "Asserts that a modifier increases a numeric object's property.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.increases', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 13 };\n  assert.increases(fn, obj, 'val')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.increases', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 13 };\n  assert.increases(fn, obj, 'val')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "increasesBy",
+          "id": "increasesby",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#increasesby",
+          "description": "Asserts that a modifier increases a numeric object's property or a modifier return value by an change.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.increasesBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val += 10 };\n  assert.increasesBy(fn, obj, 'val', 10)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.increasesBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val += 10 };\n  assert.increasesBy(fn, obj, 'val', 10)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, change: number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "doesNotIncrease",
+          "id": "doesnotincrease",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#doesnotincrease",
+          "description": "Asserts that a modifier does not increases a numeric object's property.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.doesNotIncrease', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 8 }\n  assert.doesNotIncrease(fn, obj, 'val')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.doesNotIncrease', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 8 }\n  assert.doesNotIncrease(fn, obj, 'val')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "increasesButNotBy",
+          "id": "increasesbutnotby",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#increasesbutnotby",
+          "description": "Asserts that a modifier does not increases a numeric object's property or a modifier return value by an change.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.increasesButNotBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val += 15 };\n  assert.increasesButNotBy(fn, obj, 'val', 10)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.increasesButNotBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val += 15 };\n  assert.increasesButNotBy(fn, obj, 'val', 10)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, change: number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "decreases",
+          "id": "decreases",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#decreases",
+          "description": "Asserts that a modifier decreases a numeric object's property.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.decreases', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 5 };\n  assert.decreases(fn, obj, 'val')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.decreases', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 5 };\n  assert.decreases(fn, obj, 'val')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "decreasesBy",
+          "id": "decreasesby",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#decreasesby",
+          "description": "Asserts that a modifier decreases a numeric object's property or a modifier return value by a change.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.decreasesBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val -= 5 };\n  assert.decreasesBy(fn, obj, 'val', 5)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.decreasesBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val -= 5 };\n  assert.decreasesBy(fn, obj, 'val', 5)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, change: number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "doesNotDecrease",
+          "id": "doesnotdecrease",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#doesnotdecrease",
+          "description": "Asserts that a modifier dose not decrease a numeric object's property.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.doesNotDecrease', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 15 }\n  assert.doesNotDecrease(fn, obj, 'val')\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.doesNotDecrease', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 15 }\n  assert.doesNotDecrease(fn, obj, 'val')\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "doesNotDecreaseBy",
+          "id": "doesnotdecreaseby",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#doesnotdecreaseby",
+          "description": "Asserts that a modifier does not decrease a numeric object's property or a modifier return value by a change.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.doesNotDecreaseBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 5 };\n  assert.doesNotDecreaseBy(fn, obj, 'val', 1)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.doesNotDecreaseBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 5 };\n  assert.doesNotDecreaseBy(fn, obj, 'val', 1)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, change: number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "decreasesButNotBy",
+          "id": "decreasesbutnotby",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#decreasesbutnotby",
+          "description": "Asserts that a modifier does not decrease a numeric object's property or a modifier return value by a change.",
+          "signatures": [
+            "import { assert, test } from 'vitest'\n\ntest('assert.decreasesButNotBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 5 };\n  assert.decreasesButNotBy(fn, obj, 'val', 1)\n})"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.decreasesButNotBy', () => {\n  const obj = { val: 10 }\n  function fn() { obj.val = 5 };\n  assert.decreasesButNotBy(fn, obj, 'val', 1)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(modifier: Function, object: T, property: string, change: number, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "ifError",
+          "id": "iferror",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#iferror",
+          "description": "Asserts if object is not a false value, and throws if it is a true value. This is added to allow for chai to be a drop-in replacement for Node’s assert class.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.ifError', () => {\n  const err = new Error('I am a custom error')\n  assert.ifError(err) // Rethrows err!\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, message?: string) => void"
+          ],
+          "children": []
+        },
+        {
+          "name": "isExtensible",
+          "id": "isextensible",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isextensible",
+          "description": "Asserts that object is extensible (can have new properties added to it).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isExtensible', () => {\n  assert.isExtensible({})\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, message?: string) => void",
+            "Alias: extensible"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotExtensible",
+          "id": "isnotextensible",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotextensible",
+          "description": "Asserts that object is not extensible (can not have new properties added to it).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isNotExtensible', () => {\n  const nonExtensibleObject = Object.preventExtensions({})\n  const sealedObject = Object.seal({})\n  const frozenObject = Object.freeze({})\n\n  assert.isNotExtensible(nonExtensibleObject)\n  assert.isNotExtensible(sealedObject)\n  assert.isNotExtensible(frozenObject)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, message?: string) => void",
+            "Alias: notExtensible"
+          ],
+          "children": []
+        },
+        {
+          "name": "isSealed",
+          "id": "issealed",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#issealed",
+          "description": "Asserts that object is sealed (cannot have new properties added to it and its existing properties cannot be removed).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isSealed', () => {\n  const sealedObject = Object.seal({})\n  const frozenObject = Object.seal({})\n\n  assert.isSealed(sealedObject)\n  assert.isSealed(frozenObject)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, message?: string) => void",
+            "Alias: sealed"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotSealed",
+          "id": "isnotsealed",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotsealed",
+          "description": "Asserts that object is not sealed (can have new properties added to it and its existing properties can be removed).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isNotSealed', () => {\n  assert.isNotSealed({})\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, message?: string) => void",
+            "Alias: notSealed"
+          ],
+          "children": []
+        },
+        {
+          "name": "isFrozen",
+          "id": "isfrozen",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isfrozen",
+          "description": "Asserts that object is frozen (cannot have new properties added to it and its existing properties cannot be modified).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isFrozen', () => {\n  const frozenObject = Object.freeze({})\n  assert.frozen(frozenObject)\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, message?: string) => void",
+            "Alias: frozen"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotFrozen",
+          "id": "isnotfrozen",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotfrozen",
+          "description": "Asserts that object is not frozen (can have new properties added to it and its existing properties can be modified).",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isNotFrozen', () => {\n  assert.isNotFrozen({})\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, message?: string) => void",
+            "Alias: notFrozen"
+          ],
+          "children": []
+        },
+        {
+          "name": "isEmpty",
+          "id": "isempty",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isempty",
+          "description": "Asserts that the target does not contain any values. For arrays and strings, it checks the length property. For Map and Set instances, it checks the size property. For non-function objects, it gets the count of its own enumerable string keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isEmpty', () => {\n  assert.isEmpty([])\n  assert.isEmpty('')\n  assert.isEmpty(new Map())\n  assert.isEmpty({})\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(target: T, message?: string) => void",
+            "Alias: empty"
+          ],
+          "children": []
+        },
+        {
+          "name": "isNotEmpty",
+          "id": "isnotempty",
+          "level": 2,
+          "url": "https://vitest.dev/api/assert#isnotempty",
+          "description": "Asserts that the target contains values. For arrays and strings, it checks the length property. For Map and Set instances, it checks the size property. For non-function objects, it gets the count of its own enumerable string keys.",
+          "signatures": [],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "import { assert, test } from 'vitest'\n\ntest('assert.isNotEmpty', () => {\n  assert.isNotEmpty([1, 2])\n  assert.isNotEmpty('34')\n  assert.isNotEmpty(new Set([5, 6]))\n  assert.isNotEmpty({ key: 7 })\n})"
+            }
+          ],
+          "notes": [
+            "Type: <T>(object: T, message?: string) => void",
+            "Alias: notEmpty"
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

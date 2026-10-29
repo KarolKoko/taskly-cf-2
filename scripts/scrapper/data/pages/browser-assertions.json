@@ -1,0 +1,874 @@
+{
+  "title": "Assertion API",
+  "url": "https://vitest.dev/api/browser/assertions",
+  "description": "Vitest provides a wide range of DOM assertions out of the box forked from @testing-library/jest-dom library with the added support for locators and built-in retry-ability.\n\nTests in the browser might fail inconsistently due to their asynchronous nature. Because of this, it is important to have a way to guarantee that assertions succeed even if the condition is delayed (by a timeout, network request, or animation, for example). For this purpose, Vitest provides retriable assertions out of the box via the expect.poll and expect.element APIs:\n\nWe recommend to always use expect.element when working with page.getBy* locators to reduce test flakiness. Note that expect.element accepts a second option:",
+  "entries": [
+    {
+      "name": "Assertion API",
+      "id": "assertion-api",
+      "level": 1,
+      "url": "https://vitest.dev/api/browser/assertions#assertion-api",
+      "description": "Vitest provides a wide range of DOM assertions out of the box forked from @testing-library/jest-dom library with the added support for locators and built-in retry-ability.\n\nTests in the browser might fail inconsistently due to their asynchronous nature. Because of this, it is important to have a way to guarantee that assertions succeed even if the condition is delayed (by a timeout, network request, or animation, for example). For this purpose, Vitest provides retriable assertions out of the box via the expect.poll and expect.element APIs:\n\nWe recommend to always use expect.element when working with page.getBy* locators to reduce test flakiness. Note that expect.element accepts a second option:",
+      "signatures": [
+        "interface ExpectPollOptions {\n  // The interval to retry the assertion for in milliseconds\n  // Defaults to \"expect.poll.interval\" config option\n  interval?: number\n  // Time to retry the assertion for in milliseconds\n  // Defaults to \"expect.poll.timeout\" config option\n  timeout?: number\n  // The message printed when the assertion fails\n  message?: string\n}"
+      ],
+      "aliases": [],
+      "examples": [
+        {
+          "language": "ts",
+          "code": "/// <reference types=\"vitest/browser\" />"
+        },
+        {
+          "language": "ts",
+          "code": "import { expect, test } from 'vitest'\nimport { page } from 'vitest/browser'\n\ntest('error banner is rendered', async () => {\n  triggerError()\n\n  // This creates a locator that will try to find the element\n  // when any of its methods are called.\n  // This call by itself doesn't check the existence of the element.\n  const banner = page.getByRole('alert', {\n    name: /error/i,\n  })\n\n  // Vitest provides `expect.element` with built-in retry-ability\n  // It will repeatedly check that the element exists in the DOM and that\n  // the content of `element.textContent` is equal to \"Error!\"\n  // until all the conditions are met\n  await expect.element(banner).toMatchTextContent('Error!')\n})"
+        },
+        {
+          "language": "ts",
+          "code": "interface ExpectPollOptions {\n  // The interval to retry the assertion for in milliseconds\n  // Defaults to \"expect.poll.interval\" config option\n  interval?: number\n  // Time to retry the assertion for in milliseconds\n  // Defaults to \"expect.poll.timeout\" config option\n  timeout?: number\n  // The message printed when the assertion fails\n  message?: string\n}"
+        },
+        {
+          "language": "ts",
+          "code": "// will fail immediately if .textContent is not `'Error!'`\nexpect(banner).toMatchTextContent('Error!')"
+        }
+      ],
+      "notes": [],
+      "children": [
+        {
+          "name": "toBeDisabled",
+          "id": "tobedisabled",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tobedisabled",
+          "description": "Allows you to check whether an element is disabled from the user's perspective.\n\nMatches if the element is a form control and the disabled attribute is specified on this element or the element is a descendant of a form element with a disabled attribute.\n\nNote that only native control elements such as HTML button, input, select, textarea, option, optgroup can be disabled by setting \"disabled\" attribute. \"disabled\" attribute on other elements is ignored, unless it's a custom element.",
+          "signatures": [
+            "function toBeDisabled(): Promise<void>",
+            "<button\n  data-testid=\"button\"\n  type=\"submit\"\n  disabled\n>\n  submit\n</button>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toBeDisabled(): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<button\n  data-testid=\"button\"\n  type=\"submit\"\n  disabled\n>\n  submit\n</button>"
+            },
+            {
+              "language": "ts",
+              "code": "await expect.element(getByTestId('button')).toBeDisabled() // ✅\nawait expect.element(getByTestId('button')).not.toBeDisabled() // ❌"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toBeEnabled",
+          "id": "tobeenabled",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tobeenabled",
+          "description": "Allows you to check whether an element is not disabled from the user's perspective.\n\nWorks like not.toBeDisabled(). Use this matcher to avoid double negation in your tests.",
+          "signatures": [
+            "function toBeEnabled(): Promise<void>",
+            "<button\n  data-testid=\"button\"\n  type=\"submit\"\n  disabled\n>\n  submit\n</button>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toBeEnabled(): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<button\n  data-testid=\"button\"\n  type=\"submit\"\n  disabled\n>\n  submit\n</button>"
+            },
+            {
+              "language": "ts",
+              "code": "await expect.element(getByTestId('button')).toBeEnabled() // ✅\nawait expect.element(getByTestId('button')).not.toBeEnabled() // ❌"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toBeEmptyDOMElement",
+          "id": "tobeemptydomelement",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tobeemptydomelement",
+          "description": "This allows you to assert whether an element has no visible content for the user. It ignores comments but will fail if the element contains white-space.",
+          "signatures": [
+            "function toBeEmptyDOMElement(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toBeEmptyDOMElement(): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<span data-testid=\"not-empty\"><span data-testid=\"empty\"></span></span>\n<span data-testid=\"with-whitespace\"> </span>\n<span data-testid=\"with-comment\"><!-- comment --></span>"
+            },
+            {
+              "language": "ts",
+              "code": "await expect.element(getByTestId('empty')).toBeEmptyDOMElement()\nawait expect.element(getByTestId('not-empty')).not.toBeEmptyDOMElement()\nawait expect.element(\n  getByTestId('with-whitespace')\n).not.toBeEmptyDOMElement()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toBeInTheDocument",
+          "id": "tobeinthedocument",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tobeinthedocument",
+          "description": "Assert whether an element is present in the document or not.",
+          "signatures": [
+            "function toBeInTheDocument(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toBeInTheDocument(): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<svg data-testid=\"svg-element\"></svg>"
+            },
+            {
+              "language": "ts",
+              "code": "await expect.element(getByTestId('svg-element')).toBeInTheDocument()\nawait expect.element(getByTestId('does-not-exist')).not.toBeInTheDocument()"
+            }
+          ],
+          "notes": [
+            "WARNINGThis matcher does not find detached elements. The element must be added to the document to be found by toBeInTheDocument. If you desire to search in a detached element, please use: toContainElement."
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeInvalid",
+          "id": "tobeinvalid",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tobeinvalid",
+          "description": "This allows you to check if an element, is currently invalid.\n\nAn element is invalid if it has an aria-invalid attribute with no value or a value of \"true\", or if the result of checkValidity() is false.",
+          "signatures": [
+            "function toBeInvalid(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toBeInvalid(): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<input data-testid=\"no-aria-invalid\" />\n<input data-testid=\"aria-invalid\" aria-invalid />\n<input data-testid=\"aria-invalid-value\" aria-invalid=\"true\" />\n<input data-testid=\"aria-invalid-false\" aria-invalid=\"false\" />\n\n<form data-testid=\"valid-form\">\n  <input />\n</form>\n\n<form data-testid=\"invalid-form\">\n  <input required />\n</form>"
+            },
+            {
+              "language": "ts",
+              "code": "await expect.element(getByTestId('no-aria-invalid')).not.toBeInvalid()\nawait expect.element(getByTestId('aria-invalid')).toBeInvalid()\nawait expect.element(getByTestId('aria-invalid-value')).toBeInvalid()\nawait expect.element(getByTestId('aria-invalid-false')).not.toBeInvalid()\n\nawait expect.element(getByTestId('valid-form')).not.toBeInvalid()\nawait expect.element(getByTestId('invalid-form')).toBeInvalid()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toBeRequired",
+          "id": "toberequired",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#toberequired",
+          "description": "This allows you to check if a form element is currently required.\n\nAn element is required if it is having a required or aria-required=\"true\" attribute.",
+          "signatures": [
+            "function toBeRequired(): Promise<void>",
+            "<input data-testid=\"required-input\" required />\n<input data-testid=\"aria-required-input\" aria-required=\"true\" />\n<input data-testid=\"conflicted-input\" required aria-required=\"false\" />\n<input data-testid=\"aria-not-required-input\" aria-required=\"false\" />\n<input data-testid=\"optional-input\" />\n<input data-testid=\"unsupported-type\" type=\"image\" required />\n<select data-testid=\"select\" required></select>\n<textarea data-testid=\"textarea\" required></textarea>\n<div data-testid=\"supported-role\" role=\"tree\" required></div>\n<div data-testid=\"supported-role-aria\" role=\"tree\" aria-required=\"true\"></div>",
+            "await expect.element(getByTestId('required-input')).toBeRequired()\nawait expect.element(getByTestId('aria-required-input')).toBeRequired()\nawait expect.element(getByTestId('conflicted-input')).toBeRequired()\nawait expect.element(getByTestId('aria-not-required-input')).not.toBeRequired()\nawait expect.element(getByTestId('optional-input')).not.toBeRequired()\nawait expect.element(getByTestId('unsupported-type')).not.toBeRequired()\nawait expect.element(getByTestId('select')).toBeRequired()\nawait expect.element(getByTestId('textarea')).toBeRequired()\nawait expect.element(getByTestId('supported-role')).not.toBeRequired()\nawait expect.element(getByTestId('supported-role-aria')).toBeRequired()"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toBeRequired(): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<input data-testid=\"required-input\" required />\n<input data-testid=\"aria-required-input\" aria-required=\"true\" />\n<input data-testid=\"conflicted-input\" required aria-required=\"false\" />\n<input data-testid=\"aria-not-required-input\" aria-required=\"false\" />\n<input data-testid=\"optional-input\" />\n<input data-testid=\"unsupported-type\" type=\"image\" required />\n<select data-testid=\"select\" required></select>\n<textarea data-testid=\"textarea\" required></textarea>\n<div data-testid=\"supported-role\" role=\"tree\" required></div>\n<div data-testid=\"supported-role-aria\" role=\"tree\" aria-required=\"true\"></div>"
+            },
+            {
+              "language": "ts",
+              "code": "await expect.element(getByTestId('required-input')).toBeRequired()\nawait expect.element(getByTestId('aria-required-input')).toBeRequired()\nawait expect.element(getByTestId('conflicted-input')).toBeRequired()\nawait expect.element(getByTestId('aria-not-required-input')).not.toBeRequired()\nawait expect.element(getByTestId('optional-input')).not.toBeRequired()\nawait expect.element(getByTestId('unsupported-type')).not.toBeRequired()\nawait expect.element(getByTestId('select')).toBeRequired()\nawait expect.element(getByTestId('textarea')).toBeRequired()\nawait expect.element(getByTestId('supported-role')).not.toBeRequired()\nawait expect.element(getByTestId('supported-role-aria')).toBeRequired()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toBeValid",
+          "id": "tobevalid",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tobevalid",
+          "description": "This allows you to check if the value of an element, is currently valid.\n\nAn element is valid if it has no aria-invalid attribute or an attribute value of \"false\". The result of checkValidity() must also be true if it's a form element.",
+          "signatures": [
+            "function toBeValid(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toBeValid(): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<input data-testid=\"no-aria-invalid\" />\n<input data-testid=\"aria-invalid\" aria-invalid />\n<input data-testid=\"aria-invalid-value\" aria-invalid=\"true\" />\n<input data-testid=\"aria-invalid-false\" aria-invalid=\"false\" />\n\n<form data-testid=\"valid-form\">\n  <input />\n</form>\n\n<form data-testid=\"invalid-form\">\n  <input required />\n</form>"
+            },
+            {
+              "language": "ts",
+              "code": "await expect.element(getByTestId('no-aria-invalid')).toBeValid()\nawait expect.element(getByTestId('aria-invalid')).not.toBeValid()\nawait expect.element(getByTestId('aria-invalid-value')).not.toBeValid()\nawait expect.element(getByTestId('aria-invalid-false')).toBeValid()\n\nawait expect.element(getByTestId('valid-form')).toBeValid()\nawait expect.element(getByTestId('invalid-form')).not.toBeValid()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toBeVisible",
+          "id": "tobevisible",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tobevisible",
+          "description": "This allows you to check if an element is currently visible to the user.\n\nElement is considered visible when it has non-empty bounding box and does not have visibility:hidden computed style.\n\nNote that according to this definition:\n\nTo check that at least one element from the list is visible, use locator.first().",
+          "signatures": [
+            "function toBeVisible(): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toBeVisible(): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "// A specific element is visible.\nawait expect.element(page.getByText('Welcome')).toBeVisible()\n\n// At least one item in the list is visible.\nawait expect.element(page.getByTestId('todo-item').first()).toBeVisible()\n\n// At least one of the two elements is visible, possibly both.\nawait expect.element(\n  page.getByRole('button', { name: 'Sign in' })\n    .or(page.getByRole('button', { name: 'Sign up' }))\n    .first()\n).toBeVisible()"
+            }
+          ],
+          "notes": [
+            "Elements of zero size are not considered visible.",
+            "Elements with display:none are not considered visible.",
+            "Elements with opacity:0 are considered visible."
+          ],
+          "children": []
+        },
+        {
+          "name": "toBeInViewport 4.0.0+",
+          "id": "tobeinviewport",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tobeinviewport",
+          "description": "This allows you to check if an element is currently in viewport with IntersectionObserver API.\n\nYou can pass ratio argument as option, which means the minimal ratio of the element should be in viewport. ratio should be in 0~1.",
+          "signatures": [
+            "function toBeInViewport(options: { ratio?: number }): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toBeInViewport(options: { ratio?: number }): Promise<void>"
+            },
+            {
+              "language": "ts",
+              "code": "// A specific element is in viewport.\nawait expect.element(page.getByText('Welcome')).toBeInViewport()\n\n// 50% of a specific element should be in viewport\nawait expect.element(page.getByText('To')).toBeInViewport({ ratio: 0.5 })\n\n// Full of a specific element should be in viewport\nawait expect.element(page.getByText('Vitest')).toBeInViewport({ ratio: 1 })"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toContainElement",
+          "id": "tocontainelement",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tocontainelement",
+          "description": "This allows you to assert whether an element contains another element as a descendant or not.",
+          "signatures": [
+            "function toContainElement(element: HTMLElement | SVGElement | Locator | null): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toContainElement(element: HTMLElement | SVGElement | Locator | null): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<span data-testid=\"ancestor\"><span data-testid=\"descendant\"></span></span>"
+            },
+            {
+              "language": "ts",
+              "code": "const ancestor = getByTestId('ancestor')\nconst descendant = getByTestId('descendant')\nconst nonExistingElement = getByTestId('does-not-exist')\n\nawait expect.element(ancestor).toContainElement(descendant)\nawait expect.element(descendant).not.toContainElement(ancestor)\nawait expect.element(ancestor).not.toContainElement(nonExistingElement)"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toContainHTML",
+          "id": "tocontainhtml",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tocontainhtml",
+          "description": "Assert whether a string representing a HTML element is contained in another element. The string should contain valid html, and not any incomplete html.",
+          "signatures": [
+            "function toContainHTML(htmlText: string): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toContainHTML(htmlText: string): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<span data-testid=\"parent\"><span data-testid=\"child\"></span></span>"
+            },
+            {
+              "language": "ts",
+              "code": "// These are valid usages\nawait expect.element(getByTestId('parent')).toContainHTML('<span data-testid=\"child\"></span>')\nawait expect.element(getByTestId('parent')).toContainHTML('<span data-testid=\"child\" />')\nawait expect.element(getByTestId('parent')).not.toContainHTML('<br />')\n\n// These won't work\nawait expect.element(getByTestId('parent')).toContainHTML('data-testid=\"child\"')\nawait expect.element(getByTestId('parent')).toContainHTML('data-testid')\nawait expect.element(getByTestId('parent')).toContainHTML('</span>')"
+            }
+          ],
+          "notes": [
+            "WARNINGChances are you probably do not need to use this matcher. We encourage testing from the perspective of how the user perceives the app in a browser. That's why testing against a specific DOM structure is not advised.It could be useful in situations where the code being tested renders html that was obtained from an external source, and you want to validate that html code was used as intended.It should not be used to check DOM structure that you control. Please, use toContainElement instead."
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveAccessibleDescription",
+          "id": "tohaveaccessibledescription",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohaveaccessibledescription",
+          "description": "This allows you to assert that an element has the expected accessible description.\n\nYou can pass the exact string of the expected accessible description, or you can make a partial match passing a regular expression, or by using expect.stringContaining or expect.stringMatching.",
+          "signatures": [
+            "function toHaveAccessibleDescription(description?: string | RegExp): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveAccessibleDescription(description?: string | RegExp): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<a\n  data-testid=\"link\"\n  href=\"/\"\n  aria-label=\"Home page\"\n  title=\"A link to start over\"\n  >Start</a\n>\n<a data-testid=\"extra-link\" href=\"/about\" aria-label=\"About page\">About</a>\n<img src=\"avatar.jpg\" data-testid=\"avatar\" alt=\"User profile pic\" />\n<img\n  src=\"logo.jpg\"\n  data-testid=\"logo\"\n  alt=\"Company logo\"\n  aria-describedby=\"t1\"\n/>\n<span id=\"t1\" role=\"presentation\">The logo of Our Company</span>\n<img\n  src=\"logo.jpg\"\n  data-testid=\"logo2\"\n  alt=\"Company logo\"\n  aria-description=\"The logo of Our Company\"\n/>"
+            },
+            {
+              "language": "ts",
+              "code": "await expect.element(getByTestId('link')).toHaveAccessibleDescription()\nawait expect.element(getByTestId('link')).toHaveAccessibleDescription('A link to start over')\nawait expect.element(getByTestId('link')).not.toHaveAccessibleDescription('Home page')\nawait expect.element(getByTestId('extra-link')).not.toHaveAccessibleDescription()\nawait expect.element(getByTestId('avatar')).not.toHaveAccessibleDescription()\nawait expect.element(getByTestId('logo')).not.toHaveAccessibleDescription('Company logo')\nawait expect.element(getByTestId('logo')).toHaveAccessibleDescription(\n  'The logo of Our Company',\n)\nawait expect.element(getByTestId('logo2')).toHaveAccessibleDescription(\n  'The logo of Our Company',\n)"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toHaveAccessibleErrorMessage",
+          "id": "tohaveaccessibleerrormessage",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohaveaccessibleerrormessage",
+          "description": "This allows you to assert that an element has the expected accessible error message.\n\nYou can pass the exact string of the expected accessible error message. Alternatively, you can perform a partial match by passing a regular expression or by using expect.stringContaining or expect.stringMatching.",
+          "signatures": [
+            "function toHaveAccessibleErrorMessage(message?: string | RegExp): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveAccessibleErrorMessage(message?: string | RegExp): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<input\n  aria-label=\"Has Error\"\n  aria-invalid=\"true\"\n  aria-errormessage=\"error-message\"\n/>\n<div id=\"error-message\" role=\"alert\">This field is invalid</div>\n\n<input aria-label=\"No Error Attributes\" />\n<input\n  aria-label=\"Not Invalid\"\n  aria-invalid=\"false\"\n  aria-errormessage=\"error-message\"\n/>"
+            },
+            {
+              "language": "ts",
+              "code": "// Inputs with Valid Error Messages\nawait expect.element(getByRole('textbox', { name: 'Has Error' })).toHaveAccessibleErrorMessage()\nawait expect.element(getByRole('textbox', { name: 'Has Error' })).toHaveAccessibleErrorMessage(\n  'This field is invalid',\n)\nawait expect.element(getByRole('textbox', { name: 'Has Error' })).toHaveAccessibleErrorMessage(\n  /invalid/i,\n)\nawait expect.element(\n  getByRole('textbox', { name: 'Has Error' }),\n).not.toHaveAccessibleErrorMessage('This field is absolutely correct!')\n\n// Inputs without Valid Error Messages\nawait expect.element(\n  getByRole('textbox', { name: 'No Error Attributes' }),\n).not.toHaveAccessibleErrorMessage()\n\nawait expect.element(\n  getByRole('textbox', { name: 'Not Invalid' }),\n).not.toHaveAccessibleErrorMessage()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toHaveAccessibleName",
+          "id": "tohaveaccessiblename",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohaveaccessiblename",
+          "description": "This allows you to assert that an element has the expected accessible name. It is useful, for instance, to assert that form elements and buttons are properly labelled.\n\nYou can pass the exact string of the expected accessible name, or you can make a partial match passing a regular expression, or by using expect.stringContaining or expect.stringMatching.",
+          "signatures": [
+            "function toHaveAccessibleName(name?: string | RegExp): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveAccessibleName(name?: string | RegExp): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<img data-testid=\"img-alt\" src=\"\" alt=\"Test alt\" />\n<img data-testid=\"img-empty-alt\" src=\"\" alt=\"\" />\n<svg data-testid=\"svg-title\"><title>Test title</title></svg>\n<button data-testid=\"button-img-alt\"><img src=\"\" alt=\"Test\" /></button>\n<p><img data-testid=\"img-paragraph\" src=\"\" alt=\"\" /> Test content</p>\n<button data-testid=\"svg-button\"><svg><title>Test</title></svg></p>\n<div><svg data-testid=\"svg-without-title\"></svg></div>\n<input data-testid=\"input-title\" title=\"test\" />"
+            },
+            {
+              "language": "javascript",
+              "code": "await expect.element(getByTestId('img-alt')).toHaveAccessibleName('Test alt')\nawait expect.element(getByTestId('img-empty-alt')).not.toHaveAccessibleName()\nawait expect.element(getByTestId('svg-title')).toHaveAccessibleName('Test title')\nawait expect.element(getByTestId('button-img-alt')).toHaveAccessibleName()\nawait expect.element(getByTestId('img-paragraph')).not.toHaveAccessibleName()\nawait expect.element(getByTestId('svg-button')).toHaveAccessibleName()\nawait expect.element(getByTestId('svg-without-title')).not.toHaveAccessibleName()\nawait expect.element(getByTestId('input-title')).toHaveAccessibleName()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toHaveAttribute",
+          "id": "tohaveattribute",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohaveattribute",
+          "description": "This allows you to check whether the given element has an attribute or not. You can also optionally check that the attribute has a specific expected value or partial match using expect.stringContaining or expect.stringMatching.",
+          "signatures": [
+            "function toHaveAttribute(attribute: string, value?: unknown): Promise<void>",
+            "<button data-testid=\"ok-button\" type=\"submit\" disabled>ok</button>",
+            "const button = getByTestId('ok-button')\n\nawait expect.element(button).toHaveAttribute('disabled')\nawait expect.element(button).toHaveAttribute('type', 'submit')\nawait expect.element(button).not.toHaveAttribute('type', 'button')\n\nawait expect.element(button).toHaveAttribute(\n  'type',\n  expect.stringContaining('sub')\n)\nawait expect.element(button).toHaveAttribute(\n  'type',\n  expect.not.stringContaining('but')\n)"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveAttribute(attribute: string, value?: unknown): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<button data-testid=\"ok-button\" type=\"submit\" disabled>ok</button>"
+            },
+            {
+              "language": "ts",
+              "code": "const button = getByTestId('ok-button')\n\nawait expect.element(button).toHaveAttribute('disabled')\nawait expect.element(button).toHaveAttribute('type', 'submit')\nawait expect.element(button).not.toHaveAttribute('type', 'button')\n\nawait expect.element(button).toHaveAttribute(\n  'type',\n  expect.stringContaining('sub')\n)\nawait expect.element(button).toHaveAttribute(\n  'type',\n  expect.not.stringContaining('but')\n)"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toHaveClass",
+          "id": "tohaveclass",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohaveclass",
+          "description": "This allows you to check whether the given element has certain classes within its class attribute. You must provide at least one class, unless you are asserting that an element does not have any classes.\n\nThe list of class names may include strings and regular expressions. Regular expressions are matched against each individual class in the target element, and it is NOT matched against its full class attribute value as whole.",
+          "signatures": [
+            "function toHaveClass(...classNames: string[], options?: { exact: boolean }): Promise<void>\nfunction toHaveClass(...classNames: (string | RegExp)[]): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveClass(...classNames: string[], options?: { exact: boolean }): Promise<void>\nfunction toHaveClass(...classNames: (string | RegExp)[]): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<button data-testid=\"delete-button\" class=\"btn extra btn-danger\">\n  Delete item\n</button>\n<button data-testid=\"no-classes\">No Classes</button>"
+            },
+            {
+              "language": "ts",
+              "code": "const deleteButton = getByTestId('delete-button')\nconst noClasses = getByTestId('no-classes')\n\nawait expect.element(deleteButton).toHaveClass('extra')\nawait expect.element(deleteButton).toHaveClass('btn-danger btn')\nawait expect.element(deleteButton).toHaveClass(/danger/, 'btn')\nawait expect.element(deleteButton).toHaveClass('btn-danger', 'btn')\nawait expect.element(deleteButton).not.toHaveClass('btn-link')\nawait expect.element(deleteButton).not.toHaveClass(/link/)\n\n// ⚠️ regexp matches against individual classes, not the whole classList\nawait expect.element(deleteButton).not.toHaveClass(/btn extra/)\n\n// the element has EXACTLY a set of classes (in any order)\nawait expect.element(deleteButton).toHaveClass('btn-danger extra btn', {\n  exact: true\n})\n// if it has more than expected it is going to fail\nawait expect.element(deleteButton).not.toHaveClass('btn-danger extra', {\n  exact: true\n})\n\nawait expect.element(noClasses).not.toHaveClass()"
+            }
+          ],
+          "notes": [
+            "WARNINGNote that you cannot use exact: true option when only regular expressions are provided."
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveFocus",
+          "id": "tohavefocus",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohavefocus",
+          "description": "This allows you to assert whether an element has focus or not.",
+          "signatures": [
+            "function toHaveFocus(): Promise<void>",
+            "<div><input type=\"text\" data-testid=\"element-to-focus\" /></div>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveFocus(): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<div><input type=\"text\" data-testid=\"element-to-focus\" /></div>"
+            },
+            {
+              "language": "ts",
+              "code": "const input = page.getByTestId('element-to-focus')\ninput.element().focus()\nawait expect.element(input).toHaveFocus()\ninput.element().blur()\nawait expect.element(input).not.toHaveFocus()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toHaveFormValues",
+          "id": "tohaveformvalues",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohaveformvalues",
+          "description": "This allows you to check if a form or fieldset contains form controls for each given name, and having the specified value.\n\nThis matcher abstracts away the particularities with which a form control value is obtained depending on the type of form control. For instance, <input> elements have a value attribute, but <select> elements do not. Here's a list of all cases covered:\n\nThe above rules make it easy, for instance, to switch from using a single select control to using a group of radio buttons. Or to switch from a multi select control, to using a group of checkboxes. The resulting set of form values used by this matcher to compare against would be the same.",
+          "signatures": [
+            "function toHaveFormValues(expectedValues: Record<string, unknown>): Promise<void>",
+            "<form data-testid=\"login-form\">\n  <input type=\"text\" name=\"username\" value=\"jane.doe\" />\n  <input type=\"password\" name=\"password\" value=\"12345678\" />\n  <input type=\"checkbox\" name=\"rememberMe\" checked />\n  <button type=\"submit\">Sign in</button>\n</form>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveFormValues(expectedValues: Record<string, unknown>): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<form data-testid=\"login-form\">\n  <input type=\"text\" name=\"username\" value=\"jane.doe\" />\n  <input type=\"password\" name=\"password\" value=\"12345678\" />\n  <input type=\"checkbox\" name=\"rememberMe\" checked />\n  <button type=\"submit\">Sign in</button>\n</form>"
+            },
+            {
+              "language": "ts",
+              "code": "await expect.element(getByTestId('login-form')).toHaveFormValues({\n  username: 'jane.doe',\n  rememberMe: true,\n})"
+            }
+          ],
+          "notes": [
+            "TIPIt is important to stress that this matcher can only be invoked on a form or a fieldset element.This allows it to take advantage of the .elements property in form and fieldset to reliably fetch all form controls within them.This also avoids the possibility that users provide a container that contains more than one form, thereby intermixing form controls that are not related, and could even conflict with one another.",
+            "<input type=\"number\"> elements return the value as a number, instead of a string.",
+            "<input type=\"checkbox\"> elements: if there's a single one with the given name attribute, it is treated as a boolean, returning true if the checkbox is checked, false if unchecked.if there's more than one checkbox with the same name attribute, they are all treated collectively as a single form control, which returns the value as an array containing all the values of the selected checkboxes in the collection.",
+            "<input type=\"radio\"> elements are all grouped by the name attribute, and such a group treated as a single form control. This form control returns the value as a string corresponding to the value attribute of the selected radio button within the group.",
+            "<input type=\"text\"> elements return the value as a string. This also applies to <input> elements having any other possible type attribute that's not explicitly covered in different rules above (e.g. search, email, date, password, hidden, etc.)",
+            "<select> elements without the multiple attribute return the value as a string corresponding to the value attribute of the selected option, or undefined if there's no selected option.",
+            "<select multiple> elements return the value as an array containing all the values of the selected options.",
+            "<textarea> elements return their value as a string. The value corresponds to their node content."
+          ],
+          "children": []
+        },
+        {
+          "name": "toHaveStyle",
+          "id": "tohavestyle",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohavestyle",
+          "description": "This allows you to check if a certain element has some specific css properties with specific values applied. It matches only if the element has all the expected properties applied, not just some of them.\n\nThis also works with rules that are applied to the element via a class name for which some rules are defined in a stylesheet currently active in the document. The usual rules of css precedence apply.",
+          "signatures": [
+            "function toHaveStyle(css: string | Partial<CSSStyleDeclaration>): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveStyle(css: string | Partial<CSSStyleDeclaration>): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<button\n  data-testid=\"delete-button\"\n  style=\"display: none; background-color: red\"\n>\n  Delete item\n</button>"
+            },
+            {
+              "language": "ts",
+              "code": "const button = getByTestId('delete-button')\n\nawait expect.element(button).toHaveStyle('display: none')\nawait expect.element(button).toHaveStyle({ display: 'none' })\nawait expect.element(button).toHaveStyle(`\n  background-color: red;\n  display: none;\n`)\nawait expect.element(button).toHaveStyle({\n  backgroundColor: 'red',\n  display: 'none',\n})\nawait expect.element(button).not.toHaveStyle(`\n  background-color: blue;\n  display: none;\n`)\nawait expect.element(button).not.toHaveStyle({\n  backgroundColor: 'blue',\n  display: 'none',\n})"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toHaveTextContent",
+          "id": "tohavetextcontent",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohavetextcontent",
+          "description": "This matcher allows you to validate that an element's text matches provided string exactly. This supports elements, but also text nodes and fragments. Called without arguments, it asserts that the element has some text content, so .not.toHaveTextContent() checks that it is empty.\n\nIf you wish to perform a partial check or do a case-sensitive match, use toMatchTextContent instead.",
+          "signatures": [
+            "function toHaveTextContent(\n  text?: string | number,\n  options?: { normalizeWhitespace: boolean }\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveTextContent(\n  text?: string | number,\n  options?: { normalizeWhitespace: boolean }\n): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<span data-testid=\"text-content\">Text Content</span>"
+            },
+            {
+              "language": "ts",
+              "code": "const element = getByTestId('text-content')\n\nawait expect.element(element).toHaveTextContent('Text Content')\nawait expect.element(element).not.toHaveTextContent('Content')\n// element has some text content\nawait expect.element(element).toHaveTextContent()\n// element has no text content\nawait expect.element(page.getByTestId('empty')).not.toHaveTextContent()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toMatchTextContent",
+          "id": "tomatchtextcontent",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tomatchtextcontent",
+          "description": "This matcher allows you to check whether the given node has a text content or not. This supports elements, but also text nodes and fragments.\n\nWhen a string argument is passed through, it will perform a partial case-sensitive match to the node content.\n\nTo perform a case-insensitive match, you can use a RegExp with the /i modifier.\n\nIf you want to match the whole content, you can use a RegExp to do it or toHaveTextContent matcher instead.",
+          "signatures": [
+            "function toMatchTextContent(\n  text: string | number | RegExp,\n  options?: { normalizeWhitespace: boolean }\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toMatchTextContent(\n  text: string | number | RegExp,\n  options?: { normalizeWhitespace: boolean }\n): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<span data-testid=\"text-content\">Text Content</span>"
+            },
+            {
+              "language": "ts",
+              "code": "const element = getByTestId('text-content')\n\nawait expect.element(element).toMatchTextContent('Content')\n// to match the whole content\nawait expect.element(element).toMatchTextContent(/^Text Content$/)\n// to use case-insensitive match\nawait expect.element(element).toMatchTextContent(/content$/i)\nawait expect.element(element).not.toMatchTextContent('content')"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toHaveValue",
+          "id": "tohavevalue",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohavevalue",
+          "description": "This allows you to check whether the given form element has the specified value. It accepts <input>, <select> and <textarea> elements with the exception of <input type=\"checkbox\"> and <input type=\"radio\">, which can be meaningfully matched only using toBeChecked or toHaveFormValues.\n\nIt also accepts elements with roles meter, progressbar, slider or spinbutton and checks their aria-valuenow attribute (as a number).\n\nFor all other form elements, the value is matched using the same algorithm as in toHaveFormValues does.",
+          "signatures": [
+            "function toHaveValue(value: string | string[] | number | null): Promise<void>",
+            "<input type=\"text\" value=\"text\" data-testid=\"input-text\" />\n<input type=\"number\" value=\"5\" data-testid=\"input-number\" />\n<input type=\"text\" data-testid=\"input-empty\" />\n<select multiple data-testid=\"select-number\">\n  <option value=\"first\">First Value</option>\n  <option value=\"second\" selected>Second Value</option>\n  <option value=\"third\" selected>Third Value</option>\n</select>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveValue(value: string | string[] | number | null): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<input type=\"text\" value=\"text\" data-testid=\"input-text\" />\n<input type=\"number\" value=\"5\" data-testid=\"input-number\" />\n<input type=\"text\" data-testid=\"input-empty\" />\n<select multiple data-testid=\"select-number\">\n  <option value=\"first\">First Value</option>\n  <option value=\"second\" selected>Second Value</option>\n  <option value=\"third\" selected>Third Value</option>\n</select>"
+            },
+            {
+              "language": "ts",
+              "code": "const textInput = getByTestId('input-text')\nconst numberInput = getByTestId('input-number')\nconst emptyInput = getByTestId('input-empty')\nconst selectInput = getByTestId('select-number')\n\nawait expect.element(textInput).toHaveValue('text')\nawait expect.element(numberInput).toHaveValue(5)\nawait expect.element(emptyInput).not.toHaveValue()\nawait expect.element(selectInput).toHaveValue(['second', 'third'])"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toHaveDisplayValue",
+          "id": "tohavedisplayvalue",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohavedisplayvalue",
+          "description": "This allows you to check whether the given form element has the specified displayed value (the one the end user will see). It accepts <input>, <select> and <textarea> elements with the exception of <input type=\"checkbox\"> and <input type=\"radio\">, which can be meaningfully matched only using toBeChecked or toHaveFormValues.",
+          "signatures": [
+            "function toHaveDisplayValue(\n  value: string | RegExp | (string | RegExp)[]\n): Promise<void>",
+            "<label for=\"input-example\">First name</label>\n<input type=\"text\" id=\"input-example\" value=\"Luca\" />\n\n<label for=\"textarea-example\">Description</label>\n<textarea id=\"textarea-example\">An example description here.</textarea>\n\n<label for=\"single-select-example\">Fruit</label>\n<select id=\"single-select-example\">\n  <option value=\"\">Select a fruit...</option>\n  <option value=\"banana\">Banana</option>\n  <option value=\"ananas\">Ananas</option>\n  <option value=\"avocado\">Avocado</option>\n</select>\n\n<label for=\"multiple-select-example\">Fruits</label>\n<select id=\"multiple-select-example\" multiple>\n  <option value=\"\">Select a fruit...</option>\n  <option value=\"banana\" selected>Banana</option>\n  <option value=\"ananas\">Ananas</option>\n  <option value=\"avocado\" selected>Avocado</option>\n</select>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "typescript",
+              "code": "function toHaveDisplayValue(\n  value: string | RegExp | (string | RegExp)[]\n): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<label for=\"input-example\">First name</label>\n<input type=\"text\" id=\"input-example\" value=\"Luca\" />\n\n<label for=\"textarea-example\">Description</label>\n<textarea id=\"textarea-example\">An example description here.</textarea>\n\n<label for=\"single-select-example\">Fruit</label>\n<select id=\"single-select-example\">\n  <option value=\"\">Select a fruit...</option>\n  <option value=\"banana\">Banana</option>\n  <option value=\"ananas\">Ananas</option>\n  <option value=\"avocado\">Avocado</option>\n</select>\n\n<label for=\"multiple-select-example\">Fruits</label>\n<select id=\"multiple-select-example\" multiple>\n  <option value=\"\">Select a fruit...</option>\n  <option value=\"banana\" selected>Banana</option>\n  <option value=\"ananas\">Ananas</option>\n  <option value=\"avocado\" selected>Avocado</option>\n</select>"
+            },
+            {
+              "language": "ts",
+              "code": "const input = page.getByLabelText('First name')\nconst textarea = page.getByLabelText('Description')\nconst selectSingle = page.getByLabelText('Fruit')\nconst selectMultiple = page.getByLabelText('Fruits')\n\nawait expect.element(input).toHaveDisplayValue('Luca')\nawait expect.element(input).toHaveDisplayValue(/Luc/)\nawait expect.element(textarea).toHaveDisplayValue('An example description here.')\nawait expect.element(textarea).toHaveDisplayValue(/example/)\nawait expect.element(selectSingle).toHaveDisplayValue('Select a fruit...')\nawait expect.element(selectSingle).toHaveDisplayValue(/Select/)\nawait expect.element(selectMultiple).toHaveDisplayValue([/Avocado/, 'Banana'])"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toBeChecked",
+          "id": "tobechecked",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tobechecked",
+          "description": "This allows you to check whether the given element is checked. It accepts an input of type checkbox or radio and elements with a role of checkbox, radio or switch with a valid aria-checked attribute of \"true\" or \"false\".",
+          "signatures": [
+            "function toBeChecked(): Promise<void>",
+            "<input type=\"checkbox\" checked data-testid=\"input-checkbox-checked\" />\n<input type=\"checkbox\" data-testid=\"input-checkbox-unchecked\" />\n<div role=\"checkbox\" aria-checked=\"true\" data-testid=\"aria-checkbox-checked\" />\n<div\n  role=\"checkbox\"\n  aria-checked=\"false\"\n  data-testid=\"aria-checkbox-unchecked\"\n/>\n\n<input type=\"radio\" checked value=\"foo\" data-testid=\"input-radio-checked\" />\n<input type=\"radio\" value=\"foo\" data-testid=\"input-radio-unchecked\" />\n<div role=\"radio\" aria-checked=\"true\" data-testid=\"aria-radio-checked\" />\n<div role=\"radio\" aria-checked=\"false\" data-testid=\"aria-radio-unchecked\" />\n<div role=\"switch\" aria-checked=\"true\" data-testid=\"aria-switch-checked\" />\n<div role=\"switch\" aria-checked=\"false\" data-testid=\"aria-switch-unchecked\" />"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toBeChecked(): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<input type=\"checkbox\" checked data-testid=\"input-checkbox-checked\" />\n<input type=\"checkbox\" data-testid=\"input-checkbox-unchecked\" />\n<div role=\"checkbox\" aria-checked=\"true\" data-testid=\"aria-checkbox-checked\" />\n<div\n  role=\"checkbox\"\n  aria-checked=\"false\"\n  data-testid=\"aria-checkbox-unchecked\"\n/>\n\n<input type=\"radio\" checked value=\"foo\" data-testid=\"input-radio-checked\" />\n<input type=\"radio\" value=\"foo\" data-testid=\"input-radio-unchecked\" />\n<div role=\"radio\" aria-checked=\"true\" data-testid=\"aria-radio-checked\" />\n<div role=\"radio\" aria-checked=\"false\" data-testid=\"aria-radio-unchecked\" />\n<div role=\"switch\" aria-checked=\"true\" data-testid=\"aria-switch-checked\" />\n<div role=\"switch\" aria-checked=\"false\" data-testid=\"aria-switch-unchecked\" />"
+            },
+            {
+              "language": "ts",
+              "code": "const inputCheckboxChecked = getByTestId('input-checkbox-checked')\nconst inputCheckboxUnchecked = getByTestId('input-checkbox-unchecked')\nconst ariaCheckboxChecked = getByTestId('aria-checkbox-checked')\nconst ariaCheckboxUnchecked = getByTestId('aria-checkbox-unchecked')\nawait expect.element(inputCheckboxChecked).toBeChecked()\nawait expect.element(inputCheckboxUnchecked).not.toBeChecked()\nawait expect.element(ariaCheckboxChecked).toBeChecked()\nawait expect.element(ariaCheckboxUnchecked).not.toBeChecked()\n\nconst inputRadioChecked = getByTestId('input-radio-checked')\nconst inputRadioUnchecked = getByTestId('input-radio-unchecked')\nconst ariaRadioChecked = getByTestId('aria-radio-checked')\nconst ariaRadioUnchecked = getByTestId('aria-radio-unchecked')\nawait expect.element(inputRadioChecked).toBeChecked()\nawait expect.element(inputRadioUnchecked).not.toBeChecked()\nawait expect.element(ariaRadioChecked).toBeChecked()\nawait expect.element(ariaRadioUnchecked).not.toBeChecked()\n\nconst ariaSwitchChecked = getByTestId('aria-switch-checked')\nconst ariaSwitchUnchecked = getByTestId('aria-switch-unchecked')\nawait expect.element(ariaSwitchChecked).toBeChecked()\nawait expect.element(ariaSwitchUnchecked).not.toBeChecked()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toBePartiallyChecked",
+          "id": "tobepartiallychecked",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tobepartiallychecked",
+          "description": "This allows you to check whether the given element is partially checked. It accepts an input of type checkbox and elements with a role of checkbox with a aria-checked=\"mixed\", or input of type checkbox with indeterminate set to true",
+          "signatures": [
+            "function toBePartiallyChecked(): Promise<void>",
+            "<input type=\"checkbox\" aria-checked=\"mixed\" data-testid=\"aria-checkbox-mixed\" />\n<input type=\"checkbox\" checked data-testid=\"input-checkbox-checked\" />\n<input type=\"checkbox\" data-testid=\"input-checkbox-unchecked\" />\n<div role=\"checkbox\" aria-checked=\"true\" data-testid=\"aria-checkbox-checked\" />\n<div\n  role=\"checkbox\"\n  aria-checked=\"false\"\n  data-testid=\"aria-checkbox-unchecked\"\n/>\n<input type=\"checkbox\" data-testid=\"input-checkbox-indeterminate\" />"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "typescript",
+              "code": "function toBePartiallyChecked(): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<input type=\"checkbox\" aria-checked=\"mixed\" data-testid=\"aria-checkbox-mixed\" />\n<input type=\"checkbox\" checked data-testid=\"input-checkbox-checked\" />\n<input type=\"checkbox\" data-testid=\"input-checkbox-unchecked\" />\n<div role=\"checkbox\" aria-checked=\"true\" data-testid=\"aria-checkbox-checked\" />\n<div\n  role=\"checkbox\"\n  aria-checked=\"false\"\n  data-testid=\"aria-checkbox-unchecked\"\n/>\n<input type=\"checkbox\" data-testid=\"input-checkbox-indeterminate\" />"
+            },
+            {
+              "language": "ts",
+              "code": "const ariaCheckboxMixed = getByTestId('aria-checkbox-mixed')\nconst inputCheckboxChecked = getByTestId('input-checkbox-checked')\nconst inputCheckboxUnchecked = getByTestId('input-checkbox-unchecked')\nconst ariaCheckboxChecked = getByTestId('aria-checkbox-checked')\nconst ariaCheckboxUnchecked = getByTestId('aria-checkbox-unchecked')\nconst inputCheckboxIndeterminate = getByTestId('input-checkbox-indeterminate')\n\nawait expect.element(ariaCheckboxMixed).toBePartiallyChecked()\nawait expect.element(inputCheckboxChecked).not.toBePartiallyChecked()\nawait expect.element(inputCheckboxUnchecked).not.toBePartiallyChecked()\nawait expect.element(ariaCheckboxChecked).not.toBePartiallyChecked()\nawait expect.element(ariaCheckboxUnchecked).not.toBePartiallyChecked()\n\ninputCheckboxIndeterminate.element().indeterminate = true\nawait expect.element(inputCheckboxIndeterminate).toBePartiallyChecked()"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toHaveRole",
+          "id": "tohaverole",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohaverole",
+          "description": "This allows you to assert that an element has the expected role.\n\nThis is useful in cases where you already have access to an element via some query other than the role itself, and want to make additional assertions regarding its accessibility.\n\nThe role can match either an explicit role (via the role attribute), or an implicit one via the implicit ARIA semantics.",
+          "signatures": [
+            "function toHaveRole(role: ARIARole): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveRole(role: ARIARole): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<button data-testid=\"button\">Continue</button>\n<div role=\"button\" data-testid=\"button-explicit\">Continue</button>\n<button role=\"switch button\" data-testid=\"button-explicit-multiple\">Continue</button>\n<a href=\"/about\" data-testid=\"link\">About</a>\n<a data-testid=\"link-invalid\">Invalid link<a/>"
+            },
+            {
+              "language": "ts",
+              "code": "await expect.element(getByTestId('button')).toHaveRole('button')\nawait expect.element(getByTestId('button-explicit')).toHaveRole('button')\nawait expect.element(getByTestId('button-explicit-multiple')).toHaveRole('button')\nawait expect.element(getByTestId('button-explicit-multiple')).toHaveRole('switch')\nawait expect.element(getByTestId('link')).toHaveRole('link')\nawait expect.element(getByTestId('link-invalid')).not.toHaveRole('link')\nawait expect.element(getByTestId('link-invalid')).toHaveRole('generic')"
+            },
+            {
+              "language": "jsx",
+              "code": "<div data-testid=\"switch\" role=\"switch alert\"></div>\n\nawait expect.element(getByTestId('switch')).toHaveRole('switch') // ✅\nawait expect.element(getByTestId('switch')).toHaveRole('alert') // ❌"
+            }
+          ],
+          "notes": [],
+          "children": []
+        },
+        {
+          "name": "toHaveSelection",
+          "id": "tohaveselection",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tohaveselection",
+          "description": "This allows to assert that an element has a text selection.\n\nThis is useful to check if text or part of the text is selected within an element. The element can be either an input of type text, a textarea, or any other element that contains text, such as a paragraph, span, div etc.",
+          "signatures": [
+            "function toHaveSelection(selection?: string): Promise<void>",
+            "<div>\n  <input type=\"text\" value=\"text selected text\" data-testid=\"text\" />\n  <textarea data-testid=\"textarea\">text selected text</textarea>\n  <p data-testid=\"prev\">prev</p>\n  <p data-testid=\"parent\">\n    text <span data-testid=\"child\">selected</span> text\n  </p>\n  <p data-testid=\"next\">next</p>\n</div>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toHaveSelection(selection?: string): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<div>\n  <input type=\"text\" value=\"text selected text\" data-testid=\"text\" />\n  <textarea data-testid=\"textarea\">text selected text</textarea>\n  <p data-testid=\"prev\">prev</p>\n  <p data-testid=\"parent\">\n    text <span data-testid=\"child\">selected</span> text\n  </p>\n  <p data-testid=\"next\">next</p>\n</div>"
+            },
+            {
+              "language": "ts",
+              "code": "getByTestId('text').element().setSelectionRange(5, 13)\nawait expect.element(getByTestId('text')).toHaveSelection('selected')\n\ngetByTestId('textarea').element().setSelectionRange(0, 5)\nawait expect.element('textarea').toHaveSelection('text ')\n\nconst selection = document.getSelection()\nconst range = document.createRange()\nselection.removeAllRanges()\nselection.empty()\nselection.addRange(range)\n\n// selection of child applies to the parent as well\nrange.selectNodeContents(getByTestId('child').element())\nawait expect.element(getByTestId('child')).toHaveSelection('selected')\nawait expect.element(getByTestId('parent')).toHaveSelection('selected')\n\n// selection that applies from prev all, parent text before child, and part child.\nrange.setStart(getByTestId('prev').element(), 0)\nrange.setEnd(getByTestId('child').element().childNodes[0], 3)\nawait expect.element(queryByTestId('prev')).toHaveSelection('prev')\nawait expect.element(queryByTestId('child')).toHaveSelection('sel')\nawait expect.element(queryByTestId('parent')).toHaveSelection('text sel')\nawait expect.element(queryByTestId('next')).not.toHaveSelection()\n\n// selection that applies from part child, parent text after child and part next.\nrange.setStart(getByTestId('child').element().childNodes[0], 3)\nrange.setEnd(getByTestId('next').element().childNodes[0], 2)\nawait expect.element(queryByTestId('child')).toHaveSelection('ected')\nawait expect.element(queryByTestId('parent')).toHaveSelection('ected text')\nawait expect.element(queryByTestId('prev')).not.toHaveSelection()\nawait expect.element(queryByTestId('next')).toHaveSelection('ne')"
+            }
+          ],
+          "notes": [
+            "WARNINGThe expected selection is a string, it does not allow to check for selection range indices."
+          ],
+          "children": []
+        },
+        {
+          "name": "toMatchScreenshot experimental",
+          "id": "tomatchscreenshot",
+          "level": 2,
+          "url": "https://vitest.dev/api/browser/assertions#tomatchscreenshot",
+          "description": "This assertion allows you to perform visual regression testing by comparing screenshots of elements or pages against stored reference images.\n\nWhen differences are detected beyond the configured threshold, the test fails. To help identify the changes, the assertion generates:",
+          "signatures": [
+            "function toMatchScreenshot(\n  options?: ScreenshotMatcherOptions,\n): Promise<void>\nfunction toMatchScreenshot(\n  name?: string,\n  options?: ScreenshotMatcherOptions,\n): Promise<void>"
+          ],
+          "aliases": [],
+          "examples": [
+            {
+              "language": "ts",
+              "code": "function toMatchScreenshot(\n  options?: ScreenshotMatcherOptions,\n): Promise<void>\nfunction toMatchScreenshot(\n  name?: string,\n  options?: ScreenshotMatcherOptions,\n): Promise<void>"
+            },
+            {
+              "language": "html",
+              "code": "<button data-testid=\"button\">Fancy Button</button>"
+            },
+            {
+              "language": "ts",
+              "code": "// basic usage, auto-generates screenshot name\nawait expect.element(getByTestId('button')).toMatchScreenshot()\n\n// with custom name\nawait expect.element(getByTestId('button')).toMatchScreenshot('fancy-button')\n\n// with options\nawait expect.element(getByTestId('button')).toMatchScreenshot({\n  comparatorName: 'pixelmatch',\n  comparatorOptions: {\n    allowedMismatchedPixelRatio: 0.01,\n  },\n})\n\n// with both name and options\nawait expect.element(getByTestId('button')).toMatchScreenshot('fancy-button', {\n  comparatorName: 'pixelmatch',\n  comparatorOptions: {\n    allowedMismatchedPixelRatio: 0.01,\n  },\n})"
+            }
+          ],
+          "notes": [
+            "TIPThe toMatchScreenshot assertion can be configured globally in your Vitest config.",
+            "The actual screenshot captured during the test",
+            "The expected reference screenshot",
+            "A diff image highlighting the differences (when possible)",
+            "Screenshots StabilityThe assertion automatically retries taking screenshots until two consecutive captures yield the same result. This helps reduce flakiness caused by animations, loading states, or other dynamic content. You can control this behavior with the timeout option.However, browser rendering can vary across:Different browsers and browser versionsOperating systems (Windows, macOS, Linux)Screen resolutions and pixel densitiesGPU drivers and hardware accelerationFont rendering and system fontsIt is recommended to read the Visual Regression Testing guide to implement this testing strategy efficiently.",
+            "TIPWhen a screenshot comparison fails due to intentional changes, you can update the reference screenshot by pressing the u key in watch mode, or by running tests with the -u or --update flags."
+          ],
+          "children": [
+            {
+              "name": "Options",
+              "id": "options",
+              "level": 3,
+              "url": "https://vitest.dev/api/browser/assertions#options",
+              "description": "",
+              "signatures": [],
+              "aliases": [],
+              "examples": [],
+              "notes": [
+                "comparatorName: \"pixelmatch\" = \"pixelmatch\"The algorithm/library used for comparing images.\"pixelmatch\" is the only built-in comparator, but you can use custom ones by registering them in the config file.",
+                "comparatorOptions: objectThese options allow changing the behavior of the comparator. What properties can be set depends on the chosen comparator algorithm.Vitest has set default values out of the box, but they can be overridden.\"pixelmatch\" optionsWARNINGAlways explicitly set comparatorName to get proper type inference for comparatorOptions.Without it, TypeScript won't know which options are valid:ts// ❌ TypeScript can't infer the correct options await expect.element(button).toMatchScreenshot({ comparatorOptions: { // might error when new comparators are added allowedMismatchedPixelRatio: 0.01, }, }) // ✅ TypeScript knows these are pixelmatch options await expect.element(button).toMatchScreenshot({ comparatorName: 'pixelmatch', comparatorOptions: { allowedMismatchedPixelRatio: 0.01, }, })",
+                "screenshotOptions: objectThe same options allowed by locator.screenshot(), except for:'base64''path''save''type'",
+                "timeout: number = 5_000Time to wait until a stable screenshot is found.Setting this value to 0 disables the timeout, but if a stable screenshot can't be determined the process will not end."
+              ],
+              "children": [
+                {
+                  "name": "\"pixelmatch\" comparator options",
+                  "id": "pixelmatch-comparator-options",
+                  "level": 4,
+                  "url": "https://vitest.dev/api/browser/assertions#pixelmatch-comparator-options",
+                  "description": "The \"pixelmatch\" comparator uses @blazediff/core under the hood. The following options are available when using it:",
+                  "signatures": [],
+                  "aliases": [],
+                  "examples": [],
+                  "notes": [
+                    "allowedMismatchedPixelRatio: number | undefined = undefinedThe maximum allowed ratio of differing pixels between the captured screenshot and the reference image.Must be a value between 0 and 1.For example, allowedMismatchedPixelRatio: 0.02 means the test will pass if up to 2% of pixels differ, but fail if more than 2% differ.",
+                    "allowedMismatchedPixels: number | undefined = undefinedThe maximum number of pixels that are allowed to differ between the captured screenshot and the stored reference image.If set to undefined, any non-zero difference will cause the test to fail.For example, allowedMismatchedPixels: 10 means the test will pass if 10 or fewer pixels differ, but fail if 11 or more differ.",
+                    "threshold: number = 0.1Acceptable perceived color difference between the same pixel in two images.Value ranges from 0 (strict) to 1 (very lenient). Lower values mean small differences will be detected.The comparison uses the YIQ color space.",
+                    "includeAA: boolean = falseIf true, disables detection and ignoring of anti-aliased pixels.",
+                    "alpha: number = 0.1Blending level of unchanged pixels in the diff image.Ranges from 0 (white) to 1 (original brightness).",
+                    "aaColor: [r: number, g: number, b: number] = [255, 255, 0]Color used for anti-aliased pixels in the diff image.",
+                    "diffColor: [r: number, g: number, b: number] = [255, 0, 0]Color used for differing pixels in the diff image.",
+                    "diffColorAlt: [r: number, g: number, b: number] | undefined = undefinedOptional alternative color for dark-on-light differences, to help show what's added vs. removed.If not set, diffColor is used for all differences.",
+                    "diffMask: boolean = falseIf true, shows only the diff as a mask on a transparent background, instead of overlaying it on the original image.Anti-aliased pixels won't be shown (if detected).",
+                    "WARNINGWhen both allowedMismatchedPixels and allowedMismatchedPixelRatio are set, the more restrictive value is used.For example, if you allow 100 pixels or 2% ratio, and your image has 10,000 pixels, the effective limit would be 100 pixels instead of 200."
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
