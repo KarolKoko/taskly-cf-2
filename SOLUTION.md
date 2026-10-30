@@ -18,7 +18,7 @@ PR → baseline type checks and tests
 ```
 
 ### an example run, including the agent's decisions, the skills used, and the test execution results:
-
+https://youtu.be/FMTqiUlkh-E
 
 ### Custom agent and reusable skills
 
